@@ -10,6 +10,7 @@
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration.fs" />
     <Compile Include="Json.fs" />
     <Compile Include="Kills.fs" />
     <Compile Include="ActorMessages.fs" />

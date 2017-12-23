@@ -21,10 +21,10 @@
             | x when x > 10000000000. -> Some (KillTag.Expensive "")
             | _ -> None
             
-        let isCorpLoss (km:Kill) =
+        let isCorpLoss corpId (km:Kill) =
             match km.Victim with
             | Some v -> match v.Corp with
-                         | Some c when c.Id = "423280073" -> Some (KillTag.CorpLoss "")
+                         | Some c when c.Id = corpId -> Some (KillTag.CorpLoss "")
                          | _ -> None
             | _ -> None
 
@@ -36,7 +36,7 @@
             attacker.Char |> getCorpId
 
         
-        let isCorpKill (km: Kill) =
+        let isCorpKill (corpId) (km: Kill) =
             
             let attackerCorpIds = km.Attackers
                                     |> Seq.map getAttackerCorpId
@@ -45,18 +45,18 @@
                                     |> Set.ofSeq
 
             if attackerCorpIds.Count = 1 &&
-                (attackerCorpIds |> Seq.item 0) = "423280073" then
+                (attackerCorpIds |> Seq.item 0) = corpId then
                 Some (KillTag.CorpKill "")
             else
                 None
                 
 
-        let tag km = 
+        let tag (corpId: string) km = 
             let tags = [
                             isPod km;
                             isExpensive km;
-                            isCorpKill km;
-                            isCorpLoss km;
+                            isCorpKill corpId km;
+                            isCorpLoss corpId km;
                         ]
                         |> toTags
                         |> List.append km.Tags

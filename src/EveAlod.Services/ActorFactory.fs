@@ -3,18 +3,26 @@
     open EveAlod.Entities
 
     type ActorFactory()=
-                
-        let mainChannel = { DiscordChannel.Id = ""; Token = ""}
+    
+        let configProvider = new ConfigProvider()
+        let config = configProvider.Configuration
+
+        
+        let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
         let discordPublisher = new DiscordPublishActor(mainChannel)
         let logger = new LogPublishActor()
         
-        // TODOTK: fan out?
-        let killFilter = new KillFilterActor(50., fun km -> logger.Post (Log km))
+        let killFilter = new KillFilterActor(config.MinimumScore, 
+                                                (fun km ->  //logger.Post (Log km)
+                                                            discordPublisher.Post (SendToDiscord km) 
+                                                            ))
 
-        let killScorer = new KillScorerActor(fun km -> killFilter.Post (Scored km))
+        let killScorer = new KillScorerActor(fun km ->  logger.Post (Log km)
+                                                        killFilter.Post (Scored km)
+                                            )
         
-        let killTagger = new KillTaggerActor(fun km -> killScorer.Post (Score km))
+        let killTagger = new KillTaggerActor(config.CorpId, fun km -> killScorer.Post (Score km))
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
                                             EveAlod.Data.Web.getKm, "https://redisq.zkillboard.com/listen.php?ttw=10")

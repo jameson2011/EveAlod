@@ -2,7 +2,7 @@
 
     open EveAlod.Entities
     
-    type KillTaggerActor(forward: Kill -> unit) =
+    type KillTaggerActor(corpId: string, forward: Kill -> unit) =
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
@@ -10,7 +10,7 @@
 
                 match msg with                                    
                 | Tag km ->    
-                            km |> Tagging.tag |> forward
+                            km |> Tagging.tag corpId |> forward
                 | _ ->      0 |> ignore
                 
                 

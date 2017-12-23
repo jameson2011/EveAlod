@@ -1,30 +1,30 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="ConfigProvider.fs" />
     <Compile Include="DiscordPublishActor.fs" />
     <Compile Include="KillFilterActor.fs" />
     <Compile Include="KillScorerActor.fs" />
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTaggerActor.fs" />
     <Compile Include="LogPublishActor.fs" />
-    <Compile Include="ActorFactory.fs" />     
+    <Compile Include="ActorFactory.fs" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="SampleConfig.json" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj" />
     <ProjectReference Include="..\EveAlod.Entities\EveAlod.Entities.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

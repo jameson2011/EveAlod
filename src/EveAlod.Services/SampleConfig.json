@@ -1,0 +1,6 @@
+﻿{
+  "minimumScore": 0.0,
+  "corpId": "corpId",
+  "channelId": "discordChannel",
+  "channelToken": "discordToken"
+}
