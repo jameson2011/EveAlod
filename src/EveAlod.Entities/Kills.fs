@@ -6,8 +6,12 @@
         | Awox of string
         | Solo of string
         | Npc of string
+        | CorpKill of string
+        | CorpLoss of string
         | PlexInHold of string
         | SkillInjectorInHold of string
+        | Pod of string
+        | Expensive of string
 
     type Entity = {
                     Id: string;
@@ -43,5 +47,8 @@
 
                     Attackers: Attacker list;
 
-                    Tags: KillTag list }
+                    Tags: KillTag list 
+
+                    AlodScore: float;
+                    }
 

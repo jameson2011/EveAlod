@@ -88,7 +88,9 @@
                 
                     Attackers = attackersJson |> toAttackers;
                 
-                    Tags = (toTags zkb)
+                    Tags = (toTags zkb);
+
+                    AlodScore = 0.;
                 }
             | _ -> None
             

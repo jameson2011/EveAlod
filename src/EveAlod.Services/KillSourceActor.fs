@@ -23,13 +23,11 @@
                 let get = match msg with
                                     | Stop ->   false
                                     | Start ->  
-                                                inbox.Post (GetNext sourceUri)
-                                                true                                    
+                                        inbox.Post (GetNext sourceUri)
+                                        true                                    
                                     | GetNext url ->    
-                                                onNext inbox url |> Async.RunSynchronously
-                                                
-                                                true
-
+                                        onNext inbox url |> Async.RunSynchronously                                                
+                                        true
                                     | _ ->      true
                 
                 if get then
