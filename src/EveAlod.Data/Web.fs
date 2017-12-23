@@ -1,4 +1,4 @@
-﻿namespace EveALOD.Data
+﻿namespace EveAlod.Data
     module Web=
 
         open System.IO

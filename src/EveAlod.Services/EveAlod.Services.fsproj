@@ -13,7 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="DiscordPublishActor.fs" />
+    <Compile Include="KillScorerActor.fs" />
+    <Compile Include="KillSourceActor.fs" />
+    <Compile Include="KillTaggerActor.fs" />
+    <Compile Include="LogPublishActor.fs" />
+    <Compile Include="ActorFactory.fs" />     
   </ItemGroup>
 
   <ItemGroup>

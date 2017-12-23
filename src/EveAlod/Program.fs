@@ -3,5 +3,16 @@ open System
 
 [<EntryPoint>]
 let main argv =
-    printfn "Hello World from F#!"
+        
+    let factory = new EveAlod.Services.ActorFactory()
+    let source = factory.KillSource
+
+    source.Start()
+        
+    System.Console.Out.WriteLine("ENTER to quit")
+    System.Console.ReadLine() |> ignore
+
+    source.Stop()
+
     0 // return an integer exit code
+    
