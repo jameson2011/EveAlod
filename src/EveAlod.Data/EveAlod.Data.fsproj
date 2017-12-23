@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
 
@@ -15,13 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Program.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj" />
-    <ProjectReference Include="..\EveAlod.Entities\EveAlod.Entities.fsproj" />
-    <ProjectReference Include="..\EveAlod.Services\EveAlod.Services.fsproj" />
+    <Compile Include="Library.fs" />
   </ItemGroup>
 
 </Project>
