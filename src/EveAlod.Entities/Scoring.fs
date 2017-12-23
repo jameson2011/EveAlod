@@ -3,11 +3,12 @@
         
         let private tagScore (tag: KillTag) =
             match tag with
-            | CorpKill _ -> 100.
-            | CorpLoss _ -> 50.
-            | PlexInHold _ | SkillInjectorInHold _ -> 100.
-            | Expensive _ -> 100.
-            | Pod _ -> 10.
+            | CorpKill -> 100.
+            | CorpLoss -> 50.
+            | PlexInHold | SkillInjectorInHold -> 100.
+            | Expensive -> 100.
+            | Pod  -> 10.
+            | Spendy -> 40.
             | _ -> 0.
 
         let private tagsScore (tags: KillTag list) =

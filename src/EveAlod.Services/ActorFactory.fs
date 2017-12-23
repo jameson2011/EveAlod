@@ -14,13 +14,10 @@
         let logger = new LogPublishActor()
         
         let killFilter = new KillFilterActor(config.MinimumScore, 
-                                                (fun km ->  //logger.Post (Log km)
-                                                            discordPublisher.Post (SendToDiscord km) 
-                                                            ))
+                                                (fun km ->  discordPublisher.Post (SendToDiscord km) ))
 
         let killScorer = new KillScorerActor(fun km ->  logger.Post (Log km)
-                                                        killFilter.Post (Scored km)
-                                            )
+                                                        killFilter.Post (Scored km))
         
         let killTagger = new KillTaggerActor(config.CorpId, fun km -> killScorer.Post (Score km))
 

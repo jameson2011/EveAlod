@@ -20,17 +20,17 @@
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
             | _ -> None
             
-        // TODOTK: better way???
+        // TODO: better way?
         let private toTags (json: JsonValue option) : KillTag list=
             let result = []
             let result = match (json |> getProp "npc" |> getBool) with
-                            | true -> (KillTag.Npc "NPC" :: result)
+                            | true -> (KillTag.Npc :: result)
                             | _ -> result
             let result = match (json |> getProp "solo" |> getBool) with
-                            | true -> (KillTag.Solo "Solo" :: result)
+                            | true -> (KillTag.Solo :: result)
                             | _ -> result
             let result = match (json |> getProp "awox" |> getBool) with
-                            | true -> (KillTag.Awox "Awox" :: result)
+                            | true -> (KillTag.Awox :: result)
                             | _ -> result
             result
 

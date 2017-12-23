@@ -13,18 +13,24 @@
                         | Some s -> s.Id = "670"
                         | _ -> false
             match isPod with
-            | true -> Some (KillTag.Pod "")
+            | true -> Some KillTag.Pod
             | _ -> None
 
         let isExpensive (km: Kill)=
             match km.TotalValue with
-            | x when x > 10000000000. -> Some (KillTag.Expensive "")
+            | x when x > 10000000000. -> Some KillTag.Expensive
+            | _ -> None
+        
+        let isSpendy (km: Kill)=
+            match km.TotalValue with
+            | x when x > 500000000. -> Some KillTag.Spendy
             | _ -> None
             
+
         let isCorpLoss corpId (km:Kill) =
             match km.Victim with
             | Some v -> match v.Corp with
-                         | Some c when c.Id = corpId -> Some (KillTag.CorpLoss "")
+                         | Some c when c.Id = corpId -> Some (KillTag.CorpLoss)
                          | _ -> None
             | _ -> None
 
@@ -46,7 +52,7 @@
 
             if attackerCorpIds.Count = 1 &&
                 (attackerCorpIds |> Seq.item 0) = corpId then
-                Some (KillTag.CorpKill "")
+                Some (KillTag.CorpKill)
             else
                 None
                 
@@ -55,6 +61,7 @@
             let tags = [
                             isPod km;
                             isExpensive km;
+                            isSpendy km;
                             isCorpKill corpId km;
                             isCorpLoss corpId km;
                         ]

@@ -9,7 +9,6 @@
 
                 match msg with
                 | Log km ->
-                            // TODOTK:
                             let msg = sprintf "%s %s" (km.Occurred.ToString()) km.ZkbUri
                             System.Console.Out.WriteLine(msg)
                 | _ ->      0 |> ignore

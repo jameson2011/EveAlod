@@ -3,15 +3,18 @@
     open System
 
     type KillTag =
-        | Awox of string
-        | Solo of string
-        | Npc of string
-        | CorpKill of string
-        | CorpLoss of string
-        | PlexInHold of string
-        | SkillInjectorInHold of string
-        | Pod of string
-        | Expensive of string
+        | Awox
+        | Solo
+        | Npc
+        | CorpKill
+        | CorpLoss
+        | PlexInHold
+        | SkillInjectorInHold
+        | Ecm
+        | FailFit
+        | Pod
+        | Spendy
+        | Expensive
 
     type Entity = {
                     Id: string;

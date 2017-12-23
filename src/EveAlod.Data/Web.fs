@@ -4,7 +4,7 @@
         open System.IO
         open System.Net
     
-        let private userAgent = "Maintainer:" // TODOTK: make configurable
+        let private userAgent = "Maintainer:" // TODO: make configurable
             
         let private getData (url: string) =
             async {
@@ -31,12 +31,11 @@
         
         let sendDiscord (channelId: string) (token: string) (content: string)=
             async {
-                // TODOTK: error handling
-                // post to this...
+                // TODO: error handling
                 let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
                                 
                 use client = new System.Net.Http.HttpClient()
-                // TODOTK: client.DefaultRequestHeaders.Add("User-Agent", userAgent)
+                // TODO: client.DefaultRequestHeaders.Add("User-Agent", userAgent)
         
                 let values = new System.Collections.Generic.Dictionary<string, string>()
                 values.Add("content", content)
