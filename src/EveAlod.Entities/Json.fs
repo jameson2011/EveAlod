@@ -11,6 +11,10 @@
         let getBool (json: JsonValue option)=
             defaultArg (json |> Option.map (fun j -> j.AsBoolean())) false
 
+        let getInt (json: JsonValue option)=
+            defaultArg (json |> Option.map (fun j -> j.AsInteger())) 0
+
+
         let getFloat (json: JsonValue option)=
             defaultArg (json |> Option.map (fun j -> j.AsFloat())) 0.
 

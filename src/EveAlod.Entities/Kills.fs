@@ -14,6 +14,11 @@
                     Name: string;
                     }
 
+    type CargoItem = {
+                        Item: Entity;
+                        Quantity: int;
+                    }
+
     type Character={
         Char: Entity;
         Corp: Entity option;
@@ -22,7 +27,7 @@
 
     type Attacker = {
         Char: Character option;
-        Ship: Entity;
+        Ship: Entity option;
         Damage: int
         }
 
@@ -33,6 +38,7 @@
 
                     Victim: Character option;
                     VictimShip: Entity option;
+                    Cargo: CargoItem list;
                     TotalValue: float;
 
                     Attackers: Attacker list;

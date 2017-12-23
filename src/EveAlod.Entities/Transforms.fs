@@ -34,6 +34,32 @@
                             | _ -> result
             result
 
+        let private toCargoItem (json: JsonValue) : CargoItem = 
+            { CargoItem.Item = { 
+                                Entity.Id = Some json |> getProp "item_type_id" |> getString
+                                Name = ""
+                                }; 
+                        Quantity =  Some json |> getProp "quantity_dropped" |> getInt
+                        }
+            
+        let private toCargoItems (json: JsonValue[] option) : CargoItem list = 
+            match json with
+            | Some xs -> xs |> Seq.map toCargoItem |> List.ofSeq
+            | None -> []
+
+        let private toAttacker (json: JsonValue option) : Attacker = 
+            {
+                Attacker.Char = json |> toCharacter;
+                Damage = json |> getProp "damage_done" |> getInt;
+                Ship = json |> getProp "ship_type_id" |> getString |> toEntity 
+            }
+
+        let private toAttackers (json: JsonValue[] option) : Attacker list = 
+            match json with
+            | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> List.ofSeq
+            | None -> []
+
+
         let toKill (msg: string)=
             let kmJson = jsonToKill.Parse(msg)
             let package = Some (kmJson.JsonValue.GetProperty("package"))
@@ -44,9 +70,11 @@
                 let id = km |> getProp "killmail_id" |> getString
                 let occurred = km |> getProp "killmail_time" |> getDateTime
                 let victimJson  = km |> getProp "victim"
+                let attackersJson = km |> getProp "attackers" |> Option.map (fun j -> j.AsArray())
                 let zkb = package |> getProp "zkb"
                 let location = zkb |> getProp "locationID" |> getString |> toEntity
-                
+                let items = victimJson |> getProp "items" |> Option.map (fun j -> j.AsArray())
+
                 Some {
                     Kill.Id = id; 
                     Occurred = occurred; 
@@ -56,28 +84,13 @@
                     Victim = toCharacter victimJson;
                     VictimShip = (victimJson |> getProp "ship_type_id" |> getString) |> toEntity;
                     TotalValue = zkb |> getProp "totalValue" |> getFloat;
+                    Cargo = items |> toCargoItems;
                 
-                    Attackers = []; // TODOTK:
+                    Attackers = attackersJson |> toAttackers;
                 
                     Tags = (toTags zkb)
                 }
             | _ -> None
             
-
-        let toKill3 (msg: string)=
-            // TODOTK:
-            Some {
-                Kill.Id = ""; 
-                Occurred = System.DateTime.UtcNow; 
-                ZkbUri = "http://zkillboard.com";
-                Location = None;
-
-                Victim = None;
-                VictimShip = None;
-                TotalValue = 0.;
-                
-                Attackers = [];
-                
-                Tags = []
-            }
+            
 

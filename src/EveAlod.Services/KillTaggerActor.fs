@@ -3,14 +3,18 @@
     open EveAlod.Entities
     
     type KillTaggerActor(forward: Kill -> unit) =
+
+        // TODOTK: search ...
+        let tag km = 
+            km
+
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 
                 match msg with                                    
                 | Tag km ->    
-                            // TODOTK:
-                            forward km
+                            km |> tag |> forward
                 | _ ->      0 |> ignore
                 
                 
