@@ -10,7 +10,9 @@
         let logger = new LogPublishActor()
         
         // TODOTK: fan out?
-        let killScorer = new KillScorerActor(fun km -> logger.Post (Log km))
+        let killFilter = new KillFilterActor(50., fun km -> logger.Post (Log km))
+
+        let killScorer = new KillScorerActor(fun km -> killFilter.Post (Scored km))
         
         let killTagger = new KillTaggerActor(fun km -> killScorer.Post (Score km))
 

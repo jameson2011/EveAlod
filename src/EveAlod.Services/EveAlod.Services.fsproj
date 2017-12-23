@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Compile Include="DiscordPublishActor.fs" />
+    <Compile Include="KillFilterActor.fs" />
     <Compile Include="KillScorerActor.fs" />
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTaggerActor.fs" />
