@@ -1,0 +1,13 @@
+source https://nuget.org/api/v2
+
+nuget FsCheck
+nuget FsCheck.Xunit
+nuget FSharp.Core
+nuget FAKE 4.63.2 restriction: >= net461
+nuget FSharp.Data 2.4.3
+nuget FSharpLint.Fake 0.8.1 restriction: >= net461
+nuget Microsoft.Extensions.CommandLineUtils 1.1.1 restriction: >= net461
+nuget Newtonsoft.Json 10.0.3 restriction: >= net461
+nuget xunit
+nuget xunit.runner.console
+nuget xunit.runner.visualstudio

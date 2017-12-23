@@ -1,0 +1,15 @@
+version: 0.0.0.{build}
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# tasks
+build_script:
+- cmd: >-
+    ./build.bat
+
+test: off
+
+artifacts:
+- path: artifacts
+  name: evealod
