@@ -11,6 +11,7 @@
             | PlexInHold -> "BWAHAHAHAHAHA"
             | SkillInjectorInHold -> "RETARD DOWN"
             | Awox -> "Didn't like that corp anyway"
+            | Ecm -> "ECM is illegal"
             | _ -> ""
 
         let getTagsText (tags: KillTag list) =

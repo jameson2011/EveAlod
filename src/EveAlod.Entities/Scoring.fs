@@ -9,6 +9,7 @@
             | Expensive -> 100.
             | Pod  -> 10.
             | Spendy -> 40.
+            | Ecm -> 40.
             | _ -> 0.
 
         let private tagsScore (tags: KillTag list) =
