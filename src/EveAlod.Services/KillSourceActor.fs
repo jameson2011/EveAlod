@@ -4,13 +4,16 @@
         
     type Inbox = MailboxProcessor<ActorMessage>
 
-    type KillSourceActor(forward: Kill -> unit, getKmData: string -> Async<string>, sourceUri: string)= 
+    type KillSourceActor(forward: Kill -> unit, getKmData: string -> Async<string option>, sourceUri: string)= 
 
         let onNext (inbox: Inbox) url = 
             async {                
                 let! data = getKmData url
-                if data <> "" then                                          
-                    Transforms.toKill data |> Option.iter (fun km -> forward km)                               
+                match data with
+                | Some d -> d |> Transforms.toKill |> Option.iter (fun km -> forward km)                               
+                | _ -> 0 |> ignore
+
+                inbox.Post (GetNext url)
             }
 
         let pipe = Inbox.Start(fun inbox -> 
@@ -24,7 +27,7 @@
                                                 true                                    
                                     | GetNext url ->    
                                                 onNext inbox url |> Async.RunSynchronously
-                                                inbox.Post (GetNext url)
+                                                
                                                 true
 
                                     | _ ->      true

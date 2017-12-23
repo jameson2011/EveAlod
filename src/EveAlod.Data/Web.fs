@@ -14,8 +14,8 @@
                     let! resp = req.AsyncGetResponse()
                     use stream = resp.GetResponseStream()
                     let rdr = new StreamReader(stream)
-                    return (rdr.ReadToEnd())
-                with _ -> return ""
+                    return Some (rdr.ReadToEnd())
+                with _ -> return None
             }
 
         let private getEsiData (uri) (id: string) =        
