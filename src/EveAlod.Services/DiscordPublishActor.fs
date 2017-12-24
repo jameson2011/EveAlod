@@ -3,21 +3,7 @@
     open EveAlod.Entities
 
     type DiscordPublishActor(channel: DiscordChannel)= 
-        let getTagText tag =
-            match tag with
-            | CorpLoss -> "CORPIE DOWN RIP"
-            | CorpKill -> "GREAT VICTORY"
-            | Expensive -> "DERP"
-            | PlexInHold -> "BWAHAHAHAHAHA"
-            | SkillInjectorInHold -> "RETARD DOWN"
-            | Awox -> "Didn't like that corp anyway"
-            | Ecm -> "ECM is illegal"
-            | _ -> ""
-
-        let getTagsText (tags: KillTag list) =
-            match tags with
-            | [] -> ""
-            | head::_ -> getTagText head
+        
             
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
@@ -25,11 +11,11 @@
 
                 match msg with
                 | SendToDiscord km ->    
-                            
-                            let txt = ((getTagsText km.Tags) + " " + km.ZkbUri).Trim()
+                    let txt = ((Tagging.getTagsText km.Tags) + " " + km.ZkbUri).Trim()
 
-                            let! response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt
-                            0 |> ignore                      
+                    // TODO: add timer! 1 min or so?
+                    let! response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt
+                    0 |> ignore                      
                 | _ ->      0 |> ignore
                 
                 return! getNext()            

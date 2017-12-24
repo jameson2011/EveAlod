@@ -1,7 +1,8 @@
 ﻿namespace EveAlod.Entities
 
     module Tagging=
-        //
+        
+        
         let private toTags (tags: seq<KillTag option>)= 
             tags
             |> Seq.filter (fun tag -> tag.IsSome)
@@ -69,3 +70,28 @@
                         |> List.append km.Tags
             
             {km with Tags = tags}
+
+        let getTagText tag =
+            match tag with
+            | CorpLoss -> "CORPIE DOWN. RIP"
+            | CorpKill -> "GREAT VICTORY"
+            | Pod -> "Someone should have bought pod insurance"
+            | Expensive -> "DERP"
+            | PlexInHold -> "BWAHAHAHAHAHA"
+            | SkillInjectorInHold -> "Ooops"
+            | Awox -> "Didn't like that corp anyway"
+            | Ecm -> "ECM is illegal"
+            | _ -> ""
+            
+        
+        let getTagsText (tags: KillTag list) =
+            let rec getTexts tags = 
+                match tags with
+                | [] -> ""
+                | head::tail -> 
+                    match (getTagText head) with
+                    | "" -> getTexts tail 
+                    | txt -> txt
+            getTexts tags
+
+            

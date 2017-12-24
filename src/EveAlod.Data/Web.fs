@@ -4,7 +4,7 @@
         open System.IO
         open System.Net
     
-        let private userAgent = "Maintainer:" // TODO: make configurable
+        let private userAgent = "EveALOD Maintainer:" // TODO: make configurable
             
         let private getData (url: string) =
             async {
@@ -31,16 +31,18 @@
         
         let sendDiscord (channelId: string) (token: string) (content: string)=
             async {
-                // TODO: error handling
-                let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
+                
+                try
+                    let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
                                 
-                use client = new System.Net.Http.HttpClient()
-                // TODO: client.DefaultRequestHeaders.Add("User-Agent", userAgent)
+                    use client = new System.Net.Http.HttpClient()
+                    // TODO: client.DefaultRequestHeaders.Add("User-Agent", userAgent)
         
-                let values = new System.Collections.Generic.Dictionary<string, string>()
-                values.Add("content", content)
-                let content = new System.Net.Http.FormUrlEncodedContent(values)
+                    let values = new System.Collections.Generic.Dictionary<string, string>()
+                    values.Add("content", content)
+                    let content = new System.Net.Http.FormUrlEncodedContent(values)
 
-                let! response = client.PostAsync(url, content) |> Async.AwaitTask
-                response |> ignore
+                    let! response = client.PostAsync(url, content) |> Async.AwaitTask
+                    response |> ignore
+                with _ -> 0 |> ignore
             }
