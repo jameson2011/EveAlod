@@ -2,17 +2,16 @@
 
     open EveAlod.Entities
 
-    type ActorFactory()=
+    type ServiceFactory()=
     
         let configProvider = new ConfigProvider()
         let config = configProvider.Configuration
 
         // TODO: clean up
-        (*
-        let staticData = new StaticDataProvider()
-        let groups = staticData.Groups()
-        let entities = staticData.Entities()
-        *)
+        let staticData = new StaticEntityProvider()
+        //let groups = staticData.Groups()
+        //let entities = staticData.Entities()
+        
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
         let discordPublisher = new DiscordPublishActor(mainChannel)

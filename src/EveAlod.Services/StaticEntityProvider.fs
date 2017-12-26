@@ -1,5 +1,6 @@
 ﻿namespace EveAlod.Services
 
+    open System
     open FSharp.Data
     open EveAlod.Entities
 
@@ -7,18 +8,17 @@
     type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
     type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
 
-    type StaticDataProvider()=
+    
+    type StaticEntityProvider()=
+    
+        let ecmGroupId = "201"
+        let plexGroupId = "1875"
+        let skillInjectorGroupId = "1739"
+        let capsuleGroupId = "29"
 
-        let keyGroupIds = 
-                [ 
-                    "201"; // ECM
-                    "1875"; // Plex
-                    "1739"; // skill injectors
-                ]        
-
-        let getGroupEntity(id: int)=
+        let getGroupEntity(id: string)=
             async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%i/?datasource=tranquility&language=en-us" id)
+                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
                 let! json = EveAlod.Data.Web.getData uri
                 return match json with
                         | Some j -> let root = (jsonGroupProvider.Parse(j))
@@ -41,7 +41,6 @@
                         | _ -> None
             }
 
-
         let getGroupIds() = 
             [ 1 .. 3 ] 
             |> Seq.map (fun i -> (sprintf "https://esi.tech.ccp.is/latest/universe/groups/?datasource=tranquility&page=%i" i))
@@ -51,7 +50,10 @@
             async {
                 let! j = json
                 return match j with
-                        | Some data -> jsonGroupIdProvider.Parse(data) |> List.ofSeq
+                        | Some data -> 
+                            jsonGroupIdProvider.Parse(data) 
+                            |> Seq.map (fun i -> i.ToString())
+                            |> List.ofSeq
                         | _ -> []
             }
 
@@ -62,38 +64,29 @@
                             |> Async.RunSynchronously            
             idLists |> Seq.collect (fun xs -> xs) |> Array.ofSeq
             
-        let getGroupEntities () =
-            let entities = getGroupIds()
-                            |> Seq.map getGroupEntity
-                            |> Async.Parallel
-                            |> Async.RunSynchronously
-                            |> Seq.filter (fun o -> o.IsSome)
-                            |> Seq.map (fun o -> o.Value)
-                            |> Array.ofSeq
-            entities
-
-        let groupEntities = lazy ( getGroupEntities() )
+        let getGroupEntities (ids: seq<string>) =
+            ids
+                |> Seq.map getGroupEntity
+                |> Async.Parallel
+                |> Async.RunSynchronously
+                |> Seq.filter (fun o -> o.IsSome)
+                |> Seq.map (fun o -> o.Value)
+                |> Array.ofSeq
+                    
+        let entityGroups =
+            [             
+                EntityGroupKey.Ecm, lazy ( [ ecmGroupId ] |> getGroupEntities );
+                EntityGroupKey.Plex, lazy ( [ plexGroupId ] |> getGroupEntities );
+                EntityGroupKey.SkillInjector, lazy ( [ skillInjectorGroupId ] |> getGroupEntities );
+                EntityGroupKey.Capsule, lazy ( [ capsuleGroupId ] |> getGroupEntities );
+            ]
+            |> Map.ofSeq
         
-        member this.Groups() = groupEntities.Value
-        
-        member this.Entities()=
-            // TODO: 
-            let groups = groupEntities.Value
-                            |> Seq.map (fun grp -> (grp.Id, grp))
-                            |> Map.ofSeq
+        member this.EntityIds(key: EntityGroupKey)=
+            match entityGroups |> Map.tryFind key with
+            | Some grp -> grp.Value
+                            |> Seq.collect (fun o -> o.EntityIds)
+                            |> Set.ofSeq
+            | _ -> Set.empty<string>
 
-            let entityIds = keyGroupIds 
-                            |> Seq.map groups.TryFind
-                            |> Seq.filter Option.isSome
-                            |> Seq.collect (fun o -> o.Value.EntityIds)
-                            |> Array.ofSeq
-
-            let entities = entityIds 
-                            |> Seq.map getEntity
-                            |> Async.Parallel
-                            |> Async.RunSynchronously
-                            |> Seq.filter Option.isSome
-                            |> Seq.map (fun o -> o.Value)
-                            |> Array.ofSeq
             
-            entities

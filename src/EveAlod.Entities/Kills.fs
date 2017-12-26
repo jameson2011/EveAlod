@@ -2,6 +2,12 @@
 
     open System
 
+    type EntityGroupKey =
+        | Plex
+        | SkillInjector
+        | Ecm
+        | Capsule
+
     type KillTag =
         | Awox
         | Solo

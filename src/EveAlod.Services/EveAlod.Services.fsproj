@@ -17,8 +17,8 @@
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTaggerActor.fs" />
     <Compile Include="LogPublishActor.fs" />
-    <Compile Include="StaticDataProvider.fs" />
-    <Compile Include="ActorFactory.fs" />    
+    <Compile Include="StaticEntityProvider.fs" />
+    <Compile Include="ServiceFactory.fs" />    
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleConfig.json" />

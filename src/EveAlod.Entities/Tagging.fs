@@ -1,8 +1,7 @@
 ﻿namespace EveAlod.Entities
 
     module Tagging=
-        
-        
+                
         let private toTags (tags: seq<KillTag option>)= 
             tags
             |> Seq.filter (fun tag -> tag.IsSome)
@@ -16,66 +15,77 @@
 
         let private getAttackerCorpId (attacker: Attacker)=
             attacker.Char |> getCorpId
-            
-        let private hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
-            km.Cargo
-            |> Seq.map (fun e -> e.Item)
-            |> Seq.exists pred
-            
-        let hasPlex (km: Kill)=
-            match (hasItemsInCargo EntityTypes.isPlex km) with
-            | true -> Some KillTag.PlexInHold
-            | _ -> None
-
-        let hasSkillInjector (km: Kill)=
-            match (hasItemsInCargo EntityTypes.isSkillInjector km) with
-            | true -> Some KillTag.SkillInjectorInHold
-            | _ -> None
         
-        let hasEcm (km: Kill)=
-            match (hasItemsInCargo EntityTypes.isEcm km) with
-            | true -> Some KillTag.Ecm
-            | _ -> None
+        let private isVictimInPod (km: Kill) = 
+            match km.VictimShip with
+            | Some e -> EntityTypes.isPod e
+            | _ -> false
 
-        let isPod (km:Kill )= 
-            let isPod = match km.VictimShip with
-                        | Some e -> EntityTypes.isPod e
-                        | _ -> false
-            match isPod with
-            | true -> Some KillTag.Pod
-            | _ -> None
-
-        let isExpensive (km: Kill)=
-            match km.TotalValue with
-            | x when x > 10000000000. -> Some KillTag.Expensive
-            | _ -> None
-        
-        let isSpendy (km: Kill)=
-            match km.TotalValue with
-            | x when x > 500000000. -> Some KillTag.Spendy
-            | _ -> None
-            
-        let isCorpLoss corpId (km:Kill) =
+        let private isVictimInCorp (corpId: string) (km: Kill) = 
             match km.Victim with
             | Some v -> match v.Corp with
-                         | Some c when c.Id = corpId -> Some (KillTag.CorpLoss)
-                         | _ -> None
-            | _ -> None
-
+                         | Some c when c.Id = corpId -> true
+                         | _ -> false
+            | _ -> false
         
-        let isCorpKill (corpId) (km: Kill) =
-            
+        let private areAttackersInSameCorp (corpId: string) (km: Kill)=
             let attackerCorpIds = km.Attackers
                                     |> Seq.map getAttackerCorpId
                                     |> Seq.filter (fun s -> s.IsSome)                                    
                                     |> Seq.map (fun c -> c.Value)
                                     |> Set.ofSeq
 
-            if attackerCorpIds.Count = 1 &&
-                (attackerCorpIds |> Seq.item 0) = corpId then
-                Some (KillTag.CorpKill)
-            else
-                None
+            attackerCorpIds.Count = 1 &&
+                (attackerCorpIds |> Seq.item 0) = corpId
+
+        let private isTotalValueOver (value: float) (km: Kill)=
+            match km.TotalValue with
+            | x when x > value -> true
+            | _ -> false
+
+        let private isTotalValueUnder (value: float) (km: Kill)=
+            match km.TotalValue with
+            | x when x <= value -> true
+            | _ -> false
+
+
+        let private hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
+            km.Cargo
+            |> Seq.map (fun e -> e.Item)
+            |> Seq.exists pred
+            
+        let private tagOnTrue (tag: KillTag) (pred: Kill -> bool) (km: Kill)=
+            match pred km with
+            | true -> Some tag
+            | _ -> None
+
+            
+        let hasPlex =            
+            (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo EntityTypes.isPlex)
+
+        let hasSkillInjector =
+            (tagOnTrue KillTag.SkillInjectorInHold) (hasItemsInCargo EntityTypes.isSkillInjector)
+            
+        let hasEcm =
+            (tagOnTrue KillTag.Ecm) (hasItemsInCargo EntityTypes.isEcm)
+            
+        let isPod = 
+            (tagOnTrue KillTag.Pod) (isVictimInPod)
+            
+        let isExpensive =
+            (tagOnTrue KillTag.Expensive) (isTotalValueOver 10000000000.)
+            
+        let isSpendy =
+            (tagOnTrue KillTag.Spendy) (isTotalValueOver 500000000.)
+                        
+        let isCheap = 
+            (tagOnTrue KillTag.Cheap) (isTotalValueUnder 1000000.)
+
+        let isCorpLoss corpId =
+            (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
+                    
+        let isCorpKill (corpId) =
+            (tagOnTrue KillTag.CorpKill) (areAttackersInSameCorp corpId)
                 
 
         let tag (corpId: string) km = 

@@ -4,7 +4,7 @@ open System
 [<EntryPoint>]
 let main argv =
         
-    let factory = new EveAlod.Services.ActorFactory()
+    let factory = new EveAlod.Services.ServiceFactory()
     let source = factory.KillSource
 
     source.Start()
