@@ -4,14 +4,16 @@
 
     type DiscordPublishActor(channel: DiscordChannel)= 
         
-            
+        let rnd = new System.Random()
+        let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
+
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 
                 match msg with
                 | SendToDiscord km ->    
-                    let txt = ((Tagging.getTagsText km.Tags) + " " + km.ZkbUri).Trim()
+                    let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
 
                     // TODO: add timer! 1 min or so?
                     let! response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt

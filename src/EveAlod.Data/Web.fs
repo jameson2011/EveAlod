@@ -6,7 +6,7 @@
     
         let private userAgent = "EveALOD Maintainer:" // TODO: make configurable
             
-        let private getData (url: string) =
+        let getData (url: string) =
             async {
                 try
                     let req = HttpWebRequest.Create(url) :?> HttpWebRequest
@@ -17,17 +17,7 @@
                     return Some (rdr.ReadToEnd())
                 with _ -> return None
             }
-
-        let private getEsiData (uri) (id: string) =        
-            id
-            |> sprintf uri 
-            |> getData
-
         
-        let getKm (url: string) =
-            getData url
-            
-
         
         let sendDiscord (channelId: string) (token: string) (content: string)=
             async {

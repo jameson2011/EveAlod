@@ -17,10 +17,14 @@
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTaggerActor.fs" />
     <Compile Include="LogPublishActor.fs" />
-    <Compile Include="ActorFactory.fs" />
+    <Compile Include="StaticDataProvider.fs" />
+    <Compile Include="ActorFactory.fs" />    
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleConfig.json" />
+    <Content Include="SampleEntity.json" />
+    <Content Include="SampleEntityGroup.json" />
+    <Content Include="SampleIds.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj" />

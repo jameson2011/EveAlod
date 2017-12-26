@@ -7,7 +7,12 @@
         let configProvider = new ConfigProvider()
         let config = configProvider.Configuration
 
-        
+        // TODO: clean up
+        (*
+        let staticData = new StaticDataProvider()
+        let groups = staticData.Groups()
+        let entities = staticData.Entities()
+        *)
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
         let discordPublisher = new DiscordPublishActor(mainChannel)
@@ -22,7 +27,7 @@
         let killTagger = new KillTaggerActor(config.CorpId, fun km -> killScorer.Post (Score km))
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
-                                            EveAlod.Data.Web.getKm, "https://redisq.zkillboard.com/listen.php?ttw=10")
+                                            EveAlod.Data.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
 
         
         member this.KillSource = killSource

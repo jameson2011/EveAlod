@@ -9,9 +9,37 @@
             |> Seq.map (fun tag -> tag.Value)
             |> List.ofSeq
 
+            
+        let private getCorpId (character: Character option)=
+            character |> Option.bind (fun c -> c.Corp 
+                                                |> Option.map (fun c -> c.Id))
+
+        let private getAttackerCorpId (attacker: Attacker)=
+            attacker.Char |> getCorpId
+            
+        let private hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
+            km.Cargo
+            |> Seq.map (fun e -> e.Item)
+            |> Seq.exists pred
+            
+        let hasPlex (km: Kill)=
+            match (hasItemsInCargo EntityTypes.isPlex km) with
+            | true -> Some KillTag.PlexInHold
+            | _ -> None
+
+        let hasSkillInjector (km: Kill)=
+            match (hasItemsInCargo EntityTypes.isSkillInjector km) with
+            | true -> Some KillTag.SkillInjectorInHold
+            | _ -> None
+        
+        let hasEcm (km: Kill)=
+            match (hasItemsInCargo EntityTypes.isEcm km) with
+            | true -> Some KillTag.Ecm
+            | _ -> None
+
         let isPod (km:Kill )= 
             let isPod = match km.VictimShip with
-                        | Some s -> s.Id = "670"
+                        | Some e -> EntityTypes.isPod e
                         | _ -> false
             match isPod with
             | true -> Some KillTag.Pod
@@ -27,20 +55,12 @@
             | x when x > 500000000. -> Some KillTag.Spendy
             | _ -> None
             
-
         let isCorpLoss corpId (km:Kill) =
             match km.Victim with
             | Some v -> match v.Corp with
                          | Some c when c.Id = corpId -> Some (KillTag.CorpLoss)
                          | _ -> None
             | _ -> None
-
-        let private getCorpId (character: Character option)=
-            character |> Option.bind (fun c -> c.Corp 
-                                                |> Option.map (fun c -> c.Id))
-
-        let private getAttackerCorpId (attacker: Attacker)=
-            attacker.Char |> getCorpId
 
         
         let isCorpKill (corpId) (km: Kill) =
@@ -59,37 +79,50 @@
                 
 
         let tag (corpId: string) km = 
-            let tags = [
-                            isPod km;
-                            isExpensive km;
-                            isSpendy km;
+            let tags = [                            
                             isCorpKill corpId km;
                             isCorpLoss corpId km;
+                            isPod km;
+                            hasPlex km;
+                            hasSkillInjector km;
+                            hasEcm km;
+                            isExpensive km;
+                            isSpendy km;
                         ]
                         |> toTags
                         |> List.append km.Tags
             
             {km with Tags = tags}
 
-        let getTagText tag =
-            match tag with
-            | CorpLoss -> "CORPIE DOWN. RIP"
-            | CorpKill -> "GREAT VICTORY"
-            | Pod -> "Someone should have bought pod insurance"
-            | Expensive -> "DERP"
-            | PlexInHold -> "BWAHAHAHAHAHA"
-            | SkillInjectorInHold -> "Ooops"
-            | Awox -> "Didn't like that corp anyway"
-            | Ecm -> "ECM is illegal"
-            | _ -> ""
-            
         
-        let getTagsText (tags: KillTag list) =
+        let private tagTexts = 
+            [ 
+                KillTag.CorpLoss, [| "CORPIE DOWN"; "RIP" |];
+                KillTag.CorpKill, [| "GREAT VICTORY" |];
+                KillTag.Pod, [| "Oops"; "Someone should have bought pod insurance" |];
+                KillTag.Expensive, [| "DERP"; "Oh dear, how sad, never mind" |];
+                KillTag.PlexInHold, [| "BWAHAHAHAHAHA!"; "Plex vaults - they exist"; "RMT DOWN" |];
+                KillTag.SkillInjectorInHold, [| "FFS"; "No comment needed" |];
+                KillTag.Awox, [| "Didn't like that corp anyway" |];
+                KillTag.Ecm, [| "ECM is illegal"; "Doing God's work" |];
+            ]
+            |> Map.ofSeq
+
+
+        let getTagText (rnd: System.Random) tag =            
+            match tagTexts |> Map.tryFind tag with
+            | Some txts -> 
+                let idx = rnd.Next(0, txts.Length)
+                txts.[idx]
+            | _ -> ""
+        
+        
+        let getTagsText (text: KillTag -> string) (tags: KillTag list) =
             let rec getTexts tags = 
                 match tags with
                 | [] -> ""
                 | head::tail -> 
-                    match (getTagText head) with
+                    match (text head) with
                     | "" -> getTexts tail 
                     | txt -> txt
             getTexts tags

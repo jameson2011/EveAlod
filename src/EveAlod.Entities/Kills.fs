@@ -15,10 +15,17 @@
         | Pod
         | Spendy
         | Expensive
+        | Cheap
 
     type Entity = {
                     Id: string;
                     Name: string;
+                    }
+
+    type EntityGroup = {
+                    Id: string;
+                    Name: string;
+                    EntityIds: string []
                     }
 
     type CargoItem = {

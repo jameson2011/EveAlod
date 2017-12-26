@@ -7,8 +7,9 @@
             | CorpLoss -> 50.
             | PlexInHold | SkillInjectorInHold -> 100.
             | Expensive -> 100.
-            | Pod  -> 10.
             | Spendy -> 40.
+            | Cheap -> -50.
+            | Pod  -> 10.
             | Ecm -> 40.
             | _ -> 0.
 
