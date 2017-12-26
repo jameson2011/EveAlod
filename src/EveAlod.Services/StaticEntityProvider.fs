@@ -8,7 +8,9 @@
     type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
     type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
 
-    
+    type IStaticEntityProvider=
+        abstract member EntityIds: EntityGroupKey -> Set<string>
+
     type StaticEntityProvider()=
     
         let ecmGroupId = "201"
@@ -82,11 +84,16 @@
             ]
             |> Map.ofSeq
         
-        member this.EntityIds(key: EntityGroupKey)=
+        let groupEntityIds (key: EntityGroupKey)=
             match entityGroups |> Map.tryFind key with
-            | Some grp -> grp.Value
-                            |> Seq.collect (fun o -> o.EntityIds)
-                            |> Set.ofSeq
-            | _ -> Set.empty<string>
+                | Some grp -> grp.Value
+                                |> Seq.collect (fun o -> o.EntityIds)
+                                |> Set.ofSeq
+                | _ -> Set.empty<string>
+
+
+        interface IStaticEntityProvider with
+            member this.EntityIds(key: EntityGroupKey)= 
+                groupEntityIds key
 
             

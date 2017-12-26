@@ -58,7 +58,6 @@
             match pred km with
             | true -> Some tag
             | _ -> None
-
             
         let hasPlex =            
             (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo EntityTypes.isPlex)
@@ -79,7 +78,7 @@
             (tagOnTrue KillTag.Spendy) (isTotalValueOver 500000000.)
                         
         let isCheap = 
-            (tagOnTrue KillTag.Cheap) (isTotalValueUnder 1000000.)
+            (tagOnTrue KillTag.Cheap) (isTotalValueUnder 10000000.)
 
         let isCorpLoss corpId =
             (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
@@ -98,6 +97,7 @@
                             hasEcm km;
                             isExpensive km;
                             isSpendy km;
+                            isCheap km;
                         ]
                         |> toTags
                         |> List.append km.Tags

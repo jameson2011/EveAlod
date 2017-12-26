@@ -11,13 +11,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ConfigProvider.fs" />
+    <Compile Include="StaticEntityProvider.fs" />
+    <Compile Include="KillTagger.fs" />
     <Compile Include="DiscordPublishActor.fs" />
     <Compile Include="KillFilterActor.fs" />
     <Compile Include="KillScorerActor.fs" />
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTaggerActor.fs" />
-    <Compile Include="LogPublishActor.fs" />
-    <Compile Include="StaticEntityProvider.fs" />
+    <Compile Include="LogPublishActor.fs" />    
     <Compile Include="ServiceFactory.fs" />    
   </ItemGroup>
   <ItemGroup>

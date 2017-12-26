@@ -5,13 +5,9 @@
     type ServiceFactory()=
     
         let configProvider = new ConfigProvider()
-        let config = configProvider.Configuration
-
-        // TODO: clean up
         let staticData = new StaticEntityProvider()
-        //let groups = staticData.Groups()
-        //let entities = staticData.Entities()
-        
+        let tagger = new KillTagger(staticData :> IStaticEntityProvider)
+        let config = configProvider.Configuration
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
         let discordPublisher = new DiscordPublishActor(mainChannel)
@@ -23,7 +19,9 @@
         let killScorer = new KillScorerActor(fun km ->  logger.Post (Log km)
                                                         killFilter.Post (Scored km))
         
-        let killTagger = new KillTaggerActor(config.CorpId, fun km -> killScorer.Post (Score km))
+        let killTagger = new KillTaggerActor(tagger, 
+                                                config.CorpId, 
+                                                fun km -> killScorer.Post (Score km))
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
                                             EveAlod.Data.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")

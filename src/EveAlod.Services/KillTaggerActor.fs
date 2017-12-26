@@ -2,7 +2,7 @@
 
     open EveAlod.Entities
     
-    type KillTaggerActor(corpId: string, forward: Kill -> unit) =
+    type KillTaggerActor(tagger: KillTagger, corpId: string, forward: Kill -> unit) =
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {

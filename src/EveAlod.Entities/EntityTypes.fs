@@ -1,8 +1,9 @@
 ﻿namespace EveAlod.Entities
 
+    // TODO: temporary... literals are evil. need more robust classification
     module EntityTypes=
 
-        // TODO: literals are evil. need more robust classification
+        
         let private skillInjectorIds = 
             [ "40520"; "42523"; "43630"; "45635"; "46375" ]
             |> Set.ofSeq
