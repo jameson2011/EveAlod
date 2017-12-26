@@ -6,8 +6,9 @@
     
         let configProvider = new ConfigProvider()
         let staticData = new StaticEntityProvider()
-        let tagger = new KillTagger(staticData :> IStaticEntityProvider)
-        let config = configProvider.Configuration
+
+        let config = configProvider.Configuration()
+        let tagger = new KillTagger(staticData :> IStaticEntityProvider, config.CorpId)
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
         let discordPublisher = new DiscordPublishActor(mainChannel)
@@ -25,6 +26,5 @@
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
                                             EveAlod.Data.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
-
-        
+                                            
         member this.KillSource = killSource

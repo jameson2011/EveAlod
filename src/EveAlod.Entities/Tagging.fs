@@ -2,33 +2,32 @@
 
     module Tagging=
                 
-        let private toTags (tags: seq<KillTag option>)= 
+        let toTags (tags: seq<KillTag option>)= 
             tags
             |> Seq.filter (fun tag -> tag.IsSome)
             |> Seq.map (fun tag -> tag.Value)
             |> List.ofSeq
-
-            
-        let private getCorpId (character: Character option)=
+                        
+        let getCorpId (character: Character option)=
             character |> Option.bind (fun c -> c.Corp 
                                                 |> Option.map (fun c -> c.Id))
 
-        let private getAttackerCorpId (attacker: Attacker)=
+        let getAttackerCorpId(attacker: Attacker)=
             attacker.Char |> getCorpId
         
-        let private isVictimInPod (km: Kill) = 
+        let isVictimInPod (km: Kill) = 
             match km.VictimShip with
             | Some e -> EntityTypes.isPod e
             | _ -> false
 
-        let private isVictimInCorp (corpId: string) (km: Kill) = 
+        let isVictimInCorp (corpId: string) (km: Kill) = 
             match km.Victim with
             | Some v -> match v.Corp with
                          | Some c when c.Id = corpId -> true
                          | _ -> false
             | _ -> false
         
-        let private areAttackersInSameCorp (corpId: string) (km: Kill)=
+        let areAttackersInSameCorp (corpId: string) (km: Kill)=
             let attackerCorpIds = km.Attackers
                                     |> Seq.map getAttackerCorpId
                                     |> Seq.filter (fun s -> s.IsSome)                                    
@@ -38,23 +37,23 @@
             attackerCorpIds.Count = 1 &&
                 (attackerCorpIds |> Seq.item 0) = corpId
 
-        let private isTotalValueOver (value: float) (km: Kill)=
+        let isTotalValueOver (value: float) (km: Kill)=
             match km.TotalValue with
             | x when x > value -> true
             | _ -> false
 
-        let private isTotalValueUnder (value: float) (km: Kill)=
+        let isTotalValueUnder (value: float) (km: Kill)=
             match km.TotalValue with
             | x when x <= value -> true
             | _ -> false
 
 
-        let private hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
+        let hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
             km.Cargo
             |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
             
-        let private tagOnTrue (tag: KillTag) (pred: Kill -> bool) (km: Kill)=
+        let tagOnTrue (tag: KillTag) (pred: Kill -> bool) (km: Kill)=
             match pred km with
             | true -> Some tag
             | _ -> None
@@ -85,32 +84,14 @@
                     
         let isCorpKill (corpId) =
             (tagOnTrue KillTag.CorpKill) (areAttackersInSameCorp corpId)
-                
-
-        let tag (corpId: string) km = 
-            let tags = [                            
-                            isCorpKill corpId km;
-                            isCorpLoss corpId km;
-                            isPod km;
-                            hasPlex km;
-                            hasSkillInjector km;
-                            hasEcm km;
-                            isExpensive km;
-                            isSpendy km;
-                            isCheap km;
-                        ]
-                        |> toTags
-                        |> List.append km.Tags
-            
-            {km with Tags = tags}
-
-        
+                                        
         let private tagTexts = 
             [ 
                 KillTag.CorpLoss, [| "CORPIE DOWN"; "RIP" |];
-                KillTag.CorpKill, [| "GREAT VICTORY" |];
+                KillTag.CorpKill, [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
                 KillTag.Pod, [| "Oops"; "Someone should have bought pod insurance" |];
                 KillTag.Expensive, [| "DERP"; "Oh dear, how sad, never mind" |];
+                KillTag.Spendy, [| "Oops"; |];
                 KillTag.PlexInHold, [| "BWAHAHAHAHAHA!"; "Plex vaults - they exist"; "RMT DOWN" |];
                 KillTag.SkillInjectorInHold, [| "FFS"; "No comment needed" |];
                 KillTag.Awox, [| "Didn't like that corp anyway" |];

@@ -20,5 +20,5 @@
                 ChannelToken = c.ChannelToken
             }
 
-        member this.Configuration = loadConfig configFilePath
+        member this.Configuration() = loadConfig configFilePath
 
