@@ -15,7 +15,6 @@
     <Compile Include="Kills.fs" />
     <Compile Include="ActorMessages.fs" />
     <Compile Include="Discord.fs" />
-    <Compile Include="EntityTypes.fs" />
     <Compile Include="Scoring.fs" />
     <Compile Include="Tagging.fs" />
     <Compile Include="Transforms.fs" />

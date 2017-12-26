@@ -4,24 +4,26 @@
 
     type KillTagger(entityProvider: IStaticEntityProvider, corpId: string)=
         
-        //
-        let ecmEntityIds = entityProvider.EntityIds(EntityGroupKey.Ecm)
-        let plexEntityIds = entityProvider.EntityIds(EntityGroupKey.Plex)
-        let skillInjectorEntityIds = entityProvider.EntityIds(EntityGroupKey.SkillInjector)
-        let podEntityIds = entityProvider.EntityIds(EntityGroupKey.Capsule)
+        let isType (key: EntityGroupKey) (entity:Entity) =
+            entityProvider.EntityIds(key).Contains(entity.Id)
+        
+        let isEcm = isType EntityGroupKey.Ecm
+        let isPlex = isType EntityGroupKey.Plex
+        let isSkillInjector = isType EntityGroupKey.SkillInjector
+        let isPod = isType EntityGroupKey.Capsule
         
         member this.Tag(kill: Kill)=
-            // TODO: 
+            // TODO: cleanup. Optimise...
             let tags = [                            
                             Tagging.isCorpKill corpId kill;
                             Tagging.isCorpLoss corpId kill;
-                            Tagging.isPod kill;
-                            Tagging.hasPlex kill;
-                            Tagging.hasSkillInjector kill;
-                            Tagging.hasEcm kill;
                             Tagging.isExpensive kill;
                             Tagging.isSpendy kill;
                             Tagging.isCheap kill;
+                            Tagging.isPod isPod kill;
+                            Tagging.hasPlex isPlex kill;
+                            Tagging.hasSkillInjector isSkillInjector kill;
+                            Tagging.hasEcm isEcm kill;                            
                         ]
                         |> Tagging.toTags
                         |> List.append kill.Tags

@@ -15,9 +15,9 @@
         let getAttackerCorpId(attacker: Attacker)=
             attacker.Char |> getCorpId
         
-        let isVictimInPod (km: Kill) = 
+        let isVictimInPod (isPod: Entity -> bool) (km: Kill) = 
             match km.VictimShip with
-            | Some e -> EntityTypes.isPod e
+            | Some e -> isPod e
             | _ -> false
 
         let isVictimInCorp (corpId: string) (km: Kill) = 
@@ -58,17 +58,17 @@
             | true -> Some tag
             | _ -> None
             
-        let hasPlex =            
-            (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo EntityTypes.isPlex)
+        let hasPlex (pred: Entity -> bool) =
+            (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo pred)
 
-        let hasSkillInjector =
-            (tagOnTrue KillTag.SkillInjectorInHold) (hasItemsInCargo EntityTypes.isSkillInjector)
+        let hasSkillInjector (pred: Entity -> bool) =
+            (tagOnTrue KillTag.SkillInjectorInHold) (hasItemsInCargo pred)
             
-        let hasEcm =
-            (tagOnTrue KillTag.Ecm) (hasItemsInCargo EntityTypes.isEcm)
+        let hasEcm (pred: Entity -> bool) =
+            (tagOnTrue KillTag.Ecm) (hasItemsInCargo pred)
             
-        let isPod = 
-            (tagOnTrue KillTag.Pod) (isVictimInPod)
+        let isPod isPod = 
+            (tagOnTrue KillTag.Pod) (isVictimInPod isPod)
             
         let isExpensive =
             (tagOnTrue KillTag.Expensive) (isTotalValueOver 10000000000.)
