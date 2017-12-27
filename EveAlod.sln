@@ -3,13 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod", "src\EveAlod\EveAlod.fsproj", "{BA5F3D09-05BD-49E3-866F-08178B86F011}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "EveAlod", "src\EveAlod\EveAlod.fsproj", "{BA5F3D09-05BD-49E3-866F-08178B86F011}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Entities", "src\EveAlod.Entities\EveAlod.Entities.fsproj", "{055D3D83-04D1-4C29-8CAF-B6D986841A31}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "EveAlod.Entities", "src\EveAlod.Entities\EveAlod.Entities.fsproj", "{055D3D83-04D1-4C29-8CAF-B6D986841A31}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Services", "src\EveAlod.Services\EveAlod.Services.fsproj", "{DCBC5A58-F97A-473A-8DE9-5B136E501E13}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "EveAlod.Services", "src\EveAlod.Services\EveAlod.Services.fsproj", "{DCBC5A58-F97A-473A-8DE9-5B136E501E13}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Data", "src\EveAlod.Data\EveAlod.Data.fsproj", "{E4954B2E-445B-459B-8397-7506D96A26AA}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "EveAlod.Data", "src\EveAlod.Data\EveAlod.Data.fsproj", "{E4954B2E-445B-459B-8397-7506D96A26AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E338DF9-E665-4E49-941B-2F6EB1B31B2F}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
