@@ -13,6 +13,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "EveAlod.Data", "src\EveAlod
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E338DF9-E665-4E49-941B-2F6EB1B31B2F}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build.bat = build.bat
+		build.fsx = build.fsx
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
