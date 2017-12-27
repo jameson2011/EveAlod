@@ -33,6 +33,7 @@
                     let content = new System.Net.Http.FormUrlEncodedContent(values)
 
                     let! response = client.PostAsync(url, content) |> Async.AwaitTask
+                    // TODO: interrogate response headers for rate limiting; return error status & duration
                     response |> ignore
                 with _ -> 0 |> ignore
             }
