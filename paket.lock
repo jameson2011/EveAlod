@@ -40,7 +40,6 @@ NUGET
     FSharp.Data (2.4.3)
       FSharp.Core (>= 4.0.0.1) - restriction: && (< net40) (< portable-net45+win8+wp8+wpa81)
       Zlib.Portable (>= 1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
-    FSharpLint.Fake (0.8.1) - restriction: >= net461
     Microsoft.CodeCoverage (1.0.3) - restriction: >= netcoreapp1.0
     Microsoft.DotNet.PlatformAbstractions (2.0.4) - restriction: >= netcoreapp1.0
       System.AppContext (>= 4.1) - restriction: && (< net45) (>= netstandard1.3)
