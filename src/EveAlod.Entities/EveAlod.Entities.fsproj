@@ -22,5 +22,8 @@
   <ItemGroup>
     <Content Include="SampleRedisqKillmail.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EveAlod.Core\EveAlod.Core.fsproj" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts</OutputPath>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Combinators.fs" />
+  </ItemGroup>
+
+</Project>

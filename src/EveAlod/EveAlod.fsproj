@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EveAlod.Core\EveAlod.Core.fsproj" />
     <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj" />
     <ProjectReference Include="..\EveAlod.Entities\EveAlod.Entities.fsproj" />
     <ProjectReference Include="..\EveAlod.Services\EveAlod.Services.fsproj" />
