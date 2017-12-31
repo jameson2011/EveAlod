@@ -9,6 +9,7 @@
             | Expensive -> 100.
             | Spendy -> 40.
             | Cheap -> -50.
+            | Npc -> -1000.
             | Pod  -> 10.
             | Ecm -> 40.
             | _ -> 0.
