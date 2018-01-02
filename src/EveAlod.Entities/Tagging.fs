@@ -100,7 +100,7 @@
             (tagOnTrue KillTag.Expensive) (isTotalValueOver 10000000000.)
             
         let isSpendy =
-            (tagOnTrue KillTag.Spendy) (isTotalValueOver 500000000.)
+            (tagOnTrue KillTag.Spendy) (isTotalValueOver 1000000000.)
                         
         let isCheap = 
             (tagOnTrue KillTag.Cheap) (isTotalValueUnder 10000000.)
