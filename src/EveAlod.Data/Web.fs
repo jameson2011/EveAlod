@@ -12,10 +12,18 @@
                     let req = HttpWebRequest.Create(url) :?> HttpWebRequest
                     req.UserAgent <- userAgent 
                     let! resp = req.AsyncGetResponse()
-                    use stream = resp.GetResponseStream()
-                    let rdr = new StreamReader(stream)
-                    return Some (rdr.ReadToEnd())
-                with _ -> return None
+                    let result = 
+                            match (resp :?> HttpWebResponse).StatusCode with
+                            | HttpStatusCode.OK -> 
+                                    use stream = resp.GetResponseStream()
+                                    let rdr = new StreamReader(stream)
+                                    HttpResponse.OK (rdr.ReadToEnd())
+                            | x when (int x) = 429 -> 
+                                    HttpResponse.TooManyRequests
+                            | _ -> 
+                                    HttpResponse.Error "Unknown error"
+                    return result
+                with e -> return HttpResponse.Error e.Message
             }
         
         

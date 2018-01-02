@@ -23,48 +23,15 @@
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
                 let! json = EveAlod.Data.Web.getData uri
                 return match json with
-                        | Some j -> let root = (jsonGroupProvider.Parse(j))
+                        | EveAlod.Data.HttpResponse.OK j -> 
+                                    let root = (jsonGroupProvider.Parse(j))
                                     Some {EntityGroup.Id = root.GroupId.ToString(); 
                                                 Name = root.Name;
                                                 EntityIds = root.Types |> Seq.map (fun i -> i.ToString()) |> Array.ofSeq
                                                 }
                         | _ -> None
             }
-
-        let getEntity(id: string)=
-            async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/types/%s/?datasource=tranquility&language=en-us" id)
-                let! json = EveAlod.Data.Web.getData uri
-                return match json with
-                        | Some j -> let root = (jsonEntityProvider.Parse(j))
-                                    Some {Entity.Id = root.TypeId.ToString(); 
-                                                Name = root.Name;
-                                                }
-                        | _ -> None
-            }
-
-        let getGroupIds() = 
-            [ 1 .. 3 ] 
-            |> Seq.map (fun i -> (sprintf "https://esi.tech.ccp.is/latest/universe/groups/?datasource=tranquility&page=%i" i))
-            |> Seq.map (fun uri -> EveAlod.Data.Web.getData uri)
             
-        let getIds (json : Async<string option>) =
-            async {
-                let! j = json
-                return match j with
-                        | Some data -> 
-                            jsonGroupIdProvider.Parse(data) 
-                            |> Seq.map (fun i -> i.ToString())
-                            |> List.ofSeq
-                        | _ -> []
-            }
-
-        let getGroupIds()=
-            let idLists = getGroupIds() 
-                            |> Seq.map getIds
-                            |> Async.Parallel
-                            |> Async.RunSynchronously            
-            idLists |> Seq.collect (fun xs -> xs) |> Array.ofSeq
             
         let getGroupEntities (ids: seq<string>) =
             ids
