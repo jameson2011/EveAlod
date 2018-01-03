@@ -12,6 +12,8 @@
             | Npc -> -1000.
             | Pod  -> 10.
             | Ecm -> 40.
+            | Awox -> 40.
+            | FailFit -> 20.
             | _ -> 0.
 
         let private tagsScore (tags: KillTag list) =

@@ -1,20 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>C:\Projects\GitRepos\EveAlod\artifacts\</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="HttpResponses.fs" />
     <Compile Include="Web.fs" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\EveAlod.Core\EveAlod.Core.fsproj">
+      <Private>true</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

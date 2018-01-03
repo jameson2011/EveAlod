@@ -2,7 +2,7 @@
 
     open EveAlod.Entities
     
-    // TODO: cleanup
+    
     type KillTaggerActor(tagger: KillTagger, corpId: string, forward: Kill -> unit) =
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
@@ -12,8 +12,6 @@
                 match msg with                                    
                 | Tag km ->    
                             km 
-                            // TODO: 
-                            //|> Tagging.tag corpId 
                             |> tagger.Tag
                             |> forward
                 | _ ->      0 |> ignore

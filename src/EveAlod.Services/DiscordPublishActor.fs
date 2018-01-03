@@ -6,35 +6,43 @@
     type DiscordPublishActor(channel: DiscordChannel, wait: TimeSpan)= 
         
         let rnd = new System.Random()
+        let defaultWait = TimeSpan.FromSeconds(5.0)
         let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
+    
+        let onSendToDiscord (wait: TimeSpan) (km: Kill) : Async<TimeSpan> =
+            async {
+                let! r = Async.Sleep(int wait.TotalMilliseconds)
+                ignore r
 
-        let getSleep(lastSend: DateTime) =
-            let sinceLast = DateTime.UtcNow - lastSend
-            match int ((wait - sinceLast).TotalMilliseconds) with
-            | x when x < 0 -> 0
-            | x -> x
-            
-            
+                let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
+                    
+                let! wait, response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt
+                let result = match wait with
+                            | x when x < defaultWait -> 
+                                defaultWait
+                            | x -> x
+                
+                // Do not try to resend. The queue will accumulate, and keeping Discord happy is more important
+                
+                return result
+            }
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
-            let rec getNext(lastSend: DateTime) = async {
+            let rec getNext(wait: TimeSpan) = async {
                 let! msg = inbox.Receive()
 
-                match msg with
-                | SendToDiscord km ->                        
-                    let toWait = getSleep lastSend
-                    let! r = Async.Sleep(toWait)
-
-                    let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
-                    
-                    let! response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt
-                    0 |> ignore                      
-                | _ ->      0 |> ignore
-                
-                return! getNext(DateTime.UtcNow)
+                let! nextWait = async {
+                                        match msg with
+                                                | SendToDiscord km ->                        
+                                                    let! wait = onSendToDiscord wait km
+                                                    return wait
+                                                | _ ->      
+                                                    return defaultWait
+                                        }
+                return! getNext(nextWait)
                 }
         
-            getNext(DateTime.MinValue)
+            getNext(TimeSpan.Zero)
         )
                 
         member this.Start() = pipe.Post Start

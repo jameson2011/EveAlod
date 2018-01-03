@@ -59,9 +59,7 @@
             | Some dmg ->
                 (float dmg / float totalCorpDmg) >= minimum
             | _ -> false
-                            
-            
-
+                   
 
         let isTotalValueOver (value: float) (km: Kill)=
             match km.TotalValue with
@@ -107,12 +105,18 @@
 
         let isCorpLoss corpId =
             (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
-          
+        
+        let isAwox (km: Kill)=
+            match km.Victim |> getCorpId with
+            | Some victimCorpId ->                 
+                (tagOnTrue KillTag.Awox) (fun _ -> areAttackersInSameCorp victimCorpId km) km
+            | _ -> None
+            
+
         let isCorpKill minimum corpId =
             let p1 = (areAttackersInSameCorp corpId) 
-            let p2 = (isMostlyCorpKill minimum corpId)
-            
-            (tagOnTrue KillTag.CorpKill) (p1 <|> p2)
+            let p2 = (isMostlyCorpKill minimum corpId)            
+            (tagOnTrue KillTag.CorpKill) (p1 <||> p2)
                       
 
         let private tagTexts = 
@@ -120,12 +124,12 @@
                 KillTag.CorpLoss, [| "CORPIE DOWN"; "RIP" |];
                 KillTag.CorpKill, [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
                 KillTag.Pod, [| "Someone should have bought pod insurance"; "Victim willing to buy back corpse"; "Oops"; |];
-                KillTag.Expensive, [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
-                KillTag.Spendy, [| "Oops"; "DEPLOY CREDIT CARD" |];
                 KillTag.PlexInHold, [| "Plex in hold!"; "BWAHAHAHAHAHA!"; "Plex vaults - they exist"; "RMT DOWN" |];
                 KillTag.SkillInjectorInHold, [| "Skill injector in hold!"; "FFS"; "No comment needed" |];
                 KillTag.Awox, [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];
                 KillTag.Ecm, [| "ECM is illegal"; "Doing God's work" |];
+                KillTag.Expensive, [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
+                KillTag.Spendy, [| "Oops"; "DEPLOY CREDIT CARD" |];
             ]
             |> Map.ofSeq
 

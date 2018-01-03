@@ -20,7 +20,6 @@
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
             | _ -> None
             
-        // TODO: better way?
         let private toTags (json: JsonValue option) : KillTag list=
             let result = []
             let result = match (json |> getProp "npc" |> getBool) with
