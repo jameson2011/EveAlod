@@ -30,19 +30,7 @@ Target "RunUnitTests" (fun _ ->
                                             }
                                         )                            
                             )
-
-Target "RunIntegrationTests" (fun _ -> 
-                            !! (buildTestsDir @@ "*.IntegrationTests.dll")
-                            |> xUnit2 (fun p ->
-                                            { p with 
-                                                ShadowCopy = false;
-                                                HtmlOutputPath = Some (buildTestsDir @@ "TestResults.html")
-                                                NoAppDomain = false;
-                                                MaxThreads = CollectionConcurrencyMode.MaxThreads 1;
-                                            }
-                                        )                            
-                            )
-
+                            
 
 Target "Default" (fun _ -> trace "Done!" )
 
@@ -54,7 +42,5 @@ Target "Default" (fun _ -> trace "Done!" )
 ==> "BuildTests"
 //==> "RunUnitTests"
 ==> "Default"
-
-
 
 RunTargetOrDefault "Default"

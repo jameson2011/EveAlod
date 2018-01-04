@@ -26,7 +26,7 @@ This is by design.
 ## How do I run on Windows?
 It's a standard console application:
 ```fsharp
-dotnet evealod.dll
+evealod.exe
 ```
 
 ## How do I run it in the background?
@@ -36,9 +36,9 @@ Simply configure the above command line as a scheduled task, triggered to start 
 _Work in progress!_
 
 ## Implementation
-F# (FTW!)
-.Net Core 2 
-VS 2017 or similar is needed.
+  * F# _FTW_
+  * .Net Framework 4.6.1
+  * VS 2017 or similar is needed.
 
 ## Builds
 [![Build status](https://ci.appveyor.com/api/projects/status/cro5s0i3nectf4bs?svg=true)](https://ci.appveyor.com/project/jameson2011/evealod)

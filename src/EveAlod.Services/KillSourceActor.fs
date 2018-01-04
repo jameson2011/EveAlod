@@ -27,8 +27,8 @@
 
         let rec retrySend (wait: TimeSpan) multiplier (inbox: Inbox) url = 
             let multiplier = match multiplier with
-                            | x when x > 5 -> 5
-                            | x -> x + 1
+                                | x when x > 5 -> 5
+                                | x -> x + 1
             let duration = (int wait.TotalMilliseconds) * multiplier
             Async.Sleep(duration) |> Async.RunSynchronously
             let (sent ,wait) = onNext inbox url |> Async.RunSynchronously
