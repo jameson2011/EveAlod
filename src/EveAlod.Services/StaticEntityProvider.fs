@@ -2,7 +2,7 @@
 
     open System
     open FSharp.Data
-    open EveAlod.Entities
+    open EveAlod.Data
 
     type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
     type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
@@ -21,9 +21,9 @@
         let getGroupEntity(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
-                let! json = EveAlod.Data.Web.getData uri
+                let! json = EveAlod.Common.Web.getData uri
                 return match json with
-                        | EveAlod.Data.HttpResponse.OK j -> 
+                        | EveAlod.Common.HttpResponse.OK j -> 
                                     let root = (jsonGroupProvider.Parse(j))
                                     Some {EntityGroup.Id = root.GroupId.ToString(); 
                                                 Name = root.Name;

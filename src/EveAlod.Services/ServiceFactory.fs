@@ -1,7 +1,7 @@
 ﻿namespace EveAlod.Services
 
     open System
-    open EveAlod.Entities
+    open EveAlod.Data
 
     type ServiceFactory()=
     
@@ -26,6 +26,6 @@
                                                 fun km -> killScorer.Post (Score km))
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
-                                            EveAlod.Data.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
+                                            EveAlod.Common.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             
         member this.KillSource = killSource

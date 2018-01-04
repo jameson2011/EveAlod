@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Core
+﻿namespace EveAlod.Common
     module Http =
 
         open System

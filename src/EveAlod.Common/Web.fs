@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Data
+﻿namespace EveAlod.Common
     module Web=
 
         open System
@@ -32,9 +32,9 @@
 
         let private getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
             response
-            |> EveAlod.Core.Http.getHeaderValue "X-RateLimit-Reset"
-            |> EveAlod.Core.Http.getIntValue
-            |> EveAlod.Core.DateTime.getUtcFromEpoch
+            |> Http.getHeaderValue "X-RateLimit-Reset"
+            |> Http.getIntValue
+            |> DateTime.getUtcFromEpoch
                    
         let private parseDiscordResponse (response: Http.HttpResponseMessage) =
             async {
@@ -43,7 +43,7 @@
                 | HttpStatusCode.NoContent -> 
                     let reset = (getDiscordRateLimitReset response)
                     
-                    let clientServerDiff = EveAlod.Core.DateTime.machineTimeOffset DateTime.UtcNow response.Headers.Date
+                    let clientServerDiff = DateTime.machineTimeOffset DateTime.UtcNow response.Headers.Date
                 
                     let wait = (DateTime.UtcNow + clientServerDiff - reset)
                     return wait, (HttpResponse.OK "")

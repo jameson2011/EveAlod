@@ -5,15 +5,15 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>db5b6516-640e-4990-aa8a-a44cd165ddc6</ProjectGuid>
+    <ProjectGuid>9dac1ac4-c86b-451e-808d-97d28c2972fa</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>EveAlod.Services</RootNamespace>
-    <AssemblyName>EveAlod.Services</AssemblyName>
+    <RootNamespace>EveAlod.Common</RootNamespace>
+    <AssemblyName>EveAlod.Common</AssemblyName>
     <UseStandardResourceNames>true</UseStandardResourceNames>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>EveAlod.Services</Name>
+    <Name>EveAlod.Common</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,38 +53,23 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />
-    <Compile Include="ConfigProvider.fs" />
-    <Compile Include="StaticEntityProvider.fs" />
-    <Compile Include="DiscordPublishActor.fs" />
-    <Compile Include="KillFilterActor.fs" />
-    <Compile Include="KillScorerActor.fs" />
-    <Compile Include="KillSourceActor.fs" />
-    <Compile Include="KillTagger.fs" />
-    <Compile Include="KillTaggerActor.fs" />
-    <Compile Include="LogPublishActor.fs" />
-    <Compile Include="ServiceFactory.fs" />
+    <Compile Include="Combinators.fs" />
+    <Compile Include="DateTime.fs" />
+    <Compile Include="Http.fs" />
+    <Compile Include="HttpResponses.fs" />
+    <Compile Include="Web.fs" />
+    <Compile Include="Json.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ValueTuple">
       <HintPath>..\..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EveAlod.Common\EveAlod.Common.fsproj">
-      <Name>EveAlod.Common</Name>
-      <Project>{9dac1ac4-c86b-451e-808d-97d28c2972fa}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj">
-      <Name>EveAlod.Data</Name>
-      <Project>{bd16ae68-f3bb-4a45-a6bf-2925676f8d03}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -472,13 +457,6 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid' And ($(TargetFrameworkVersion) == 'v7.0' Or $(TargetFrameworkVersion) == 'v7.1' Or $(TargetFrameworkVersion) == 'v8.0')">
-      <ItemGroup>
-        <Reference Include="System.Net.Http">
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETStandard' And ($(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v1.2')">
       <ItemGroup>
         <Reference Include="System.Net.Http">

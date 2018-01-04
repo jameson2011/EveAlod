@@ -2,7 +2,7 @@
     
     open System.IO
     open FSharp.Data
-    open EveAlod.Entities
+    open EveAlod.Data
 
     type configJson = JsonProvider<"./SampleConfig.json">
 

@@ -1,3 +1,3 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Data
     type DiscordChannel = { Id: string; Token: string}
 

@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Data
     module Scoring=
         
         let private tagScore (tag: KillTag) =

@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Data
+﻿namespace EveAlod.Common
     type HttpResponse =
     | OK of string
     | TooManyRequests

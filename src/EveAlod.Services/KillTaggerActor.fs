@@ -1,6 +1,6 @@
 ﻿namespace EveAlod.Services
 
-    open EveAlod.Entities
+    open EveAlod.Data
     
     
     type KillTaggerActor(tagger: KillTagger, corpId: string, forward: Kill -> unit) =

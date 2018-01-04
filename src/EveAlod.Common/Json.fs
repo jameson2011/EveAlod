@@ -1,9 +1,8 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Common
     
     open System
     open FSharp.Data
 
-    [<AutoOpen>]
     module Json=
         let getProp (name : string) (json: JsonValue option) = 
             json |> Option.bind (fun j -> j.TryGetProperty(name))

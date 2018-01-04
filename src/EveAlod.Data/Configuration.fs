@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Data
     type Configuration = {
                     MinimumScore: float;
                     CorpId: string;

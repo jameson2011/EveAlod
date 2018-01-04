@@ -1,8 +1,9 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Data
     
-    open FSharp.Data
-
     module Transforms=
+
+        open EveAlod.Common.Json
+        open FSharp.Data
 
         type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
 

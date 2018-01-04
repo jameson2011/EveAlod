@@ -1,6 +1,6 @@
-﻿namespace EveAlod.Entities
+﻿namespace EveAlod.Data
 
-    open EveAlod.Core
+    open EveAlod.Common.Combinators
 
     module Tagging=
                 

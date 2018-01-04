@@ -1,4 +1,4 @@
-﻿
+﻿// Learn more
 open System
 
 [<EntryPoint>]

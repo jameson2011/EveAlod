@@ -1,7 +1,7 @@
 ﻿namespace EveAlod.Services
 
     open System
-    open EveAlod.Entities
+    open EveAlod.Data
 
     type DiscordPublishActor(channel: DiscordChannel, wait: TimeSpan)= 
         
@@ -16,7 +16,7 @@
 
                 let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
                     
-                let! wait, response = EveAlod.Data.Web.sendDiscord channel.Id channel.Token txt
+                let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token txt
                 let result = match wait with
                             | x when x < defaultWait -> 
                                 defaultWait

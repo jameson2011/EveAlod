@@ -1,8 +1,8 @@
 ﻿namespace EveAlod.Services
 
     open System
+    open EveAlod.Common
     open EveAlod.Data
-    open EveAlod.Entities
         
     type Inbox = MailboxProcessor<ActorMessage>
 

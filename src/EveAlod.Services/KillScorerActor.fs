@@ -1,6 +1,6 @@
 ﻿namespace EveAlod.Services
 
-    open EveAlod.Entities
+    open EveAlod.Data
     
     type KillScorerActor(forward: Kill -> unit) =
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
