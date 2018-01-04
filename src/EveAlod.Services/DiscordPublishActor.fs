@@ -3,17 +3,15 @@
     open System
     open EveAlod.Data
 
-    type DiscordPublishActor(channel: DiscordChannel, wait: TimeSpan)= 
+    type DiscordPublishActor(channel: DiscordChannel, defaultWait: TimeSpan)= 
         
         let rnd = new System.Random()
-        let defaultWait = TimeSpan.FromSeconds(5.0)
         let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
     
-        let onSendToDiscord (wait: TimeSpan) (km: Kill) : Async<TimeSpan> =
+        let sendToDiscord (wait: TimeSpan) (km: Kill) : Async<TimeSpan> =
             async {
                 let! r = Async.Sleep(int wait.TotalMilliseconds)
-                ignore r
-
+               
                 let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
                     
                 let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token txt
@@ -34,10 +32,10 @@
                 let! nextWait = async {
                                         match msg with
                                                 | SendToDiscord km ->                        
-                                                    let! wait = onSendToDiscord wait km
+                                                    let! wait = sendToDiscord wait km
                                                     return wait
                                                 | _ ->      
-                                                    return defaultWait
+                                                    return TimeSpan.Zero
                                         }
                 return! getNext(nextWait)
                 }

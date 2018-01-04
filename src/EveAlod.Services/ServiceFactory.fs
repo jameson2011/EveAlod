@@ -12,7 +12,7 @@
         let tagger = new KillTagger(staticData :> IStaticEntityProvider, config.CorpId)
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
-        let discordPublisher = new DiscordPublishActor(mainChannel, TimeSpan.FromSeconds(30.))
+        let discordPublisher = new DiscordPublishActor(mainChannel, TimeSpan.FromSeconds(5.))
         let logger = new LogPublishActor()
         
         let killFilter = new KillFilterActor(config.MinimumScore, 
