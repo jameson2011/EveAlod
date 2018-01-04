@@ -10,13 +10,13 @@ Very simply, zKB Redisq (https://github.com/zKillboard/RedisQ) is polled for the
 The categorisation is a handful of predicates, applied to each killmail. Each kill is tagged and scored accordingly: those over a threshold make it to Discord for analysis, amusement, trolling, whatever suits your fancy.
 
 ## What rules are these?
-⋅⋅* Corp kill: _Because who doesn't like good news?_
-⋅⋅* Corp loss: _CEOs need reasons to be angry_
-⋅⋅* Plex/Skill injector in hold: _Because this never gets old_
-⋅⋅* Awox: _required for a long running scientific study on just how hard API checks can be_
-⋅⋅* ECM in hold: _because ECM is evil_
-⋅⋅* Expensive (>10bn ISK): _no reason needed_
-⋅⋅* Pods: _because the Pod God needs his sacrifice_
+  * Corp kill: _Because who doesn't like good news?_
+  * Corp loss: _CEOs need reasons to be angry_
+  * Plex/Skill injector in hold: _Because this never gets old_
+  * Awox: _required for a long running scientific study on just how hard API checks can be_
+  * ECM in hold: _because ECM is evil_
+  * Expensive (>10bn ISK): _no reason needed_
+  * Pods: _because the Pod God needs his sacrifice_
 
 _more to come!_
 
