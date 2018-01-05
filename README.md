@@ -41,11 +41,11 @@ _Work in progress!_
   * VS 2017 or similar is needed.
 
 ## Credits
-EveALOD is released under the MIT license (LICENSE). 
-Data is sourced from https://zkillboard.com/  and Eve-online, covered by by a separate license from [CCP](http://www.ccpgames.com/en/home). You can see the full license in the `CCP.MD` file. 
-EveALO uses various 3rd party libraries carrying their own licensing. Please refer to each individually for more information.
+EveALOD is released under the MIT license (`LICENSE`). 
+Data is sourced from https://zkillboard.com/  and EVE-Online, covered by a separate license from [CCP](http://www.ccpgames.com/en/home). You can see the full license in the `CCP.MD` file. 
+EveALOD uses various 3rd party libraries carrying their own licensing. Please refer to each individually for more information.
 
 ## Builds
-Builds are on-commit and the latest is available from
+Builds are available from AppVeyor: 
 [![Build status](https://ci.appveyor.com/api/projects/status/cro5s0i3nectf4bs?svg=true)](https://ci.appveyor.com/project/jameson2011/evealod)
 
