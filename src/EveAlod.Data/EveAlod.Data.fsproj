@@ -59,6 +59,33 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Content Include="packages.config" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="Discord.fs" />
+    <Compile Include="Kills.fs" />
+    <Compile Include="ActorMessages.fs" />
+    <Compile Include="Scoring.fs" />
+    <Compile Include="Tagging.fs" />
+    <Compile Include="Transforms.fs" />
+    <None Include="SampleRedisqKillmail.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <ProjectReference Include="..\EveAlod.Common\EveAlod.Common.fsproj">
+      <Name>EveAlod.Common</Name>
+      <Project>{9dac1ac4-c86b-451e-808d-97d28c2972fa}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3' Or $(TargetFrameworkVersion) == 'v4.7' Or $(TargetFrameworkVersion) == 'v4.7.1')">
       <ItemGroup>
@@ -1241,31 +1268,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Content Include="packages.config" />
-    <Compile Include="Configuration.fs" />
-    <Compile Include="Discord.fs" />
-    <Compile Include="Kills.fs" />
-    <Compile Include="ActorMessages.fs" />
-    <Compile Include="Scoring.fs" />
-    <Compile Include="Tagging.fs" />
-    <Compile Include="Transforms.fs" />
-    <None Include="SampleRedisqKillmail.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <ProjectReference Include="..\EveAlod.Common\EveAlod.Common.fsproj">
-      <Name>EveAlod.Common</Name>
-      <Project>{9dac1ac4-c86b-451e-808d-97d28c2972fa}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

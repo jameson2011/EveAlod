@@ -3,7 +3,7 @@
 
         open System
 
-        let private epochStart = new DateTime(1970, 1, 1)
+        let epochStart = new DateTime(1970, 1, 1)
 
         let getUtcFromEpoch (seconds) = epochStart.AddSeconds(float seconds)
 

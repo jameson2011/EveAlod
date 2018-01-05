@@ -13,16 +13,17 @@ Target "ScrubArtifacts" (fun _ -> CleanDirs [ buildDir;
 
 Target "BuildApp" (fun _ -> 
                             !! "src/**/*.fsproj"
+                            -- "src/**/*.Tests.fsproj"
                             |> MSBuildRelease buildDir "Build"
                             |> Log "AppBuild-Output: ")
 
 Target "BuildTests" (fun _ -> 
-                            !! "tests/**/*.fsproj"
+                            !! "src/**/*.Tests.fsproj"
                             |> MSBuildRelease buildTestsDir "Build"
                             |> Log "TestsBuild-Output: ")
 
 Target "RunUnitTests" (fun _ -> 
-                            !! (buildTestsDir @@ "*.UnitTests.dll")
+                            !! (buildTestsDir @@ "*.Tests.dll")
                             |> xUnit2 (fun p ->
                                             { p with 
                                                 ShadowCopy = false;
@@ -40,7 +41,7 @@ Target "Default" (fun _ -> trace "Done!" )
 "ScrubArtifacts" 
 ==> "BuildApp"
 ==> "BuildTests"
-//==> "RunUnitTests"
+==> "RunUnitTests"
 ==> "Default"
 
 RunTargetOrDefault "Default"
