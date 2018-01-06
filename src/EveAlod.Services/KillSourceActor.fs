@@ -14,63 +14,51 @@
         let standoffWait = TimeSpan.FromSeconds(60.)
         
         let onNext (inbox: Inbox) url = 
-            async {                
+            async {                                
                 let! data = getKmData url
-                let sent,waitTime = match data with
+
+                let waitTime = match data with
                                     | HttpResponse.OK d -> 
                                             d |> Transforms.toKill |> Option.iter (fun km -> forward km)            
-                                            true, TimeSpan.Zero
+                                            TimeSpan.Zero
                                     | HttpResponse.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
-                                        false, standoffWait
+                                        standoffWait
                                     | HttpResponse.Error msg ->                                         
                                         ActorMessage.Error ("zKB", msg) |> log
-                                        true, standoffWait
-                if sent then
-                    inbox.Post (GetNext url)
+                                        standoffWait
+                inbox.Post (GetNext (url, waitTime))
 
-                return sent, waitTime
             }
-
-        let rec retrySend (wait: TimeSpan) multiplier (inbox: Inbox) url = 
-            let multiplier = match multiplier with
-                                | x when x > 5 -> 5
-                                | x -> x + 1
-            let duration = (int wait.TotalMilliseconds) * multiplier
-            Async.Sleep(duration) |> Async.RunSynchronously
-            let (sent, wait) = onNext inbox url |> Async.RunSynchronously
-            match sent  with
-            | false -> 
-                retrySend wait multiplier inbox url
-            | _ -> 
-                ignore 0
             
-
         let pipe = Inbox.Start(fun inbox -> 
-            let rec getNext(prevWait: TimeSpan) = async {
+
+
+            let rec getNextFromInbox() = async {
+                
                 let! msg = inbox.Receive()
 
-                let get = match msg with
+                let! cont = async {
+                                    match msg with
                                     | Stop ->   
-                                        false
+                                        return false
+
                                     | x -> match x with
                                             | Start ->  
-                                                inbox.Post (GetNext sourceUri) 
-                                                true
-                                            | GetNext url ->    
-                                                let sent,wait = (onNext inbox url |> Async.RunSynchronously)
+                                                inbox.Post (GetNext (sourceUri, TimeSpan.Zero))
+                                                return true
+                                            | GetNext (url, wait) ->    
+                                                let! w = Async.Sleep((int wait.TotalMilliseconds))
                                                 
-                                                if not sent then
-                                                    retrySend wait 0 inbox url
-                                                true
-                                            | _ -> true
-                                            
-                
-                if get then
-                    return! getNext(TimeSpan.Zero + prevWait)
+                                                do! onNext inbox url 
+                                                return true
+                                            | _ -> return true                                                        
+                                    }
+                if cont then
+                    return! getNextFromInbox()
                 }
         
-            getNext(TimeSpan.Zero)
+            getNextFromInbox()
         )
 
         

@@ -1,8 +1,10 @@
 ﻿namespace EveAlod.Data
+    open System
+
     type ActorMessage=
         | Start
         | Stop
-        | GetNext of string
+        | GetNext of string * TimeSpan
         | New of Kill
         | Tag of Kill
         | Tagged of Kill
@@ -12,7 +14,7 @@
         | Scored of Kill
         | SendToDiscord of Kill
         | Log of Kill
-        | Exception of string * System.Exception
+        | Exception of string * Exception
         | Error of string * string
         | Warning of string * string
         
