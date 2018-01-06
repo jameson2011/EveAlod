@@ -6,8 +6,12 @@
         
     type Inbox = MailboxProcessor<ActorMessage>
 
-    type KillSourceActor(forward: Kill -> unit, getKmData: string -> Async<HttpResponse>, sourceUri: string)= 
-
+    type KillSourceActor(forward: Kill -> unit, 
+                            log: ActorMessage -> unit,
+                            getKmData: string -> Async<HttpResponse>, 
+                            sourceUri: string)= 
+        
+        let standoffWait = TimeSpan.FromSeconds(60.)
         
         let onNext (inbox: Inbox) url = 
             async {                
@@ -17,11 +21,14 @@
                                             d |> Transforms.toKill |> Option.iter (fun km -> forward km)            
                                             true, TimeSpan.Zero
                                     | HttpResponse.TooManyRequests -> 
-                                        false, TimeSpan.FromSeconds(60.)                                        
-                                    | _ -> 
-                                        true, TimeSpan.Zero
+                                        ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
+                                        false, standoffWait
+                                    | HttpResponse.Error msg ->                                         
+                                        ActorMessage.Error ("zKB", msg) |> log
+                                        true, standoffWait
                 if sent then
                     inbox.Post (GetNext url)
+
                 return sent, waitTime
             }
 
@@ -31,15 +38,13 @@
                                 | x -> x + 1
             let duration = (int wait.TotalMilliseconds) * multiplier
             Async.Sleep(duration) |> Async.RunSynchronously
-            let (sent ,wait) = onNext inbox url |> Async.RunSynchronously
+            let (sent, wait) = onNext inbox url |> Async.RunSynchronously
             match sent  with
             | false -> 
                 retrySend wait multiplier inbox url
             | _ -> 
                 ignore 0
             
-            
-
 
         let pipe = Inbox.Start(fun inbox -> 
             let rec getNext(prevWait: TimeSpan) = async {

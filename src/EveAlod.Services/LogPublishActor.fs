@@ -15,20 +15,24 @@
         
         let logger = log4net.LogManager.GetLogger(typeof<LogPublishActor>)
 
-        let log (msg: string) =            
+        let logInfo (msg: string) = logger.Info(msg)
             
-            logger.Info(msg)
-            
+        let logWarn (msg: string) = logger.Warn(msg)
+
+        let logError (msg: string) = logger.Error(msg)
+
+        let logException (source: string) (ex: System.Exception) = logger.Error(source, ex)
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 
                 match msg with
-                | Log km ->
-                            getMsg km |> log
-
-                | _ ->      0 |> ignore
+                | Log km ->                     getMsg km |> logInfo
+                | Warning (source,msg) ->       (source + ": " + msg) |> logWarn
+                | Error (source, msg) ->     (source + ": " + msg) |> logError
+                | Exception (source, ex) ->  logException source ex                
+                | _ -> ignore 0
                 
                 return! getNext()            
                 }

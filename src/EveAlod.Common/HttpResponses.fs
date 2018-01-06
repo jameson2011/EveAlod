@@ -2,5 +2,5 @@
     type HttpResponse =
     | OK of string
     | TooManyRequests
-    | Error of string
+    | Error of string 
 

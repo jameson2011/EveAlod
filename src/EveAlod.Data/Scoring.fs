@@ -14,8 +14,7 @@
             | Ecm -> 10.
             | Awox -> 10.
             | Solo -> 10.
-            | FailFit -> 20.
-            | _ -> 0.
+            | FailFit -> 20.            
 
         let private tagsScore (tags: KillTag list) =
             tags |> Seq.map tagScore |> Seq.sum

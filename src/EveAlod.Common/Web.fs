@@ -24,8 +24,8 @@
                                     HttpResponse.OK (rdr.ReadToEnd())
                             | x when (int x) = 429 -> 
                                     HttpResponse.TooManyRequests
-                            | _ -> 
-                                    HttpResponse.Error "Unknown error"
+                            | x -> 
+                                    HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
                     return result
                 with e -> return HttpResponse.Error e.Message
             }
@@ -79,5 +79,6 @@
                     
                     return! parseDiscordResponse response
                     
-                with _ -> return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
+                with _ -> 
+                    return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
             }

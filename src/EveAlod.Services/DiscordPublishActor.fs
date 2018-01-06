@@ -1,13 +1,23 @@
 ﻿namespace EveAlod.Services
 
     open System
+    open EveAlod.Common
     open EveAlod.Data
-
-    type DiscordPublishActor(channel: DiscordChannel, defaultWait: TimeSpan)= 
+    
+    type DiscordPublishActor(log: ActorMessage -> unit, channel: DiscordChannel, defaultWait: TimeSpan)= 
         
         let rnd = new System.Random()
         let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
     
+        let logResponse (response) =            
+            let logMsg = (match response with
+                            | HttpResponse.TooManyRequests -> 
+                                Some (ActorMessage.Warning ("Discord", "Too many requests")) 
+                            | HttpResponse.Error msg -> 
+                                Some (ActorMessage.Error ("Discord", msg)) 
+                            | _ ->  None)  
+            logMsg |> Option.iter (fun msg -> log msg)
+
         let sendToDiscord (wait: TimeSpan) (km: Kill) : Async<TimeSpan> =
             async {
                 let! r = Async.Sleep(int wait.TotalMilliseconds)
@@ -15,6 +25,9 @@
                 let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
                     
                 let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token txt
+                
+                logResponse response
+
                 let result = match wait with
                                 | x when x < defaultWait -> 
                                     defaultWait

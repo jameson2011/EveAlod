@@ -9,11 +9,16 @@
         let staticData = new StaticEntityProvider()
 
         let config = configProvider.Configuration()
+        let logger = new LogPublishActor()
+        let sendLog = logger.Post
+        
         let tagger = new KillTagger(staticData :> IStaticEntityProvider, config.CorpId)
+        
+
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
         
-        let discordPublisher = new DiscordPublishActor(mainChannel, TimeSpan.FromSeconds(5.))
-        let logger = new LogPublishActor()
+        let discordPublisher = new DiscordPublishActor(sendLog, mainChannel, TimeSpan.FromSeconds(5.))
+        
         
         let killFilter = new KillFilterActor(config.MinimumScore, 
                                                 (fun km ->  discordPublisher.Post (SendToDiscord km) ))
@@ -26,6 +31,7 @@
                                                 fun km -> killScorer.Post (Score km))
 
         let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
-                                            EveAlod.Common.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
+                                                sendLog,
+                                                EveAlod.Common.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             
         member this.KillSource = killSource
