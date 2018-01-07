@@ -41,10 +41,12 @@
                 let! cont = async {
                                     match msg with
                                     | Stop ->   
+                                        ActorMessage.Info "Stopped kill source." |> log
                                         return false
 
                                     | x -> match x with
                                             | Start ->  
+                                                ActorMessage.Info "Started kill source." |> log
                                                 inbox.Post (GetNext (sourceUri, TimeSpan.Zero))
                                                 return true
                                             | GetNext (url, wait) ->    
