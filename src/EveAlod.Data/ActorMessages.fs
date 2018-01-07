@@ -15,6 +15,7 @@
         | Publish of Kill
         | SendToDiscord of string
         | Log of Kill
+        | Info of string
         | Exception of string * Exception
         | Error of string * string
         | Warning of string * string

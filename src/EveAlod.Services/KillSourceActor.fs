@@ -62,8 +62,12 @@
         )
 
         
-        member this.Start() = pipe.Post Start
+        member this.Start() = 
+            ActorMessage.Info "Starting kill source..." |> log
+            pipe.Post Start
         
-        member this.Stop() = pipe.Post Stop
+        member this.Stop() = 
+            ActorMessage.Info "Stopping kill source..." |> log
+            pipe.Post Stop
 
         member this.Post(msg: ActorMessage) = pipe.Post msg

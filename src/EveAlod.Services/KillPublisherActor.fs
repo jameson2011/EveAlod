@@ -1,23 +1,16 @@
 ﻿namespace EveAlod.Services
 
-    open System
-    open EveAlod.Common
     open EveAlod.Data
 
-    type KillPublisherActor(forward: string -> unit)=
-
-        let rnd = new System.Random()
-        let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
-
-        let getMsg km = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
-
+    type KillPublisherActor(msgFactory: KillMessageBuilder, forward: string -> unit)=
+        
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
                 
                 match msg with
                         | Publish km ->                        
-                            km |> getMsg |> forward
+                            km |> msgFactory.CreateMessage |> forward
                         | _ ->      
                             ignore 0
                 

@@ -11,7 +11,7 @@
                             |> Seq.map (fun t -> t.ToString())
                 System.String.Join(", ", s)                
 
-            sprintf "%s Score: %f %s Tags: %s" (km.Occurred.ToString(CultureInfo.InvariantCulture)) km.AlodScore km.ZkbUri (tags km)
+            sprintf "%s Score: %.2f %s Tags: %s" (km.Occurred.ToString(CultureInfo.InvariantCulture)) km.AlodScore km.ZkbUri (tags km)
         
         let logger = log4net.LogManager.GetLogger(typeof<LogPublishActor>)
 
@@ -28,10 +28,11 @@
                 let! msg = inbox.Receive()
 
                 match msg with
-                | Log km ->                     getMsg km |> logInfo
-                | Warning (source,msg) ->       (source + ": " + msg) |> logWarn
-                | Error (source, msg) ->     (source + ": " + msg) |> logError
-                | Exception (source, ex) ->  logException source ex                
+                | Log km ->                 getMsg km |> logInfo
+                | Warning (source,msg) ->   (source + ": " + msg) |> logWarn
+                | Error (source, msg) ->    (source + ": " + msg) |> logError
+                | Exception (source, ex) -> logException source ex               
+                | Info msg ->               msg |> logInfo
                 | _ -> ignore 0
                 
                 return! getNext()            
