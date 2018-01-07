@@ -5,23 +5,26 @@
 
     type ServiceFactory()=
     
+        
         let configProvider = new ConfigProvider()
+        let config = configProvider.Configuration()
+        let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
+
         let staticData = new StaticEntityProvider()
 
-        let config = configProvider.Configuration()
         let logger = new LogPublishActor()
         let sendLog = logger.Post
         
         let tagger = new KillTagger(staticData :> IStaticEntityProvider, config.CorpId)
         
-
-        let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
+        
         
         let discordPublisher = new DiscordPublishActor(sendLog, mainChannel, TimeSpan.FromSeconds(5.))
         
+        let killPublisher = new KillPublisherActor(fun s -> discordPublisher.Post (SendToDiscord s))
         
         let killFilter = new KillFilterActor(config.MinimumScore, 
-                                                (fun km ->  discordPublisher.Post (SendToDiscord km) ))
+                                                (fun km ->  killPublisher.Post (Publish km) ))
 
         let killScorer = new KillScorerActor(fun km ->  logger.Post (Log km)
                                                         killFilter.Post (Scored km))

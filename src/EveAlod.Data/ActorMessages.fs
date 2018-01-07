@@ -12,7 +12,8 @@
         | Classified of Kill
         | Score of Kill
         | Scored of Kill
-        | SendToDiscord of Kill
+        | Publish of Kill
+        | SendToDiscord of string
         | Log of Kill
         | Exception of string * Exception
         | Error of string * string

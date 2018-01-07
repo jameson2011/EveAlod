@@ -5,9 +5,6 @@
     open EveAlod.Data
     
     type DiscordPublishActor(log: ActorMessage -> unit, channel: DiscordChannel, defaultWait: TimeSpan)= 
-        
-        let rnd = new System.Random()
-        let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
     
         let logResponse (response) =            
             let logMsg = (match response with
@@ -18,13 +15,11 @@
                             | _ ->  None)  
             logMsg |> Option.iter (fun msg -> log msg)
 
-        let sendToDiscord (wait: TimeSpan) (km: Kill) : Async<TimeSpan> =
+        let sendToDiscord (wait: TimeSpan) (msg) : Async<TimeSpan> =
             async {
                 let! r = Async.Sleep(int wait.TotalMilliseconds)
-               
-                let txt = ((getTagText km.Tags) + " " + km.ZkbUri).Trim()
                     
-                let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token txt
+                let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token msg
                 
                 logResponse response
 
@@ -40,18 +35,18 @@
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext(wait: TimeSpan) = async {
-                let! msg = inbox.Receive()
+                let! inMsg = inbox.Receive()
 
                 let! nextWait = async {
-                                        match msg with
-                                                | SendToDiscord km ->                        
-                                                    let! wait = sendToDiscord wait km
-                                                    return wait
+                                        match inMsg with
+                                                | SendToDiscord pubMsg ->
+                                                    let! newWait = sendToDiscord wait pubMsg
+                                                    return newWait
                                                 | _ ->      
                                                     return TimeSpan.Zero
                                         }
                 return! getNext(nextWait)
-                }
+            }
         
             getNext(TimeSpan.Zero)
         )
