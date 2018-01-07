@@ -21,7 +21,7 @@
         
         let discordPublisher = new DiscordPublishActor(sendLog, mainChannel, TimeSpan.FromSeconds(5.))
         
-        let killPublisher = new KillPublisherActor(killMessageBuilder, 
+        let killPublisher = new KillPublisherActor(sendLog, killMessageBuilder, 
                                                     fun s -> discordPublisher.Post (SendToDiscord s))
         
         let killFilter = new KillFilterActor(config.MinimumScore, 

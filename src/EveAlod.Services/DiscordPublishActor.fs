@@ -50,6 +50,8 @@
         
             getNext(TimeSpan.Zero)
         )
+
+        do pipe.Error.Add(fun e -> ActorMessage.Exception (typeof<DiscordPublishActor>.Name, e) |> log)
                 
         member this.Start() = pipe.Post Start
         

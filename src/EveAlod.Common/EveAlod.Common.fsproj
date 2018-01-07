@@ -61,6 +61,7 @@
     <Compile Include="HttpResponses.fs" />
     <Compile Include="Web.fs" />
     <Compile Include="Json.fs" />
+    <Compile Include="Strings.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

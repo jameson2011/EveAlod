@@ -63,6 +63,7 @@
             getNextFromInbox()
         )
 
+        do pipe.Error.Add(fun e -> ActorMessage.Exception (typeof<KillSourceActor>.Name, e) |> log)
         
         member this.Start() = 
             ActorMessage.Info "Starting kill source..." |> log
