@@ -12,7 +12,8 @@
                             sourceUri: string)= 
         
         let standoffWait = TimeSpan.FromSeconds(60.)
-        
+        let logException ex = (ActorMessage.Exception (typeof<KillSourceActor>.Name, ex)) |> log
+
         let onNext (inbox: Inbox) url = 
             async {                                
                 let! data = getKmData url
@@ -52,7 +53,10 @@
                                             | GetNext (url, wait) ->    
                                                 let! w = Async.Sleep((int wait.TotalMilliseconds))
                                                 
-                                                do! onNext inbox url 
+                                                try
+                                                    do! onNext inbox url 
+                                                with ex -> logException ex
+
                                                 return true
                                             | _ -> return true                                                        
                                     }
