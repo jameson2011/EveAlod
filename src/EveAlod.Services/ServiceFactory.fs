@@ -16,7 +16,7 @@
         let sendLog = logger.Post
         
         let tagger = new KillTagger(staticData, config.CorpId)
-        let killMessageBuilder = new KillMessageBuilder(staticData)
+        let killMessageBuilder = new KillMessageBuilder(staticData, config.CorpId)
         
         
         let discordPublisher = new DiscordPublishActor(sendLog, mainChannel, TimeSpan.FromSeconds(5.))
