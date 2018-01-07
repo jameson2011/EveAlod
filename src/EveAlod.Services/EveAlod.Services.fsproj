@@ -87,6 +87,7 @@
     <None Include="SampleEntityGroup.json" />
     <None Include="SampleIds.json" />
     <None Include="SampleConfig.json" />
+    <None Include="SampleCharacter.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

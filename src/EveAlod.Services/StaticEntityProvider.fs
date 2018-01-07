@@ -7,9 +7,12 @@
     type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
     type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
     type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
+    type jsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
 
     type IStaticEntityProvider=
         abstract member EntityIds: EntityGroupKey -> Set<string>
+        abstract member Entity: string -> Async<Entity option>
+        abstract member Character: string -> Async<Character option>
 
     type StaticEntityProvider()=
     
@@ -58,9 +61,38 @@
                                 |> Set.ofSeq
                 | _ -> Set.empty<string>
 
+        let getEntity(id: string)=
+            async {
+                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/types/%s/?datasource=tranquility&language=en-us" id)
+                let! json = EveAlod.Common.Web.getData uri
+                return match json with
+                        | EveAlod.Common.HttpResponse.OK j -> 
+                                    let root = (jsonEntityProvider.Parse(j))                
+                                    Some {Entity.Id = root.TypeId.ToString(); 
+                                                Name = root.Name;
+                                                }
+                        | _ -> None
+            }
+
+        let getCharacter(id: string)=
+            async {
+                let uri = (sprintf "https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us" id)
+                let! json = EveAlod.Common.Web.getData uri
+                return match json with
+                        | EveAlod.Common.HttpResponse.OK j -> 
+                                    let root = (jsonCharacterProvider.Parse(j))                
+                                    Some {Character.Char = {Entity.Id = id; Name = root.Name; };
+                                            Corp = Some {Entity.Id = root.CorporationId.ToString(); Name = "" };
+                                            Alliance = None
+                                        }
+                        | _ -> None
+            }
 
         interface IStaticEntityProvider with
-            member this.EntityIds(key: EntityGroupKey)= 
-                groupEntityIds key
+            member this.EntityIds(key: EntityGroupKey) = groupEntityIds key
+
+            member this.Entity (id: string) = getEntity id
+
+            member this.Character(id: string) = getCharacter id
 
             
