@@ -20,7 +20,9 @@
 
                 let waitTime = match data with
                                     | HttpResponse.OK d -> 
-                                            d |> Transforms.toKill |> Option.iter (fun km -> forward km)            
+                                            match d |> Transforms.toKill with
+                                            | Some k -> forward k
+                                            | _ -> Messages.info "No data received from zKB" |> log
                                             TimeSpan.Zero
                                     | HttpResponse.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
