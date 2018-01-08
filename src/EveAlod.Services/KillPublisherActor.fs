@@ -2,10 +2,10 @@
 
     open EveAlod.Data
 
-    type KillPublisherActor(log: ActorMessage -> unit, msgFactory: KillMessageBuilder, forward: string -> unit)=
-        
-        let onException ex = (ActorMessage.Exception (typeof<KillPublisherActor>.Name,ex)) |> log
+    type KillPublisherActor(log: Post, msgFactory: KillMessageBuilder, forward: string -> unit)=
 
+        let onException = Actors.postException typeof<KillPublisherActor>.Name log
+        
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 
@@ -18,7 +18,7 @@
                             ignore 0
 
                 with e -> 
-                    onException e                    
+                    onException e
 
                 return! getNext()
                 }

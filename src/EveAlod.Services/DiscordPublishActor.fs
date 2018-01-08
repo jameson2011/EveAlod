@@ -4,7 +4,7 @@
     open EveAlod.Common
     open EveAlod.Data
     
-    type DiscordPublishActor(log: ActorMessage -> unit, channel: DiscordChannel, defaultWait: TimeSpan)= 
+    type DiscordPublishActor(log: Post, channel: DiscordChannel, defaultWait: TimeSpan)= 
     
         let logResponse (response) =            
             let logMsg = (match response with
@@ -35,6 +35,7 @@
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext(wait: TimeSpan) = async {
+                
                 let! inMsg = inbox.Receive()
 
                 let! nextWait = async {
@@ -51,7 +52,7 @@
             getNext(TimeSpan.Zero)
         )
 
-        do pipe.Error.Add(fun e -> ActorMessage.Exception (typeof<DiscordPublishActor>.Name, e) |> log)
+        do pipe.Error.Add(Actors.postException typeof<DiscordPublishActor>.Name log)
                 
         member this.Start() = pipe.Post Start
         

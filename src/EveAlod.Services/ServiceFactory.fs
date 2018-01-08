@@ -13,31 +13,33 @@
         let staticData = new StaticEntityProvider() :> IStaticEntityProvider
 
         let logger = new LogPublishActor()
-        let sendLog = logger.Post
-        
-        let tagger = new KillTagger(staticData, config.CorpId)
-        let killMessageBuilder = new KillMessageBuilder(staticData, config.CorpId)
         
         
-        let discordPublisher = new DiscordPublishActor(sendLog, mainChannel, TimeSpan.FromSeconds(5.))
+        let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, TimeSpan.FromSeconds(5.))
         
-        let killPublisher = new KillPublisherActor(sendLog, killMessageBuilder, 
-                                                    fun s -> discordPublisher.Post (SendToDiscord s))
         
-        let killFilter = new KillFilterActor(config.MinimumScore, 
-                                                (fun km ->  killPublisher.Post (Publish km) ))
+        let killPublisher = new KillPublisherActor(logger.Post, 
+                                                    new KillMessageBuilder(staticData, config.CorpId), 
+                                                    Actors.forward SendToDiscord discordPublisher.Post
+                                                    )
+        
+        let killFilter = new KillFilterActor(logger.Post, 
+                                                config.MinimumScore, 
+                                                Actors.forward Publish killPublisher.Post)
 
-        let killScorer = new KillScorerActor(fun km ->  sendLog (Log km)
-                                                        killFilter.Post (Scored km))
+        let killScorer = new KillScorerActor(logger.Post, 
+                                                fun km ->   logger.Post (Log km)
+                                                            killFilter.Post (Scored km)) 
         
-        let killTagger = new KillTaggerActor(tagger, 
-                                                config.CorpId, 
-                                                fun km -> killScorer.Post (Score km))
+        let killTagger = new KillTaggerActor(logger.Post, 
+                                                new KillTagger(staticData, config.CorpId), 
+                                                Actors.forward Score killScorer.Post)
 
-        let killSource = new KillSourceActor((fun km -> killTagger.Post (Tag km)), 
-                                                sendLog,
-                                                EveAlod.Common.Web.getData, "https://redisq.zkillboard.com/listen.php?ttw=10")
+        let killSource = new KillSourceActor(logger.Post,
+                                                Actors.forward Tag killTagger.Post,
+                                                EveAlod.Common.Web.getData, 
+                                                "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             
         member this.KillSource = killSource
 
-        member this.Log = sendLog
+        member this.Log = logger.Post

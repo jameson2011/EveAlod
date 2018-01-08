@@ -4,7 +4,7 @@
     open System.Globalization
 
     type LogPublishActor()= 
-
+        
         let getMsg km = 
             let tags km = 
                 let s = km.Tags 
@@ -23,23 +23,28 @@
 
         let logException (source: string) (ex: System.Exception) = logger.Error(source, ex)
 
+        let onException = logException typeof<LogPublishActor>.Name 
+
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 
-                match msg with
-                | Log km ->                 getMsg km |> logInfo
-                | Warning (source,msg) ->   (source + ": " + msg) |> logWarn
-                | Error (source, msg) ->    (source + ": " + msg) |> logError
-                | Exception (source, ex) -> logException source ex               
-                | Info msg ->               msg |> logInfo
-                | _ -> ignore 0
-                
+                try
+                    match msg with
+                    | Log km ->                 getMsg km |> logInfo
+                    | Warning (source,msg) ->   (source + ": " + msg) |> logWarn
+                    | Error (source, msg) ->    (source + ": " + msg) |> logError
+                    | Exception (source, ex) -> logException source ex               
+                    | Info msg ->               msg |> logInfo
+                    | _ -> ignore 0
+                with e -> onException e
                 return! getNext()            
                 }
         
             getNext()
         )
+
+        do pipe.Error.Add(onException)
 
         
         member this.Start() = pipe.Post Start

@@ -6,14 +6,14 @@
         
     type Inbox = MailboxProcessor<ActorMessage>
 
-    type KillSourceActor(forward: Kill -> unit, 
-                            log: ActorMessage -> unit,
+    type KillSourceActor(log: Post,
+                            forward: Kill -> unit, 
                             getKmData: string -> Async<HttpResponse>, 
                             sourceUri: string)= 
         
+        let logException = Actors.postException typeof<KillSourceActor>.Name log
         let standoffWait = TimeSpan.FromSeconds(60.)
-        let logException ex = (ActorMessage.Exception (typeof<KillSourceActor>.Name, ex)) |> log
-
+        
         let onNext (inbox: Inbox) url = 
             async {                                
                 let! data = getKmData url
@@ -42,12 +42,12 @@
                 let! cont = async {
                                     match msg with
                                     | Stop ->   
-                                        ActorMessage.Info "Stopped kill source." |> log
+                                        "Stopped kill source." |> Messages.info |> log
                                         return false
 
                                     | x -> match x with
                                             | Start ->  
-                                                ActorMessage.Info "Started kill source." |> log
+                                                "Started kill source." |> Messages.info |> log
                                                 inbox.Post (GetNext (sourceUri, TimeSpan.Zero))
                                                 return true
                                             | GetNext (url, wait) ->    
@@ -55,7 +55,8 @@
                                                 
                                                 try
                                                     do! onNext inbox url 
-                                                with ex -> logException ex
+                                                with ex -> 
+                                                    logException ex
 
                                                 return true
                                             | _ -> return true                                                        
@@ -67,14 +68,14 @@
             getNextFromInbox()
         )
 
-        do pipe.Error.Add(fun e -> ActorMessage.Exception (typeof<KillSourceActor>.Name, e) |> log)
+        do pipe.Error.Add(logException)
         
         member this.Start() = 
-            ActorMessage.Info "Starting kill source..." |> log
+            "Starting kill source..." |> Messages.info |> log
             pipe.Post Start
         
         member this.Stop() = 
-            ActorMessage.Info "Stopping kill source..." |> log
+            "Stopping kill source..." |> Messages.info |> log
             pipe.Post Stop
 
         member this.Post(msg: ActorMessage) = pipe.Post msg

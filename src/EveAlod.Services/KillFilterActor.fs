@@ -2,24 +2,30 @@
 
     open EveAlod.Data
 
-    type KillFilterActor(minScore: float, forward: Kill -> unit) =
+    type KillFilterActor(log: Post, minScore: float, forward: Kill -> unit) =
+
+        let onException = Actors.postException typeof<KillFilterActor>.Name log
+
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
+                
                 let! msg = inbox.Receive()
 
-                match msg with                                    
-                | Scored km ->    
-                            if km.AlodScore >= minScore then
-                                forward km  
-                                                
-                | _ ->      0 |> ignore
-                
+                try
+                    match msg with                                    
+                    | Scored km ->    
+                                if km.AlodScore >= minScore then
+                                    forward km          
+                    | _ ->      ignore 0
+                with e -> onException e
                 return! getNext()            
                 }
         
             getNext()
         )
         
+        do pipe.Error.Add(onException)
+
         member this.Start() = pipe.Post Start
         
         member this.Stop() = pipe.Post Stop

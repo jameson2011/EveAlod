@@ -20,3 +20,6 @@
         | Error of string * string
         | Warning of string * string
         
+
+    module Messages =
+        let info = ActorMessage.Info

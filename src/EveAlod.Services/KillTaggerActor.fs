@@ -3,25 +3,29 @@
     open EveAlod.Data
     
     
-    type KillTaggerActor(tagger: KillTagger, corpId: string, forward: Kill -> unit) =
+    type KillTaggerActor(log: Post, tagger: KillTagger, forward: Kill -> unit) =
+
+        let onException = Actors.postException typeof<KillTaggerActor>.Name log
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
-
-                match msg with                                    
-                | Tag km ->    
-                            km 
-                            |> tagger.Tag
-                            |> forward
-                | _ ->      0 |> ignore
-                
+                try
+                    match msg with                                    
+                    | Tag km ->    
+                                km 
+                                |> tagger.Tag
+                                |> forward
+                    | _ ->      0 |> ignore
+                with e -> onException e
                 
                 return! getNext()            
                 }
         
             getNext()
         )
+
+        do pipe.Error.Add(onException)
                 
         member this.Start() = pipe.Post Start
         
