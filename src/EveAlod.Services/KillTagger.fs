@@ -16,7 +16,6 @@
             let tags = [                            
                             Tagging.isCorpKill 0.5 corpId;
                             Tagging.isCorpLoss corpId;
-                            Tagging.isAwox;
                             Tagging.hasPlex isPlex;
                             Tagging.hasSkillInjector isSkillInjector;
                             Tagging.hasEcm isEcm;               

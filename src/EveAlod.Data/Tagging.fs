@@ -106,11 +106,6 @@
         let isCorpLoss corpId =
             (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
         
-        let isAwox (km: Kill)=
-            match km.Victim |> getCorpId with
-            | Some victimCorpId ->                 
-                (tagOnTrue KillTag.Awox) (fun _ -> areAttackersInSameCorp victimCorpId km) km
-            | _ -> None
             
 
         let isCorpKill minimum corpId =
