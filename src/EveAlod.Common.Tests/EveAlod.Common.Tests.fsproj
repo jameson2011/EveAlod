@@ -89,8 +89,10 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />
+    <Compile Include="Arb.fs" />
     <Compile Include="DateTimeTests.fs" />
     <Compile Include="CombinatorsTests.fs" />
+    <Compile Include="StringsTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

@@ -2,8 +2,8 @@
     
     open System
         
-    module Strings=
-        
+    module Strings=                      
+
         let prettyConcat (txts: string list) =
             let rec concat txts (result: string) =
                 match txts with                

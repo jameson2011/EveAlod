@@ -6,11 +6,17 @@
     module CombinatorsTests=
         
         [<Property(Verbose = true)>]
-        let DoublePipeCombinatorIsDisjunctive left right =
-            let l = (fun () -> left)
-            let r = (fun () -> right)
+        let DoublePipeCombinatorIsDisjunctive left right =            
+            let f = (fun () -> left) <||> (fun () -> right)
 
-            let f = l <||> r
+            f() = (left || right)
 
-            f() = (l() || r())
+
+        [<Property(Verbose = true)>]
+        let DoubleAmpersandCombinatorIsConjunctive left right =
+            
+            let f = (fun () -> left) <&&> (fun () -> right)
+
+            f() = (left && right)
+
 
