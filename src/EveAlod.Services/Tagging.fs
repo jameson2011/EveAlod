@@ -1,6 +1,7 @@
-﻿namespace EveAlod.Data
+﻿namespace EveAlod.Services
 
     open EveAlod.Common.Combinators
+    open EveAlod.Data
 
     module Tagging=
                 

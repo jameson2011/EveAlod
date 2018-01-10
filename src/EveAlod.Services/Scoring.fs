@@ -1,4 +1,7 @@
-﻿namespace EveAlod.Data
+﻿namespace EveAlod.Services
+    
+    open EveAlod.Data
+
     module Scoring=
         
         let private tagScore (tag: KillTag) =

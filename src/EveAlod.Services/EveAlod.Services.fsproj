@@ -72,6 +72,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />
     <Compile Include="Actors.fs" />
+    <Compile Include="Scoring.fs" />
+    <Compile Include="Tagging.fs" />
     <Compile Include="ConfigProvider.fs" />
     <Compile Include="StaticEntityProvider.fs" />
     <Compile Include="DiscordPublishActor.fs" />

@@ -66,8 +66,6 @@
     <Compile Include="Discord.fs" />
     <Compile Include="Kills.fs" />
     <Compile Include="ActorMessages.fs" />
-    <Compile Include="Scoring.fs" />
-    <Compile Include="Tagging.fs" />
     <Compile Include="Transforms.fs" />
     <None Include="SampleRedisqKillmail.json" />
   </ItemGroup>
