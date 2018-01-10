@@ -19,11 +19,9 @@
             | Solo -> 10.
             | FailFit -> 20.            
 
-        let private tagsScore (tags: KillTag list) =
-            tags |> Seq.map tagScore |> Seq.sum
+        let private tagsScore = Seq.map tagScore >> Seq.sum
             
-
         let score (km: Kill) = 
-            let score = tagsScore km.Tags
-            score
+            km.Tags |> Seq.distinct |> tagsScore
+            
 
