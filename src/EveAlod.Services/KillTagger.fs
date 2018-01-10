@@ -1,5 +1,6 @@
 ﻿namespace EveAlod.Services
 
+    open EveAlod.Common
     open EveAlod.Data
 
     type KillTagger(entityProvider: IStaticEntityProvider, corpId: string)=
@@ -25,7 +26,7 @@
                             Tagging.isCheap;                            
                         ]
                         |> Seq.map (fun f -> f kill)
-                        |> Tagging.toTags
+                        |> Seq.exceptNones
                         |> List.append kill.Tags
             
             {kill with Tags = tags}

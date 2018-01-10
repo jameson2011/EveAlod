@@ -5,12 +5,6 @@
 
     module Tagging=
                 
-        let toTags (tags: seq<KillTag option>)= 
-            tags
-            |> Seq.filter (fun tag -> tag.IsSome)
-            |> Seq.map (fun tag -> tag.Value)
-            |> List.ofSeq
-                        
         let getCorpId (character: Character option)=
             character |> Option.bind (fun c -> c.Corp 
                                                 |> Option.map (fun c -> c.Id))
