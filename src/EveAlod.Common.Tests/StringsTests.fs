@@ -38,5 +38,5 @@
             let f = ((Arb.charCount ',') >> (=) commas) <&&> ((Arb.charCount '&') >>(=) amps)
 
             prettyConcat xs |> f 
-            
+
 

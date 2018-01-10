@@ -9,31 +9,17 @@
         type Discord429Payload = JsonProvider<"""{ "message": "a", "retry_after": 0, "global":  false }""">
         
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
-            
-        let getData (url: string) =
-            async {
-                try
-                    let req = HttpWebRequest.Create(url) :?> HttpWebRequest
-                    req.UserAgent <- userAgent 
-                    let! resp = req.AsyncGetResponse()
-                    let result = 
-                            match (resp :?> HttpWebResponse).StatusCode with
-                            | HttpStatusCode.OK -> 
-                                    use stream = resp.GetResponseStream()
-                                    let rdr = new StreamReader(stream)
-                                    HttpResponse.OK (rdr.ReadToEnd())
-                            | x when (int x) = 429 -> 
-                                    HttpResponse.TooManyRequests
-                            | x -> 
-                                    HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
-                    return result
-                with e -> return HttpResponse.Error e.Message
-            }
 
+        let private getHeaderValue name (response: Http.HttpResponseMessage) = 
+            response.Headers
+                |> Seq.filter (fun h -> h.Key = name)
+                |> Seq.collect (fun h -> h.Value)
+                |> Seq.tryHead
+        
         let private getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
             response
-            |> Http.getHeaderValue "X-RateLimit-Reset"
-            |> Http.getIntValue
+            |> getHeaderValue "X-RateLimit-Reset"
+            |> Strings.toIntValue
             |> DateTime.getUtcFromEpoch
                    
         let private parseDiscordResponse (response: Http.HttpResponseMessage) =
@@ -81,4 +67,24 @@
                     
                 with _ -> 
                     return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
+            }
+
+        let getData (url: string) =
+            async {
+                try
+                    let req = HttpWebRequest.Create(url) :?> HttpWebRequest
+                    req.UserAgent <- userAgent 
+                    let! resp = req.AsyncGetResponse()
+                    let result = 
+                            match (resp :?> HttpWebResponse).StatusCode with
+                            | HttpStatusCode.OK -> 
+                                    use stream = resp.GetResponseStream()
+                                    let rdr = new StreamReader(stream)
+                                    HttpResponse.OK (rdr.ReadToEnd())
+                            | x when (int x) = 429 -> 
+                                    HttpResponse.TooManyRequests
+                            | x -> 
+                                    HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
+                    return result
+                with e -> return HttpResponse.Error e.Message
             }

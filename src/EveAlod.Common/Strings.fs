@@ -18,6 +18,12 @@
                                 concat t h
                                     
             concat txts ""
+
+        let toIntValue (value: string option) =
+            value
+            |> Option.map (fun s -> Int32.TryParse(s))
+            |> Option.map (fun (ok,value) -> if ok then value else 0)
+            |> Option.defaultValue 0                
                 
             
 
