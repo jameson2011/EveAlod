@@ -36,12 +36,10 @@
             ({ defaultKill() with Tags = [] } |> Scoring.score ) = 0.
 
         [<Property(Verbose=true)>]
-        let ``all tags have a non-zero score``(tag: KillTag)=
+        let ``all tags have a positive score``(tag: KillTag)=
             let kill = { defaultKill() with Tags = [ tag ] }
 
-            let r = Scoring.score kill 
-            
-            r <> 0.
+            (Scoring.score kill) > 0.
 
         [<Property(Verbose=true, Replay="(193286329,296399112)")>]
         let ``tag scores are accumulative``(tags: KillTag list)=
@@ -49,11 +47,10 @@
             let kill tag = { defaultKill() with Tags = [ tag ] }
             let tagScores = tags    |> List.map kill
                                     |> List.map Scoring.score
-
-                                
-            let tagsScore = { defaultKill() with Tags = (tags ) }
+                                    
+            let tagsScore = { defaultKill() with Tags = tags}
                                 |> Scoring.score
-                                
-            tagsScore = (tagScores |> Seq.sum)
+            
+            tagsScore >= (tagScores |> Seq.sum)
 
             

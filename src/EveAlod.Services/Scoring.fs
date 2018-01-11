@@ -11,8 +11,8 @@
             | PlexInHold | SkillInjectorInHold -> 100.
             | Expensive -> 100.
             | Spendy -> 40.
-            | Cheap -> -50.
-            | Npc -> -1000.
+            | Cheap -> 1.
+            | Npc -> 1.
             | Pod  -> 10.
             | Ecm -> 10.
             | Awox -> 10.
