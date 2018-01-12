@@ -92,23 +92,30 @@
                 with _ -> 
                     return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
             }
-
+            
         let getData (url: string) =
             async {
                 try
-                    let req = HttpWebRequest.Create(url) :?> HttpWebRequest
-                    req.UserAgent <- userAgent 
-                    let! resp = req.AsyncGetResponse()
-                    let result = 
-                            match (resp :?> HttpWebResponse).StatusCode with
+                    use client = httpClient()
+                    
+                    let! resp = client.GetAsync(url) |> Async.AwaitTask
+                    
+                    let! result = 
+                        async {
+                            match resp.StatusCode with
                             | HttpStatusCode.OK -> 
-                                    use stream = resp.GetResponseStream()
-                                    let rdr = new StreamReader(stream)
-                                    HttpResponse.OK (rdr.ReadToEnd())
+                                    use content = resp.Content
+                                    let! s = content.ReadAsStringAsync() |> Async.AwaitTask                    
+                                    
+                                    return HttpResponse.OK (s)
                             | x when (int x) = 429 -> 
-                                    HttpResponse.TooManyRequests
+                                    return HttpResponse.TooManyRequests
                             | x -> 
-                                    HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
+                                    return HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
+
+                             }
                     return result
-                with e -> return HttpResponse.Error e.Message
+                with e -> 
+                    return HttpResponse.Error e.Message
             }
+
