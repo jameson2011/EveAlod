@@ -1,12 +1,18 @@
-﻿// Learn more
-open System
+﻿open System
 open EveAlod.Data
+open EveAlod
 
 [<EntryPoint>]
 let main argv =
         
-    try
-        let factory = new EveAlod.Services.ServiceFactory()
+    try       
+        let webhook = match argv with           
+                        | [| x |] -> x
+                        | _ -> ""
+        
+        let c = (fun () -> Bootstrap.config webhook)
+        
+        let factory = new EveAlod.Services.ServiceFactory(c)
         let source = factory.KillSource
         let log = factory.Log
 

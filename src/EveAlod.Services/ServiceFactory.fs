@@ -3,11 +3,9 @@
     open System
     open EveAlod.Data
 
-    type ServiceFactory()=
+    type ServiceFactory(configProvider: unit -> Configuration)=
     
-        
-        let configProvider = new ConfigProvider()
-        let config = configProvider.Configuration()
+        let config = configProvider()
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
         let staticData = new StaticEntityProvider() :> IStaticEntityProvider

@@ -9,8 +9,7 @@
     type ConfigProvider()=
         
         let configFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-        let configFileName = "settings.json"
-        let configFilePath = Path.Combine(configFolder, configFileName)
+        let configFilePath = Path.Combine(configFolder, "settings.json")
        
         let loadConfig(filePath: string) =
             let c = configJson.Load filePath
