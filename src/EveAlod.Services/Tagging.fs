@@ -113,7 +113,7 @@
             [ 
                 KillTag.CorpLoss, [| "CORPIE DOWN"; "RIP" |];
                 KillTag.CorpKill, [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
-                KillTag.Pod, [| "Someone should have bought pod insurance"; "Victim willing to buy back corpse"; "Oops"; |];
+                KillTag.Pod, [| "Someone should have bought pod insurance"; "Someone needs his implants back"; |];
                 KillTag.PlexInHold, [| "Plex in hold!"; "BWAHAHAHAHAHA!"; "Plex vaults - they exist"; "RMT DOWN" |];
                 KillTag.SkillInjectorInHold, [| "Skill injector in hold!"; "FFS"; "No comment needed" |];
                 KillTag.Awox, [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];

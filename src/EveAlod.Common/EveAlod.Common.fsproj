@@ -52,28 +52,6 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Content Include="packages.config" />
-    <Compile Include="Combinators.fs" />
-    <Compile Include="DateTime.fs" />
-    <Compile Include="Strings.fs" />
-    <Compile Include="Seq.fs" />
-    <Compile Include="HttpResponses.fs" />
-    <Compile Include="Web.fs" />
-    <Compile Include="Json.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1274,4 +1252,27 @@
       </ItemGroup>
     </When>
   </Choose>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Content Include="packages.config" />
+    <Compile Include="Combinators.fs" />
+    <Compile Include="DateTime.fs" />
+    <Compile Include="Strings.fs" />
+    <Compile Include="Seq.fs" />
+    <Compile Include="HttpResponses.fs" />
+    <Compile Include="Web.fs" />
+    <Compile Include="Json.fs" />
+    <None Include="SampleDiscordWebhookResponse.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

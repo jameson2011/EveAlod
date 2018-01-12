@@ -1,0 +1,8 @@
+﻿{
+  "name": "name",
+  "channel_id": "channel_id",
+  "token": "token",
+  "avatar": "avatar",
+  "guild_id": "guild_id",
+  "id": "id"
+}

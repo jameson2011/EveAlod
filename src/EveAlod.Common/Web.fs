@@ -7,8 +7,14 @@
         open FSharp.Data
 
         type Discord429Payload = JsonProvider<"""{ "message": "a", "retry_after": 0, "global":  false }""">
+        type DiscordWebhookPayload = JsonProvider<"./SampleDiscordWebhookResponse.json">
         
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
+
+        let private httpClient()=
+            let client = new System.Net.Http.HttpClient()
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
+            client
 
         let private getHeaderValue name (response: Http.HttpResponseMessage) = 
             response.Headers
@@ -46,16 +52,34 @@
                 | _ -> 
                     return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
             }
+
+        let private parseDiscordWebhookResponse (response: Http.HttpResponseMessage)=
+            async {
+                match response.StatusCode with
+                | HttpStatusCode.OK  -> 
+                    let! json = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+                    let data = DiscordWebhookPayload.Parse(json)                    
+                    return Choice1Of2 (data.Id, data.Token)
+                | _ -> 
+                    return Choice2Of2 ("HTTP error " + (int response.StatusCode).ToString())
+            }
+
+        let getDiscordChannel (webhookUri: string)=
+            async {
+                try
+                    use client = httpClient()
+                    let! response = client.GetAsync(webhookUri) |> Async.AwaitTask
+                    return! parseDiscordWebhookResponse response
+                with e -> 
+                    return Choice2Of2 e.Message                
+            }
         
         let sendDiscord (channelId: string) (token: string) (content: string)=
-            async {
-                
+            async {                
                 try
                     let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
                                 
-                    use client = new System.Net.Http.HttpClient()                    
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
-                    
+                    use client = httpClient()
         
                     let values = new System.Collections.Generic.Dictionary<string, string>()
                     values.Add("content", content)
