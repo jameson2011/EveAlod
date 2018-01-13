@@ -120,6 +120,6 @@
                              }
                     return result
                 with e -> 
-                    return HttpResponse.Error e.Message
+                    return HttpResponse.Error (e.Message + e.StackTrace)
             }
 
