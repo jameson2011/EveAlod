@@ -33,11 +33,11 @@
                 match response.StatusCode with
                 | HttpStatusCode.OK 
                 | HttpStatusCode.NoContent -> 
-                    let reset = (getDiscordRateLimitReset response)
+                    let remoteTime = response.Headers.Date |> DateTime.ofDateTimeOffset DateTime.UtcNow 
+                    let remoteResetTime = (getDiscordRateLimitReset response)
                     
-                    let clientServerDiff = DateTime.machineTimeOffset DateTime.UtcNow response.Headers.Date
-                
-                    let wait = (DateTime.UtcNow + clientServerDiff - reset)
+                    let wait = remoteResetTime - remoteTime
+                    
                     return wait, (HttpResponse.OK "")
 
                 | x when (int x) = 429 ->                     
@@ -87,7 +87,7 @@
                     let values = new System.Collections.Generic.Dictionary<string, string>()
                     values.Add("content", content)
                     let content = new System.Net.Http.FormUrlEncodedContent(values)
-
+                    
                     let! response = client.PostAsync(url, content) |> Async.AwaitTask
                     
                     return! parseDiscordResponse response

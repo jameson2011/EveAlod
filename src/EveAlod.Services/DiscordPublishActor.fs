@@ -26,15 +26,10 @@
                 let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token msg
                 
                 logResponse response
-
-                let result = match wait with
-                                | x when x < defaultWait -> 
-                                    defaultWait
-                                | x -> x
                 
                 // Do not try to resend. The queue will accumulate, and keeping Discord happy is more important
                 
-                return result
+                return wait
             }
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
