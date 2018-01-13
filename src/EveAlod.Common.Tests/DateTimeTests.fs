@@ -58,3 +58,25 @@
 
             result = TimeSpan.FromSeconds(float remoteOffset)
     
+        [<Fact>]
+        let ``ofDateTimeOffset null value yields default``()=
+            let def = DateTime.UtcNow
+            let value = System.Nullable<DateTimeOffset>()
+
+            let result = DateTime.ofDateTimeOffset def value
+
+            result = def
+
+        [<Fact>]
+        let ``ofDateTimeOffset non-null value yields value``()=
+            let now = DateTime.UtcNow
+            let def = now
+            let dto = DateTimeOffset.UtcNow.AddDays(-1.)
+            let value = System.Nullable<DateTimeOffset>(dto)
+
+            let result = DateTime.ofDateTimeOffset def value
+
+            result = dto.UtcDateTime
+
+            
+            

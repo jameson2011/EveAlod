@@ -7,6 +7,12 @@
 
         let getUtcFromEpoch (seconds) = epochStart.AddSeconds(float seconds)
 
+        let ofDateTimeOffset (defaultTime: DateTime) (time: Nullable<DateTimeOffset>)=            
+            if time.HasValue then
+                time.Value.UtcDateTime
+            else
+                defaultTime
+
         let machineTimeOffset (localUtcTime: DateTime) (serverUtcTime: Nullable<DateTimeOffset>) =
             let serverTime =    if serverUtcTime.HasValue then
                                     serverUtcTime.Value.UtcDateTime
