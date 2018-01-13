@@ -33,9 +33,8 @@
                 match response.StatusCode with
                 | HttpStatusCode.OK 
                 | HttpStatusCode.NoContent -> 
-                    let remoteTime = response.Headers.Date |> DateTime.ofDateTimeOffset DateTime.UtcNow 
-                    let remoteResetTime = (getDiscordRateLimitReset response)
-                    
+                    let remoteTime = response.Headers.Date |> DateTime.ofDateTimeOffset (DateTime.UtcNow.AddMinutes(-2.)) 
+                    let remoteResetTime = (getDiscordRateLimitReset response)                    
                     let wait = remoteResetTime - remoteTime
                     
                     return wait, (HttpResponse.OK "")
