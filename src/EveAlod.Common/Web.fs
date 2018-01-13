@@ -91,8 +91,8 @@
                     
                     return! parseDiscordResponse response
                     
-                with _ -> 
-                    return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
+                with e -> 
+                    return TimeSpan.FromSeconds(30.), "Unknown error: " + e.Message + e.StackTrace |> HttpResponse.Error
             }
             
         let getData (url: string) =
