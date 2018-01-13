@@ -8,7 +8,7 @@
         let private getDiscordChannel webhook = 
             match (EveAlod.Common.Web.getDiscordChannel webhook |> Async.RunSynchronously) with
             | Choice1Of2 (id, token) -> { DiscordChannel.Id = id; Token = token } 
-            | Choice2Of2 msg -> failwith msg
+            | Choice2Of2 msg -> failwith ("Error connecting to Discord: " + msg)
 
         let private applyDiscord config channel = 
             { config with ChannelId = channel.Id; ChannelToken = channel.Token }

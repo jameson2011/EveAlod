@@ -12,7 +12,11 @@
                                 Some (ActorMessage.Warning ("Discord", "Too many requests")) 
                             | HttpResponse.Error msg -> 
                                 Some (ActorMessage.Error ("Discord", msg)) 
-                            | _ ->  None)  
+                            | HttpResponse.Unauthorized ->
+                                Some (ActorMessage.Error ("Discord", "Unauthorized")) 
+                            | HttpResponse.OK _ ->  
+                                None)  
+
             logMsg |> Option.iter (fun msg -> log msg)
 
         let sendToDiscord (wait: TimeSpan) (msg) : Async<TimeSpan> =

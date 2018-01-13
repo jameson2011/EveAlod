@@ -27,6 +27,9 @@
                                     | HttpResponse.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
                                         standoffWait
+                                    | HttpResponse.Unauthorized -> 
+                                        ActorMessage.Warning ("zKB", "zKB reported unauthorized") |> log
+                                        standoffWait
                                     | HttpResponse.Error msg ->                                         
                                         ActorMessage.Error ("zKB", msg) |> log
                                         standoffWait

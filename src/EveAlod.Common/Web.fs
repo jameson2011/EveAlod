@@ -48,7 +48,8 @@
                     let wait = TimeSpan.FromMilliseconds(float responsePayload.RetryAfter)
                     
                     return wait, (HttpResponse.TooManyRequests)
-
+                | HttpStatusCode.Unauthorized ->
+                    return TimeSpan.FromSeconds(30.), (HttpResponse.Unauthorized)
                 | _ -> 
                     return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
             }
@@ -60,6 +61,8 @@
                     let! json = response.Content.ReadAsStringAsync() |> Async.AwaitTask
                     let data = DiscordWebhookPayload.Parse(json)                    
                     return Choice1Of2 (data.Id, data.Token)
+                | HttpStatusCode.Unauthorized ->
+                    return Choice2Of2 "Unauthorized"
                 | _ -> 
                     return Choice2Of2 ("HTTP error " + (int response.StatusCode).ToString())
             }
@@ -110,6 +113,8 @@
                                     return HttpResponse.OK (s)
                             | x when (int x) = 429 -> 
                                     return HttpResponse.TooManyRequests
+                            | HttpStatusCode.Unauthorized -> 
+                                    return HttpResponse.Unauthorized
                             | x -> 
                                     return HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
 
