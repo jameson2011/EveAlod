@@ -15,4 +15,9 @@
             
             localUtcTime - serverTime
             
+        let remoteTimeOffset (localUtcStart: DateTime) (localUtcEnd: DateTime) (remoteUtc: DateTime) =
+            let localDuration = (localUtcEnd - localUtcStart).TotalMilliseconds / 2.
+            let localUtc = localUtcStart.AddMilliseconds(localDuration)
 
+            remoteUtc - localUtc
+            

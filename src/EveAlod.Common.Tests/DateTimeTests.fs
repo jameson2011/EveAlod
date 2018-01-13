@@ -1,11 +1,14 @@
 ﻿namespace EveAlod.Common.Tests
 
+    open System
     open Xunit
     open FsCheck
     open FsCheck.Xunit
     open EveAlod.Common.DateTime    
     
     module DateTimeTests =
+        open EveAlod.Common
+        open FsCheck.Gen
     
         let baseDate = epochStart
 
@@ -18,12 +21,40 @@
                 r.Year < epochStart.Year
                 
         [<Fact>]
-        let EpochIsFirstDayOf1970() =
+        let ``epochStart is first day of 1970``() =
             let r = getUtcFromEpoch 0
             Assert.Equal(epochStart, r)            
 
         [<Property(Verbose = true)>]
-        let ParameterIsTreatedAsSeconds(secs) =
+        let ``getUtcFromEpoch Parameter is treated as seconds``(secs) =
             let diff = (getUtcFromEpoch secs) - System.TimeSpan.FromSeconds(float secs)
 
-            Assert.Equal(baseDate, diff)
+            baseDate = diff
+
+        [<Property(Verbose = true)>]
+        let ``remoteTimeOffset when remote is mid way offset is always zero``(localSpread: float)=
+            let now = DateTime.UtcNow
+            let seconds = int localSpread |> float |> abs
+            let startTime = now.AddSeconds(-seconds)
+            let endTime = now.AddSeconds(seconds)
+
+            let remote = now
+
+            let result = DateTime.remoteTimeOffset startTime endTime remote
+
+            result = TimeSpan.Zero
+
+        [<Property(Verbose = true)>]
+        let ``remoteTimeOffset the given non-zero remote offset is returned as the result``(localSpread: int, remoteOffset: int)=
+            let now = DateTime.UtcNow
+            let seconds = float localSpread |> abs
+
+            let startTime = now.AddSeconds(-seconds)
+            let endTime = now.AddSeconds(seconds)
+
+            let remote = now.AddSeconds(float remoteOffset)
+
+            let result = DateTime.remoteTimeOffset startTime endTime remote
+
+            result = TimeSpan.FromSeconds(float remoteOffset)
+    
