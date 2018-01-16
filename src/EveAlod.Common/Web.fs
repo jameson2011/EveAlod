@@ -19,6 +19,7 @@
             cc.Public <- true
             client.DefaultRequestHeaders.CacheControl <- cc
             client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
+            
             client
 
         let getHeaderValue name (response: Http.HttpResponseMessage) = 
@@ -75,7 +76,7 @@
             async {
                 try
                     use client = httpClient()
-                    let! response = client.GetAsync(webhookUri) |> Async.AwaitTask
+                    use! response = client.GetAsync(webhookUri) |> Async.AwaitTask
                     return! parseDiscordWebhookResponse response
                 with e -> 
                     return Choice2Of2 e.Message                
@@ -90,7 +91,7 @@
                     values.Add("content", content)
                     let content = new System.Net.Http.FormUrlEncodedContent(values)
                     
-                    let! response = client.PostAsync(url, content) |> Async.AwaitTask
+                    use! response = client.PostAsync(url, content) |> Async.AwaitTask
                     
                     return! parseDiscordResponse response
                     
@@ -102,7 +103,7 @@
         let getData (client: HttpClient) (url: string) =
             async {
                 try                    
-                    let! resp = client.GetAsync(url) |> Async.AwaitTask
+                    use! resp = client.GetAsync(url) |> Async.AwaitTask
                     
                     let! result = 
                         async {                            
