@@ -23,6 +23,31 @@
         | Expensive
         | Cheap
 
+
+    type ItemLocation =
+        | Unknown
+        | NoLocation // None
+        | Hangar
+        | CargoHold
+        | HighSlot
+        | MidSlot
+        | LowSlot
+        | FixedSlot
+        | Capsule
+        | Pilot
+        | RigSlot
+        | Subsystem
+        | Implant
+        | DroneBay
+        | ShipHangar
+        | ShipHold
+        | SecondaryStorage
+        | FleetHangar
+        | FighterBay
+        | FighterTube
+        | SubsystemBay
+    
+
     type Entity = {
                     Id: string;
                     Name: string;
@@ -37,6 +62,7 @@
     type CargoItem = {
                         Item: Entity;
                         Quantity: int;
+                        Location: ItemLocation;
                     }
 
     type Character={

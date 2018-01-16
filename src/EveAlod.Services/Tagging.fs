@@ -71,7 +71,25 @@
             km.Cargo
             |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
+        
+        let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
+            km.Cargo
+            |> Seq.filter (fun i -> match i.Location with 
+                                    | ItemLocation.HighSlot 
+                                    | ItemLocation.MidSlot 
+                                    | ItemLocation.LowSlot
+                                    | ItemLocation.DroneBay
+                                    | ItemLocation.RigSlot
+                                    | ItemLocation.FixedSlot
+                                    | ItemLocation.FighterBay
+                                    | ItemLocation.FighterTube
+                                    | ItemLocation.Implant
+                                    | ItemLocation.Subsystem -> true
+                                    | _ -> false)
+            |> Seq.map (fun e -> e.Item)
+            |> Seq.exists pred
             
+
         let tagOnTrue (tag: KillTag) (pred: Kill -> bool) (km: Kill)=
             match pred km with
             | true -> Some tag
@@ -84,7 +102,7 @@
             (tagOnTrue KillTag.SkillInjectorInHold) (hasItemsInCargo pred)
             
         let hasEcm (pred: Entity -> bool) =
-            (tagOnTrue KillTag.Ecm) (hasItemsInCargo pred)
+            (tagOnTrue KillTag.Ecm) (hasItemsFitted pred)
             
         let isPod isPod = 
             (tagOnTrue KillTag.Pod) (isVictimInPod isPod)
