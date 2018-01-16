@@ -2,6 +2,7 @@
 
     open System
     open FSharp.Data
+    open EveAlod.Common
     open EveAlod.Data
 
     type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
@@ -21,10 +22,13 @@
         let skillInjectorGroupId = "1739"
         let capsuleGroupId = "29"
 
+        let httpClient = Web.httpClient()
+        let getData = Web.getData httpClient
+
         let getGroupEntity(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
-                let! json = EveAlod.Common.Web.getData uri
+                let! json = getData uri
                 return match json with
                         | EveAlod.Common.HttpResponse.OK j -> 
                                     let root = (jsonGroupProvider.Parse(j))
@@ -64,7 +68,7 @@
         let getEntity(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/types/%s/?datasource=tranquility&language=en-us" id)
-                let! json = EveAlod.Common.Web.getData uri
+                let! json = getData uri
                 return match json with
                         | EveAlod.Common.HttpResponse.OK j -> 
                                     let root = (jsonEntityProvider.Parse(j))                
@@ -77,7 +81,7 @@
         let getCharacter(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us" id)
-                let! json = EveAlod.Common.Web.getData uri
+                let! json = getData uri
                 return match json with
                         | EveAlod.Common.HttpResponse.OK j -> 
                                     let root = (jsonCharacterProvider.Parse(j))                

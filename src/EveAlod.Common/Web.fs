@@ -5,30 +5,35 @@
         open System.IO
         open System.Net
         open FSharp.Data
-
+        open System.Net.Http
+        
         type Discord429Payload = JsonProvider<"""{ "message": "a", "retry_after": 0, "global":  false }""">
         type DiscordWebhookPayload = JsonProvider<"./SampleDiscordWebhookResponse.json">
         
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
 
-        let private httpClient()=
+        let httpClient()=
             let client = new System.Net.Http.HttpClient()
+            let cc = new System.Net.Http.Headers.CacheControlHeaderValue()
+            cc.NoCache <- false
+            cc.Public <- true
+            client.DefaultRequestHeaders.CacheControl <- cc
             client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
             client
 
-        let private getHeaderValue name (response: Http.HttpResponseMessage) = 
+        let getHeaderValue name (response: Http.HttpResponseMessage) = 
             response.Headers
                 |> Seq.filter (fun h -> h.Key = name)
                 |> Seq.collect (fun h -> h.Value)
                 |> Seq.tryHead
         
-        let private getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
+        let getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
             response
             |> getHeaderValue "X-RateLimit-Reset"
             |> Strings.toIntValue
             |> DateTime.getUtcFromEpoch
                    
-        let private parseDiscordResponse (response: Http.HttpResponseMessage) =
+        let parseDiscordResponse (response: Http.HttpResponseMessage) =
             async {
                 match response.StatusCode with
                 | HttpStatusCode.OK 
@@ -53,7 +58,7 @@
                     return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
             }
 
-        let private parseDiscordWebhookResponse (response: Http.HttpResponseMessage)=
+        let parseDiscordWebhookResponse (response: Http.HttpResponseMessage)=
             async {
                 match response.StatusCode with
                 | HttpStatusCode.OK  -> 
@@ -75,13 +80,11 @@
                 with e -> 
                     return Choice2Of2 e.Message                
             }
-        
-        let sendDiscord (channelId: string) (token: string) (content: string)=
+                
+        let sendDiscord (client: HttpClient) (channelId: string) (token: string) (content: string)=
             async {                
                 try
                     let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
-                                
-                    use client = httpClient()
         
                     let values = new System.Collections.Generic.Dictionary<string, string>()
                     values.Add("content", content)
@@ -95,15 +98,14 @@
                     return TimeSpan.FromSeconds(30.), "Unknown error: " + e.Message + e.StackTrace |> HttpResponse.Error
             }
             
-        let getData (url: string) =
+        
+        let getData (client: HttpClient) (url: string) =
             async {
-                try
-                    use client = httpClient()
-                    
+                try                    
                     let! resp = client.GetAsync(url) |> Async.AwaitTask
                     
                     let! result = 
-                        async {
+                        async {                            
                             match resp.StatusCode with
                             | HttpStatusCode.OK -> 
                                     use content = resp.Content
@@ -122,4 +124,3 @@
                 with e -> 
                     return HttpResponse.Error (e.Message + e.StackTrace)
             }
-

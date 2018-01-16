@@ -8,15 +8,19 @@
 
     type KillSourceActor(log: Post,
                             forward: Kill -> unit, 
-                            getKmData: string -> Async<HttpResponse>, 
+                            getKmData: System.Net.Http.HttpClient -> string -> Async<HttpResponse>, 
                             sourceUri: string)= 
         
         let logException = Actors.postException typeof<KillSourceActor>.Name log
         let standoffWait = TimeSpan.FromSeconds(60.)
         
+        let httpClient = Web.httpClient()
+        let getData = getKmData httpClient
+
+
         let onNext (inbox: Inbox) url = 
             async {                                
-                let! data = getKmData url
+                let! data = getData url
 
                 let waitTime = match data with
                                     | HttpResponse.OK d -> 

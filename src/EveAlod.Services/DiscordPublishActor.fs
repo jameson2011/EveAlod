@@ -3,9 +3,13 @@
     open System
     open EveAlod.Common
     open EveAlod.Data
+    open System.Net.Http
     
-    type DiscordPublishActor(log: Post, channel: DiscordChannel, defaultWait: TimeSpan)= 
+    type DiscordPublishActor(log: Post, channel: DiscordChannel,  sendDiscord: HttpClient-> string -> string -> string -> Async<TimeSpan * HttpResponse>)= 
     
+        let httpClient = Web.httpClient()
+        let post = sendDiscord httpClient channel.Id channel.Token 
+
         let logResponse (response) =            
             let logMsg = (match response with
                             | HttpResponse.TooManyRequests -> 
@@ -23,7 +27,7 @@
             async {
                 let! r = Async.Sleep(int wait.TotalMilliseconds)
                     
-                let! wait, response = EveAlod.Common.Web.sendDiscord channel.Id channel.Token msg
+                let! wait, response = post msg
                 
                 logResponse response
                 

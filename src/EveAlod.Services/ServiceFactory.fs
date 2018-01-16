@@ -13,7 +13,7 @@
         let logger = new LogPublishActor()
         
         
-        let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, TimeSpan.FromSeconds(5.))
+        let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
         
         let killPublisher = new KillPublisherActor(logger.Post, 
@@ -35,7 +35,7 @@
 
         let killSource = new KillSourceActor(logger.Post,
                                                 Actors.forward Tag killTagger.Post,
-                                                EveAlod.Common.Web.getData, 
+                                                EveAlod.Common.Web.getData,
                                                 "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             
         member this.KillSource = killSource
