@@ -29,7 +29,19 @@
     type NonEmptyStrings=
         static member Words()=
             Arb.Default.String()
-            |> Arb.filter (fun s -> String.IsNullOrWhiteSpace(s) |> not)            
+            |> Arb.filter (String.IsNullOrWhiteSpace >> not)            
+
+    type DigitStrings=
+        static member Words()=
+            Arb.Default.String()
+            |> Arb.filter ((=) null >> not)
+            |> Arb.filter (fun s -> s |> Seq.exists (Char.IsDigit))
+
+    type NonDigitStrings=
+        static member Words()=
+            Arb.Default.String()
+            |> Arb.filter ((=) null >> not)
+            |> Arb.filter (fun s -> s |> Seq.exists (Char.IsDigit >> not))
 
     type UniqueNonEmptyStrings=        
         static member Words()=                

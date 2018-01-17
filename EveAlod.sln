@@ -26,6 +26,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Common.Tests", "src
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Services.Tests", "src\EveAlod.Services.Tests\EveAlod.Services.Tests.fsproj", "{2DE59415-AFA8-4ED3-BD20-10BD7D247F92}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Data.Tests", "src\EveAlod.Data.Tests\EveAlod.Data.Tests.fsproj", "{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{2DE59415-AFA8-4ED3-BD20-10BD7D247F92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DE59415-AFA8-4ED3-BD20-10BD7D247F92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DE59415-AFA8-4ED3-BD20-10BD7D247F92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1804C976-CE6C-4152-BF62-90ECE09C985C} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
 		{2DE59415-AFA8-4ED3-BD20-10BD7D247F92} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
+		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FF0F849-EC12-4523-8B22-F5DF8F531259}

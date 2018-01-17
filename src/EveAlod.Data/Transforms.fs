@@ -7,11 +7,11 @@
 
         type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
 
-        let private toEntity (id: string) =
-            match id with
+        let toEntity =
+            function
             | "" -> None
             | id -> Some {Entity.Id = id; Name = "" };
-
+       
         let private toCharacter (json: JsonValue option) =
             let char = toEntity (json |> getProp "character_id" |> getString)
             let corp = toEntity (json |> getProp "corporation_id" |> getString)
