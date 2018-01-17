@@ -8,7 +8,6 @@
     
     module DateTimeTests =
         open EveAlod.Common
-        open FsCheck.Gen
     
         let baseDate = epochStart
 
@@ -78,5 +77,11 @@
 
             result = dto.UtcDateTime
 
+        [<Property(Verbose=true)>]
+        let ``diff is the same as DateTime.op_subtract``(x: DateTime, y: DateTime)=
+            (diff x y) = (x - y)
             
-            
+        [<Property(Verbose=true, Arbitrary = [| typeof<PositiveFloats> |])>]
+        let ``addTimeSpan is the same as DateTime.Add``(x: DateTime, secs: float)=
+            let y = TimeSpan.FromSeconds(secs)
+            (addTimeSpan y x) = (x.Add(y))

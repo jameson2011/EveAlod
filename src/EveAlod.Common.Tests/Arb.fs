@@ -50,4 +50,9 @@
             |> Arb.fromGen    
             |> Arb.filter (fun s -> String.IsNullOrWhiteSpace(s) |> not)
 
+    type PositiveFloats=
+        static member Numbers()=
+            Arb.Default.Float()
+            |> Arb.filter (fun x -> x >  0. && x < 10000.)
+
     

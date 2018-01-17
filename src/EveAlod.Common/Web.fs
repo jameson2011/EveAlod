@@ -14,12 +14,7 @@
 
         let httpClient()=
             let client = new System.Net.Http.HttpClient()
-            let cc = new System.Net.Http.Headers.CacheControlHeaderValue()
-            cc.NoCache <- false
-            cc.Public <- true
-            client.DefaultRequestHeaders.CacheControl <- cc
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
-            
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)            
             client
 
         let getHeaderValue name (response: Http.HttpResponseMessage) = 
@@ -30,10 +25,31 @@
         
         let getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
             response
-            |> getHeaderValue "X-RateLimit-Reset"
-            |> Strings.toIntValue
-            |> DateTime.getUtcFromEpoch
+                |> getHeaderValue "X-RateLimit-Reset"
+                |> Strings.toIntValue
+                |> DateTime.getUtcFromEpoch
                    
+        let getAge (response: Net.Http.HttpResponseMessage)=
+            Option.ofNullable response.Headers.Age 
+
+        let getServerTime (response: Net.Http.HttpResponseMessage)=
+            let age = getAge response
+            Option.ofNullable response.Headers.Date
+                |> Option.map DateTimeOffset.toUtc
+                |> Option.map2 DateTime.addTimeSpan age
+                    
+        let getExpires (response: Net.Http.HttpResponseMessage)=
+            Option.ofNullable response.Content.Headers.Expires 
+                |> Option.map DateTimeOffset.toUtc
+            
+        let getWait (response: Net.Http.HttpResponseMessage) =           
+            let expires = getExpires response            
+            getServerTime response
+                |> Option.map2 (DateTime.diff) expires 
+                |> Option.map 
+                (min TimeSpan.Zero)
+            
+
         let parseDiscordResponse (response: Http.HttpResponseMessage) =
             async {
                 match response.StatusCode with

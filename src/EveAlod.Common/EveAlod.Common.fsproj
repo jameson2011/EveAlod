@@ -64,6 +64,7 @@
     <Content Include="packages.config" />
     <Compile Include="Combinators.fs" />
     <Compile Include="DateTime.fs" />
+    <Compile Include="DateTimeOffset.fs" />
     <Compile Include="Strings.fs" />
     <Compile Include="Seq.fs" />
     <Compile Include="HttpResponses.fs" />
