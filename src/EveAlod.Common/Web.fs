@@ -1,8 +1,22 @@
 ﻿namespace EveAlod.Common
+
+    open System
+
+    type HttpStatus =
+        | OK
+        | TooManyRequests
+        | Unauthorized
+        | Error
+    
+    type WebResponse=
+        {
+            Status: HttpStatus;
+            Retry: TimeSpan option;
+            Message: string
+        }
+
     module Web=
 
-        open System
-        open System.IO
         open System.Net
         open FSharp.Data
         open System.Net.Http
@@ -46,8 +60,8 @@
             let expires = getExpires response            
             getServerTime response
                 |> Option.map2 (DateTime.diff) expires 
-                |> Option.map 
-                (min TimeSpan.Zero)
+                |> Option.map (max TimeSpan.Zero)
+            
             
 
         let parseDiscordResponse (response: Http.HttpResponseMessage) =
@@ -59,7 +73,10 @@
                     let remoteResetTime = (getDiscordRateLimitReset response)                    
                     let wait = remoteResetTime - remoteTime
                     
-                    return wait, (HttpResponse.OK "")
+                    return { WebResponse.Status = HttpStatus.OK;
+                                                Retry = Some wait;
+                                                Message = ""
+                                            }                    
 
                 | x when (int x) = 429 ->                     
                     use content = response.Content
@@ -68,11 +85,20 @@
                     
                     let wait = TimeSpan.FromMilliseconds(float responsePayload.RetryAfter)
                     
-                    return wait, (HttpResponse.TooManyRequests)
+                    return { WebResponse.Status = HttpStatus.TooManyRequests;
+                                                Retry = Some wait;
+                                                Message = s
+                                            }
                 | HttpStatusCode.Unauthorized ->
-                    return TimeSpan.FromSeconds(30.), (HttpResponse.Unauthorized)
+                    return { WebResponse.Status = HttpStatus.Unauthorized;
+                                Retry = Some (TimeSpan.FromSeconds(30.));
+                                Message = ""
+                            }
                 | _ -> 
-                    return TimeSpan.FromSeconds(30.), (HttpResponse.Error "Unknown error")
+                    return { WebResponse.Status = HttpStatus.Error;
+                                Retry = Some (TimeSpan.FromSeconds(30.));
+                                Message = "Unknown error"
+                            }
             }
 
         let parseDiscordWebhookResponse (response: Http.HttpResponseMessage)=
@@ -112,7 +138,10 @@
                     return! parseDiscordResponse response
                     
                 with e -> 
-                    return TimeSpan.FromSeconds(30.), "Unknown error: " + e.Message + e.StackTrace |> HttpResponse.Error
+                    return { WebResponse.Status = HttpStatus.Error;
+                                Retry = Some (TimeSpan.FromSeconds(30.));
+                                Message = "Unknown error: " + e.Message + e.StackTrace
+                            }
             }
             
         
@@ -122,22 +151,37 @@
                     use! resp = client.GetAsync(url) |> Async.AwaitTask
                     
                     let! result = 
-                        async {                            
+                        async {                       
+                            let retry = getWait resp
                             match resp.StatusCode with
                             | HttpStatusCode.OK -> 
                                     use content = resp.Content
                                     let! s = content.ReadAsStringAsync() |> Async.AwaitTask                    
                                     
-                                    return HttpResponse.OK (s)
+                                    return { WebResponse.Status = HttpStatus.OK;
+                                                Retry = retry;
+                                                Message = s
+                                            }
                             | x when (int x) = 429 -> 
-                                    return HttpResponse.TooManyRequests
+                                    return { Status = HttpStatus.TooManyRequests;
+                                                Retry = retry;
+                                                Message = "";
+                                            }
                             | HttpStatusCode.Unauthorized -> 
-                                    return HttpResponse.Unauthorized
+                                    return { Status = HttpStatus.Unauthorized;
+                                                Retry = retry;
+                                                Message = "";
+                                            }
                             | x -> 
-                                    return HttpResponse.Error (sprintf "Error %s getting data" (x.ToString()) )
-
+                                    return { Status = HttpStatus.Error;
+                                                Retry = retry;
+                                                Message = (sprintf "Error %s getting data" (x.ToString()) );
+                                            }
                              }
                     return result
                 with e -> 
-                    return HttpResponse.Error (e.Message + e.StackTrace)
+                    return { Status = HttpStatus.Error;
+                                                Retry = None;
+                                                Message = (e.Message + e.StackTrace);
+                                            }
             }

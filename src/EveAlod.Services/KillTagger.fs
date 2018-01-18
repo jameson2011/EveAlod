@@ -26,7 +26,8 @@
                             Tagging.isCheap;                            
                         ]
                         |> Seq.map (fun f -> f kill)
-                        |> Seq.exceptNones
+                        |> Seq.mapSomes
+                        |> List.ofSeq
                         |> List.append kill.Tags
             
             {kill with Tags = tags}

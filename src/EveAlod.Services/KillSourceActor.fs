@@ -8,7 +8,7 @@
 
     type KillSourceActor(log: Post,
                             forward: Kill -> unit, 
-                            getKmData: System.Net.Http.HttpClient -> string -> Async<HttpResponse>, 
+                            getKmData: System.Net.Http.HttpClient -> string -> Async<WebResponse>, 
                             sourceUri: string)= 
         
         let logException = Actors.postException typeof<KillSourceActor>.Name log
@@ -20,22 +20,22 @@
 
         let onNext (inbox: Inbox) url = 
             async {                                
-                let! data = getData url
+                let! resp = getData url
 
-                let waitTime = match data with
-                                    | HttpResponse.OK d -> 
-                                            match d |> Transforms.toKill with
+                let waitTime = match resp.Status with
+                                    | EveAlod.Common.HttpStatus.OK -> 
+                                            match resp.Message |> Transforms.toKill with
                                             | Some k -> forward k
                                             | _ -> Messages.info "No data received from zKB" |> log
                                             TimeSpan.Zero
-                                    | HttpResponse.TooManyRequests -> 
+                                    | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
                                         standoffWait
-                                    | HttpResponse.Unauthorized -> 
+                                    | HttpStatus.Unauthorized -> 
                                         ActorMessage.Warning ("zKB", "zKB reported unauthorized") |> log
                                         standoffWait
-                                    | HttpResponse.Error msg ->                                         
-                                        ActorMessage.Error ("zKB", msg) |> log
+                                    | HttpStatus.Error ->                                         
+                                        ActorMessage.Error ("zKB", resp.Message) |> log
                                         standoffWait
                 inbox.Post (GetNext (url, waitTime))
 

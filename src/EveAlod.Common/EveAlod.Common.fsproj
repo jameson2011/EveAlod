@@ -67,7 +67,6 @@
     <Compile Include="DateTimeOffset.fs" />
     <Compile Include="Strings.fs" />
     <Compile Include="Seq.fs" />
-    <Compile Include="HttpResponses.fs" />
     <Compile Include="Web.fs" />
     <Compile Include="Json.fs" />
     <None Include="SampleDiscordWebhookResponse.json" />

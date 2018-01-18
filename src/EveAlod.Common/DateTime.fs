@@ -8,9 +8,11 @@
 
         let getUtcFromEpoch (seconds) = epochStart.AddSeconds(float seconds)
 
-        let addTimeSpan (y: TimeSpan) (x: DateTime) = x.Add(y)
+        let addTimeSpan (y: TimeSpan) (x: DateTime) = 
+            x.Add(y)
 
-        let diff (x: DateTime) (y: DateTime) = x - y
+        let diff (x: DateTime) (y: DateTime) = 
+            x - y
 
         let ofDateTimeOffset (defaultTime: DateTime) (time: Nullable<DateTimeOffset>)=            
             if time.HasValue then
