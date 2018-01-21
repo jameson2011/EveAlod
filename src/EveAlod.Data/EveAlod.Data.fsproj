@@ -65,8 +65,13 @@
     <Compile Include="Configuration.fs" />
     <Compile Include="Kills.fs" />
     <Compile Include="ActorMessages.fs" />
+    <Compile Include="..\..\..\EveAlod\src\EveAlod.Data\EntityTransforms.fs" />
     <Compile Include="Transforms.fs" />
     <None Include="SampleRedisqKillmail.json" />
+    <None Include="..\..\..\EveAlod\src\EveAlod.Data\SampleCharacter.json" />
+    <None Include="..\..\..\EveAlod\src\EveAlod.Data\SampleEntity.json" />
+    <None Include="..\..\..\EveAlod\src\EveAlod.Data\SampleEntityGroup.json" />
+    <None Include="..\..\..\EveAlod\src\EveAlod.Data\SampleIds.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
