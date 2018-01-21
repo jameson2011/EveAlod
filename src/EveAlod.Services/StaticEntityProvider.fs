@@ -31,11 +31,7 @@
                 let! resp = getData uri
                 return match resp.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
-                                    let root = (jsonGroupProvider.Parse(resp.Message))
-                                    Some {EntityGroup.Id = root.GroupId.ToString(); 
-                                                Name = root.Name;
-                                                EntityIds = root.Types |> Seq.map (fun i -> i.ToString()) |> Array.ofSeq
-                                                }
+                            resp.Message |> EntityTransforms.parseEntityGroup
                         | _ -> None
             }
             
@@ -70,10 +66,7 @@
                 let! response = getData uri
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
-                                    let root = (jsonEntityProvider.Parse(response.Message))
-                                    Some {Entity.Id = root.TypeId.ToString(); 
-                                                Name = root.Name;
-                                                }
+                                    response.Message |> EntityTransforms.parseEntity
                         | _ -> None
             }
 
@@ -83,11 +76,7 @@
                 let! response = getData uri
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
-                                    let root = (jsonCharacterProvider.Parse(response.Message))
-                                    Some {Character.Char = {Entity.Id = id; Name = root.Name; };
-                                            Corp = Some {Entity.Id = root.CorporationId.ToString(); Name = "" };
-                                            Alliance = None
-                                        }
+                            response.Message |> EntityTransforms.parseCharacter id
                         | _ -> None
             }
 

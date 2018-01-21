@@ -26,8 +26,7 @@
             | Some id -> id = corpId
             | _ -> false
                         
-        let getCharacters (chars: seq<Character>) =
-            
+        let getCharacters (chars: seq<Character>) =            
             let queries =   chars 
                             |> Seq.map (fun c -> c.Char.Id)
                             |> Seq.map staticEntities.Character                            
