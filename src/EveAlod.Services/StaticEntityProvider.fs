@@ -5,11 +5,6 @@
     open EveAlod.Common
     open EveAlod.Data
 
-    type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
-    type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
-    type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
-    type jsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
-
     type IStaticEntityProvider=
         abstract member EntityIds: EntityGroupKey -> Set<string>
         abstract member Entity: string -> Async<Entity option>
