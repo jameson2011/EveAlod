@@ -24,7 +24,7 @@
         | Cheap
 
     
-    type SpaceArea = 
+    type SpaceSecurity = 
         | Lowsec
         | Nullsec
         | Wormhole
@@ -34,7 +34,7 @@
         {
             Id: string;
             Name: string;
-            Space: SpaceArea
+            Security: SpaceSecurity
         }
 
     type ItemLocation =

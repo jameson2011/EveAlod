@@ -89,6 +89,7 @@
     <Compile Include="KillPublisherActor.fs" />
     <Compile Include="ServiceFactory.fs" />
     <None Include="SampleConfig.json" />
+    <None Include="Script1.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

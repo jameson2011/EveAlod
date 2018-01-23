@@ -4,6 +4,7 @@
 
         open EveAlod.Common.Json
         open FSharp.Data
+        open System
 
         type jsonToSolarSystem = JsonProvider<"./SampleSolarSystem.json">
         type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
@@ -11,11 +12,29 @@
         type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
         type jsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
 
+        
+
+        // Temporary until SDE integrated    
+        let isWormholeName (name: string) = 
+            let stringComp = StringComparer.InvariantCultureIgnoreCase
+            (name.StartsWith("J", StringComparison.InvariantCultureIgnoreCase) &&          
+                (name.IndexOf("-") < 0 ) &&
+                Int32.TryParse(name.Substring(1)) |> (fun (isWh,_) -> isWh) ) ||
+            stringComp.Equals(name, "Thera")
+
+        let getSecurityStatus name status = 
+            match (name, status) with        
+                        | _,s when s >= 0.5m -> SpaceSecurity.Highsec
+                        | _,s when s > 0.0m -> SpaceSecurity.Lowsec
+                        | n,s when (isWormholeName n) -> SpaceSecurity.Wormhole
+                        | _ -> SpaceSecurity.Nullsec        
+
         let parseCharacter id json = 
             let root = (jsonCharacterProvider.Parse(json))
             Some {Character.Char = {Entity.Id = id; Name = root.Name; };
                     Corp = Some {Entity.Id = root.CorporationId.ToString(); Name = "" };
-                    Alliance = None
+                    Alliance = None;
+                    //Alliance = Some { Entity.Id = root.AllianceId.ToString(); Name = ""};
                 }
 
         let parseEntity json =
@@ -33,11 +52,6 @@
 
         let parseSolarSystem json =
             let o = jsonToSolarSystem.Parse(json)            
-            let area = match o.SecurityStatus with
-                        | s when s >= 5.0m -> SpaceArea.Highsec
-                        | s when s > 0.0m -> SpaceArea.Lowsec
-                        | s when s < -0.98m -> SpaceArea.Wormhole
-                        | _ -> SpaceArea.Nullsec
             Some { SolarSystem.Id = o.SystemId.ToString();
                         Name = o.Name;
-                        Space = area}
+                        Security = getSecurityStatus o.Name o.SecurityStatus}
