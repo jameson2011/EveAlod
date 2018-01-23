@@ -24,34 +24,22 @@
                             resp.Message |> EntityTransforms.parseEntityGroup
                         | _ -> None
             }
-            
-            
-        let getGroupEntities (ids: seq<string>) =
-            ids
-                |> Seq.map getGroupEntity
-                |> Async.Parallel
-                |> Async.RunSynchronously
-                |> Seq.mapSomes
-                |> List.ofSeq
-                    
-        let entityGroups =
-            [             
-                EntityGroupKey.Ecm, lazy ( [ ecmGroupId ] |> getGroupEntities );
-                EntityGroupKey.Plex, lazy ( [ plexGroupId ] |> getGroupEntities );
-                EntityGroupKey.SkillInjector, lazy ( [ skillInjectorGroupId ] |> getGroupEntities );
-                EntityGroupKey.Capsule, lazy ( [ capsuleGroupId ] |> getGroupEntities );
-            ]
-            |> Map.ofSeq
+
+        let entityGroupId = 
+            function
+            | EntityGroupKey.Ecm -> ecmGroupId
+            | EntityGroupKey.Plex ->  plexGroupId
+            | EntityGroupKey.SkillInjector -> skillInjectorGroupId
+            | EntityGroupKey.Capsule -> capsuleGroupId
         
-        let groupEntityIds (key: EntityGroupKey)=
-            async {
-                return match entityGroups |> Map.tryFind key with
-                        | Some grp -> grp.Value
-                                        |> Seq.collect (fun o -> o.EntityIds)
-                                        |> Set.ofSeq
-                                        |> Option.Some
-                        | _ -> None
+        let groupEntityIds (key: EntityGroupKey)=            
+            async {  
+                    let! entity = key |> entityGroupId |> getGroupEntity
+                    match entity with
+                    | Some e -> return Some (e.EntityIds |> Set.ofSeq)
+                    | _ -> return None    
                 }
+            
 
         let getEntity(id: string)=
             async {
