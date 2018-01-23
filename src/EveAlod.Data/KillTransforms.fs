@@ -17,20 +17,21 @@
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
             | _ -> None
             
-        let toStandardTags (json: JsonValue option) =
-            let result = []
-            let result = match (json |> getProp "npc" |> getBool) with
-                            | true -> (KillTag.Npc :: result)
-                            | _ -> result
-            let result = match (json |> getProp "solo" |> getBool) with
-                            | true -> (KillTag.Solo :: result)
-                            | _ -> result
-            match (json |> getProp "awox" |> getBool) with
-                            | true -> (KillTag.Awox :: result)
-                            | _ -> result
-            
-
         
+        let toStandardTags (json: JsonValue option) =
+            let tagMap = [ "npc", KillTag.Npc;
+                        "solo", KillTag.Solo;
+                        "awox", KillTag.Awox]
+            let rec addTags (json) (map) result=
+                match map with
+                | [] -> result
+                | (name,tag)::t -> 
+                        let r = match json |> getProp name |> getBool with
+                                | true -> tag :: result
+                                | _ -> result
+                        addTags json t r
+            addTags json tagMap []
+            
         
         let toCargoItem (json: JsonValue) = 
             { CargoItem.Item = { 
