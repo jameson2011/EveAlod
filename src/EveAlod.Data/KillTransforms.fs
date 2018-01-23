@@ -8,7 +8,7 @@
         type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
 
         
-        let private toCharacter (json: JsonValue option) =
+        let toCharacter (json: JsonValue option) =
             let char = EntityTransforms.toEntity (json |> getProp "character_id" |> getString)
             let corp = EntityTransforms.toEntity (json |> getProp "corporation_id" |> getString)
             let alliance = EntityTransforms.toEntity (json |> getProp "alliance_id" |> getString)
@@ -17,7 +17,7 @@
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
             | _ -> None
             
-        let private toTags (json: JsonValue option) : KillTag list=
+        let toTags (json: JsonValue option) =
             let result = []
             let result = match (json |> getProp "npc" |> getBool) with
                             | true -> (KillTag.Npc :: result)
@@ -25,14 +25,14 @@
             let result = match (json |> getProp "solo" |> getBool) with
                             | true -> (KillTag.Solo :: result)
                             | _ -> result
-            let result = match (json |> getProp "awox" |> getBool) with
+            match (json |> getProp "awox" |> getBool) with
                             | true -> (KillTag.Awox :: result)
                             | _ -> result
-            result
+            
 
         
         
-        let private toCargoItem (json: JsonValue) : CargoItem = 
+        let toCargoItem (json: JsonValue) = 
             { CargoItem.Item = { 
                                 Entity.Id = Some json |> getProp "item_type_id" |> getString
                                 Name = ""
@@ -43,19 +43,19 @@
 
 
             
-        let private toCargoItems (json: JsonValue[] option) : CargoItem list = 
+        let toCargoItems (json: JsonValue[] option) : CargoItem list = 
             match json with
             | Some xs -> xs |> Seq.map toCargoItem |> List.ofSeq
             | None -> []
 
-        let private toAttacker (json: JsonValue option) : Attacker = 
+        let toAttacker (json: JsonValue option) = 
             {
                 Attacker.Char = json |> toCharacter;
                 Damage = json |> getProp "damage_done" |> getInt;
                 Ship = json |> getProp "ship_type_id" |> getString |> EntityTransforms.toEntity 
             }
 
-        let private toAttackers (json: JsonValue[] option) : Attacker list = 
+        let toAttackers (json: JsonValue[] option) = 
             match json with
             | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> List.ofSeq
             | None -> []
