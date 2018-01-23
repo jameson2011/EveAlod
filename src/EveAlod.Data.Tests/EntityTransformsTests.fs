@@ -36,3 +36,20 @@
         let ``getSecurityStatus thera``(status)=
             let r = EntityTransforms.getSecurityStatus "thera" status
             r = SpaceSecurity.Wormhole
+
+        
+        [<Fact>]
+        let ``toEntity empty value yields None``()=
+            let r = EntityTransforms.toEntity ""
+            r = None
+
+        [<Property(Verbose = true, Arbitrary = [| typeof<EveAlod.Common.Tests.NonEmptyStrings> |])>]
+        let ``toEntity id applied to Entity Id``(id: string)=
+            let r = (EntityTransforms.toEntity id).Value.Id 
+            
+            r = id
+
+        [<Property(Verbose = true, Arbitrary = [| typeof<EveAlod.Common.Tests.NonDigitStrings> |])>]
+        let ``toItemLocation non-integer value yields Unknown``(id)=
+            let r = EntityTransforms.toItemLocation id
+            r = ItemLocation.Unknown
