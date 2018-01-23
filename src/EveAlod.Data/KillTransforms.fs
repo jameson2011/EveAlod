@@ -1,6 +1,6 @@
 ﻿namespace EveAlod.Data
     
-    module Transforms=
+    module KillTransforms=
 
         open EveAlod.Common.Json
         open FSharp.Data

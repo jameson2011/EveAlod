@@ -24,7 +24,7 @@
 
                 let waitTime = match resp.Status with
                                     | EveAlod.Common.HttpStatus.OK -> 
-                                            match resp.Message |> Transforms.toKill with
+                                            match resp.Message |> KillTransforms.toKill with
                                             | Some k -> forward k
                                             | _ -> Messages.info "No data received from zKB" |> log
                                             TimeSpan.Zero

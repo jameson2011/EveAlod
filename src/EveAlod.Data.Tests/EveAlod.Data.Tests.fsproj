@@ -60,7 +60,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="TransformsTests.fs" />
+    <Compile Include="EntityTransformsTests.fs" />
+    <Compile Include="KillTransformsTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
