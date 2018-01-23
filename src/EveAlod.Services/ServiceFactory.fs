@@ -12,9 +12,7 @@
 
         let logger = new LogPublishActor()
         
-        
         let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
-        
         
         let killPublisher = new KillPublisherActor(logger.Post, 
                                                     new KillMessageBuilder(staticData, config.CorpId), 

@@ -1,7 +1,6 @@
 ﻿namespace EveAlod.Services
 
     open System
-    open FSharp.Data
     open EveAlod.Common
     open EveAlod.Data
 
@@ -71,11 +70,23 @@
                         | _ -> None
             }
 
+        let getSolarSystem(id: string)=
+            async{
+                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/systems/%s/?datasource=tranquility&language=en-us" id)
+                let! response = getData uri
+                return match response.Status with
+                        | EveAlod.Common.HttpStatus.OK -> 
+                            response.Message |> EntityTransforms.parseSolarSystem
+                        | _ -> None
+                }
+
         interface IStaticEntityProvider with
             member this.EntityIds(key: EntityGroupKey) = groupEntityIds key
 
             member this.Entity (id: string) = getEntity id
 
             member this.Character(id: string) = getCharacter id
+
+            member this.SolarSystem(id: string) = getSolarSystem id
 
             

@@ -23,6 +23,19 @@
         | Expensive
         | Cheap
 
+    
+    type SpaceArea = 
+        | Lowsec
+        | Nullsec
+        | Wormhole
+        | Highsec
+
+    type SolarSystem=
+        {
+            Id: string;
+            Name: string;
+            Space: SpaceArea
+        }
 
     type ItemLocation =
         | Unknown

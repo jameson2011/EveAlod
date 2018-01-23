@@ -9,5 +9,6 @@
         abstract member EntityIds: EntityGroupKey -> Set<string>
         abstract member Entity: string -> Async<Entity option>
         abstract member Character: string -> Async<Character option>
+        abstract member SolarSystem: string -> Async<SolarSystem option>
 
 
