@@ -17,7 +17,7 @@
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
             | _ -> None
             
-        let toTags (json: JsonValue option) =
+        let toStandardTags (json: JsonValue option) =
             let result = []
             let result = match (json |> getProp "npc" |> getBool) with
                             | true -> (KillTag.Npc :: result)
@@ -89,7 +89,7 @@
                 
                     Attackers = attackersJson |> toAttackers;
                 
-                    Tags = (toTags zkb);
+                    Tags = (toStandardTags zkb);
 
                     AlodScore = 0.;
                 }

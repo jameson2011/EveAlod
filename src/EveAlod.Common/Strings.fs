@@ -3,6 +3,7 @@
     open System
         
     module Strings=                      
+        let str x = x.ToString()
 
         let prettyConcat (txts: string list) =
             let rec concat txts (result: string) =
