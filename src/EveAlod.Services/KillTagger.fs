@@ -6,7 +6,10 @@
     type KillTagger(entityProvider: IStaticEntityProvider, corpId: string)=
         
         let isType (key: EntityGroupKey) (entity:Entity) =
-            entityProvider.EntityIds(key).Contains(entity.Id)
+            let group = entityProvider.EntityIds(key) |> Async.RunSynchronously
+            match group with 
+            | Some grp -> grp.Contains(entity.Id)
+            | None -> false
         
         let isEcm = isType EntityGroupKey.Ecm
         let isPlex = isType EntityGroupKey.Plex

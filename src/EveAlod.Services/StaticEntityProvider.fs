@@ -44,11 +44,14 @@
             |> Map.ofSeq
         
         let groupEntityIds (key: EntityGroupKey)=
-            match entityGroups |> Map.tryFind key with
-                | Some grp -> grp.Value
-                                |> Seq.collect (fun o -> o.EntityIds)
-                                |> Set.ofSeq
-                | _ -> Set.empty<string>
+            async {
+                return match entityGroups |> Map.tryFind key with
+                        | Some grp -> grp.Value
+                                        |> Seq.collect (fun o -> o.EntityIds)
+                                        |> Set.ofSeq
+                                        |> Option.Some
+                        | _ -> None
+                }
 
         let getEntity(id: string)=
             async {

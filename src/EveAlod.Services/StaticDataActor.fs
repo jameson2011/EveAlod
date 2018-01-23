@@ -7,19 +7,21 @@
     type private StaticDataCache=
         {
             Characters: Map<string, Character option>;
-            SolarSystems: Map<string, SolarSystem option>
+            SolarSystems: Map<string, SolarSystem option>;
+            EntityGroups: Map<EntityGroupKey, Set<string> option>;
         }
 
     type private DataActorMessage=
         | GetCharacter of string * AsyncReplyChannel<Character option>
         | GetSolarSystem of string * AsyncReplyChannel<SolarSystem option>
+        | GetEntityGroup of EntityGroupKey * AsyncReplyChannel<Set<string> option>
         
 
     type StaticDataActor(log: Post, provider: IStaticEntityProvider)=
         
         let onException = Actors.postException typeof<StaticDataActor>.Name log
 
-        let cacheGetOrSet (cache: Map<string, 'a option>) (get: string -> Async<'a option>) id =
+        let cacheGetOrSet (cache: Map<'k, 'a option>) (get: 'k -> Async<'a option>) id =
             async {
                     match cache.TryFind(id) with
                     | Some x -> return cache, x
@@ -39,6 +41,12 @@
             async {
                 let! (m,c) = cacheGetOrSet cache.Characters provider.Character id
                 return { cache with Characters = m}, c
+            }
+
+        let entityGroupIds (cache: StaticDataCache) (key: EntityGroupKey) =
+            async {
+                let! (m,c) = cacheGetOrSet cache.EntityGroups provider.EntityIds key
+                return { cache with EntityGroups = m}, c
             }
 
         let onRequest (cache: StaticDataCache) get id (chnl: AsyncReplyChannel<'a>) : Async<StaticDataCache> =
@@ -64,13 +72,17 @@
                                             
                                         | GetCharacter (id, ch) ->
                                             return! onRequest cache character id ch
+
+                                        | GetEntityGroup (key, ch) ->
+                                            return! onRequest cache entityGroupIds key ch
                                     }
 
                 return! loop(newCache)
             }
 
             let cache = { StaticDataCache.Characters = Map.empty<string, Character option>;
-                            SolarSystems = Map.empty<string, SolarSystem option>
+                            SolarSystems = Map.empty<string, SolarSystem option>;
+                            EntityGroups = Map.empty<EntityGroupKey, Set<string> option>;
                             }
             loop(cache)
             )
@@ -82,3 +94,8 @@
             
         member __.Character(id: string) = 
             agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetCharacter (id,ch))
+           
+        member __.EntityIds(key: EntityGroupKey) = 
+            agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetEntityGroup (key, ch))
+                            |> Async.RunSynchronously
+            

@@ -4,7 +4,7 @@
     open EveAlod.Data
     open EveAlod.Common.Strings
 
-    type KillMessageBuilder(staticEntities: IStaticEntityProvider, corpId: string)=
+    type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         
         let rnd = new System.Random()
         let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 

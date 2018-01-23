@@ -9,13 +9,13 @@
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
         let staticData = new StaticEntityProvider() :> IStaticEntityProvider
-
         let logger = new LogPublishActor()
+        let data = new StaticDataActor(logger.Post, staticData)
         
         let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
         let killPublisher = new KillPublisherActor(logger.Post, 
-                                                    new KillMessageBuilder(staticData, config.CorpId), 
+                                                    new KillMessageBuilder(data, config.CorpId), 
                                                     Actors.forward SendToDiscord discordPublisher.Post
                                                     )
         
