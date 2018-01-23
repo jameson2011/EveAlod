@@ -97,5 +97,4 @@
            
         member __.EntityIds(key: EntityGroupKey) = 
             agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetEntityGroup (key, ch))
-                            |> Async.RunSynchronously
             

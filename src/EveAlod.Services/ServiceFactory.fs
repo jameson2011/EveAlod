@@ -8,14 +8,14 @@
         let config = configProvider()
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
-        let staticData = new StaticEntityProvider() :> IStaticEntityProvider
+        let dataProvider = new StaticEntityProvider() :> IStaticEntityProvider
         let logger = new LogPublishActor()
-        let data = new StaticDataActor(logger.Post, staticData)
+        let dataActor = new StaticDataActor(logger.Post, dataProvider)
         
         let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
         let killPublisher = new KillPublisherActor(logger.Post, 
-                                                    new KillMessageBuilder(data, config.CorpId), 
+                                                    new KillMessageBuilder(dataActor, config.CorpId), 
                                                     Actors.forward SendToDiscord discordPublisher.Post
                                                     )
         
@@ -28,7 +28,7 @@
                                                             killFilter.Post (Scored km)) 
         
         let killTagger = new KillTaggerActor(logger.Post, 
-                                                new KillTagger(staticData, config.CorpId), 
+                                                new KillTagger(dataActor, config.CorpId), 
                                                 Actors.forward Score killScorer.Post)
 
         let killSource = new KillSourceActor(logger.Post,

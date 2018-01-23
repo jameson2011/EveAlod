@@ -3,7 +3,7 @@
     open EveAlod.Common
     open EveAlod.Data
 
-    type KillTagger(entityProvider: IStaticEntityProvider, corpId: string)=
+    type KillTagger(entityProvider: StaticDataActor, corpId: string)=
         
         let isType (key: EntityGroupKey) (entity:Entity) =
             let group = entityProvider.EntityIds(key) |> Async.RunSynchronously
