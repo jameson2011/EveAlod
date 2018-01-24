@@ -45,6 +45,20 @@
                 | _ -> ItemLocation.Unknown
             | _ -> 
                 ItemLocation.Unknown
+        
+        let isFitted = 
+            function
+            | ItemLocation.HighSlot 
+            | ItemLocation.MidSlot 
+            | ItemLocation.LowSlot
+            | ItemLocation.DroneBay
+            | ItemLocation.RigSlot
+            | ItemLocation.FixedSlot
+            | ItemLocation.FighterBay
+            | ItemLocation.FighterTube
+            | ItemLocation.Implant
+            | ItemLocation.Subsystem -> true
+            | _ -> false
 
         // Temporary until SDE integrated    
         let isWormholeName (name: string) = 

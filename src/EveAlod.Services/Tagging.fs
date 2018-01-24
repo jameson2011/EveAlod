@@ -74,18 +74,7 @@
         
         let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
             km.Cargo
-            |> Seq.filter (fun i -> match i.Location with 
-                                    | ItemLocation.HighSlot 
-                                    | ItemLocation.MidSlot 
-                                    | ItemLocation.LowSlot
-                                    | ItemLocation.DroneBay
-                                    | ItemLocation.RigSlot
-                                    | ItemLocation.FixedSlot
-                                    | ItemLocation.FighterBay
-                                    | ItemLocation.FighterTube
-                                    | ItemLocation.Implant
-                                    | ItemLocation.Subsystem -> true
-                                    | _ -> false)
+            |> Seq.filter (fun i -> i.Location |> EntityTransforms.isFitted)            
             |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
             

@@ -92,6 +92,7 @@
     <Compile Include="Arb.fs" />
     <Compile Include="DateTimeTests.fs" />
     <Compile Include="CombinatorsTests.fs" />
+    <Compile Include="SeqTests.fs" />
     <Compile Include="StringsTests.fs" />
   </ItemGroup>
   <ItemGroup>
