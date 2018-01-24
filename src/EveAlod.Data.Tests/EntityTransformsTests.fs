@@ -45,10 +45,9 @@
 
         [<Property(Verbose = true, Arbitrary = [| typeof<NonEmptyStrings> |])>]
         let ``toEntity id applied to Entity Id``(id: string)=
-            let r = (EntityTransforms.toEntity id).Value.Id 
-            
+            let r = (EntityTransforms.toEntity id).Value.Id             
             r = id
-
+            
         [<Property(Verbose = true, Arbitrary = [| typeof<NonDigitStrings> |])>]
         let ``toItemLocation non-integer value yields Unknown``(id)=
             let r = EntityTransforms.toItemLocation id

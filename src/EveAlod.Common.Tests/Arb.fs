@@ -25,7 +25,7 @@
         let stripWhiteSpace (s: string)=
             let set = s |> Seq.filter Char.IsLetterOrDigit |> Array.ofSeq
             new string(set)
-                
+    
     type NonEmptyStrings=
         static member Words()=
             Arb.Default.String()

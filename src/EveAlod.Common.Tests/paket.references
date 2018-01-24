@@ -2,3 +2,4 @@ xunit
 xunit.runner.visualstudio
 FsCheck
 FsCheck.Xunit
+FSharp.Data

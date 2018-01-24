@@ -2,6 +2,7 @@
     
     module KillTransforms=
 
+        open EveAlod.Common
         open EveAlod.Common.Json
         open FSharp.Data
 
@@ -9,9 +10,9 @@
 
         
         let toCharacter (json: JsonValue option) =
-            let char = EntityTransforms.toEntity (json |> getProp "character_id" |> getString)
-            let corp = EntityTransforms.toEntity (json |> getProp "corporation_id" |> getString)
-            let alliance = EntityTransforms.toEntity (json |> getProp "alliance_id" |> getString)
+            let char =  json |> getPropStr "character_id" |> EntityTransforms.toEntity
+            let corp = json |> getPropStr "corporation_id" |> EntityTransforms.toEntity
+            let alliance = json |> getPropStr "alliance_id" |> EntityTransforms.toEntity
 
             match char with
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
@@ -26,7 +27,7 @@
                 match map with
                 | [] -> result
                 | (name,tag)::t -> 
-                        let r = match json |> getProp name |> getBool with
+                        let r = match json |> getPropOption name |> getBool with
                                 | true -> tag :: result
                                 | _ -> result
                         addTags json t r
@@ -34,26 +35,29 @@
             
         
         let toCargoItem (json: JsonValue) = 
-            { CargoItem.Item = { 
-                                Entity.Id = Some json |> getProp "item_type_id" |> getString
-                                Name = ""
-                                }; 
-                        Quantity =  Some json |> getProp "quantity_dropped" |> getInt;
-                        Location = Some json |> getProp "flag" |> getString |> EntityTransforms.toItemLocation
-                        }
+            let json = Some json
+            let item = json |> getPropStr "item_type_id" |> EntityTransforms.toEntity;
+            match item with
+            | Some i -> 
+                let destroyed = json |> getPropInt "quantity_destroyed" 
+                let dropped = json |> getPropInt "quantity_dropped" 
+                let quantity = (destroyed + dropped)
+                Some { CargoItem.Item =  i;
+                            Quantity =  quantity;
+                            Location = json |> getPropStr "flag" |> EntityTransforms.toItemLocation
+                            }                        
+            | _ -> None
 
-
-            
         let toCargoItems (json: JsonValue[] option) : CargoItem list = 
             match json with
-            | Some xs -> xs |> Seq.map toCargoItem |> List.ofSeq
+            | Some xs -> xs |> Seq.map toCargoItem |> Seq.mapSomes |> List.ofSeq
             | None -> []
 
         let toAttacker (json: JsonValue option) = 
             {
                 Attacker.Char = json |> toCharacter;
-                Damage = json |> getProp "damage_done" |> getInt;
-                Ship = json |> getProp "ship_type_id" |> getString |> EntityTransforms.toEntity 
+                Damage = json |> getPropInt "damage_done";
+                Ship = json |> getPropStr "ship_type_id" |> EntityTransforms.toEntity 
             }
 
         let toAttackers (json: JsonValue[] option) = 
@@ -65,17 +69,17 @@
         let toKill (msg: string)=
             let kmJson = jsonToKill.Parse(msg)
             let package = Some (kmJson.JsonValue.GetProperty("package"))
-            let km = package |> getProp "killmail"
+            let km = package |> getPropOption "killmail"
             match km with
             | Some _ -> 
             
-                let id = km |> getProp "killmail_id" |> getString
-                let occurred = km |> getProp "killmail_time" |> getDateTime
-                let victimJson  = km |> getProp "victim"
-                let attackersJson = km |> getProp "attackers" |> Option.map (fun j -> j.AsArray())
-                let zkb = package |> getProp "zkb"
-                let location = zkb |> getProp "locationID" |> getString |> EntityTransforms.toEntity
-                let items = victimJson |> getProp "items" |> Option.map (fun j -> j.AsArray())
+                let id = km |> getPropOption "killmail_id" |> getString
+                let occurred = km |> getPropOption "killmail_time" |> getDateTime
+                let victimJson  = km |> getPropOption "victim"
+                let attackersJson = km |> getPropOption "attackers" |> Option.map (fun j -> j.AsArray())
+                let zkb = package |> getPropOption "zkb"
+                let location = zkb |> getPropOption "locationID" |> getString |> EntityTransforms.toEntity
+                let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray())
 
                 Some {
                     Kill.Id = id; 
@@ -84,8 +88,8 @@
                     Location = location;
 
                     Victim = toCharacter victimJson;
-                    VictimShip = (victimJson |> getProp "ship_type_id" |> getString) |> EntityTransforms.toEntity;
-                    TotalValue = zkb |> getProp "totalValue" |> getFloat;
+                    VictimShip = (victimJson |> getPropOption "ship_type_id" |> getString) |> EntityTransforms.toEntity;
+                    TotalValue = zkb |> getPropOption "totalValue" |> getFloat;
                     Cargo = items |> toCargoItems;
                 
                     Attackers = attackersJson |> toAttackers;

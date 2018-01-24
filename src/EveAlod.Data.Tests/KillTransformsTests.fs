@@ -107,7 +107,7 @@
                         |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
                         |> Array.ofSeq
                         |> JsonValue.Record
-            let r = KillTransforms.toCargoItem json
+            let r = (KillTransforms.toCargoItem json).Value
             r.Item.Id = id &&
             r.Quantity = quantity &&
             r.Location = (EntityTransforms.toItemLocation (str flag))
@@ -120,7 +120,7 @@
                         |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
                         |> Array.ofSeq
                         |> JsonValue.Record
-            let r = KillTransforms.toCargoItem json
+            let r = (KillTransforms.toCargoItem json).Value
             r.Item.Id = id &&
             r.Quantity = 0 &&
             r.Location = (EntityTransforms.toItemLocation (str flag))
@@ -133,19 +133,18 @@
                         |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
                         |> Array.ofSeq
                         |> JsonValue.Record
-            let r = KillTransforms.toCargoItem json
-            r.Item.Id = "" &&
-            r.Quantity = 0 
+            let r = (KillTransforms.toCargoItem json)
+            r = None
                         
         [<Property(Verbose = true, Arbitrary = [| typeof<NonEmptyStrings>; typeof<PositiveInts> |])>]
-        let ``toCargoItem invalid flag prop``(id: string) (quantity: int) (flag: int) name=
+        let ``toCargoItem invalid flag prop``(id: string) (dropped: int) (destroyed: int) (flag: int) name=
 
-            let json = [ id; str quantity; str flag  ]
-                        |> Seq.zip [ "item_type_id"; "quantity_dropped"; name; ]
+            let json = [ id; str dropped; str destroyed; str flag  ]
+                        |> Seq.zip [ "item_type_id"; "quantity_dropped"; "quantity_destroyed"; name; ]
                         |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
                         |> Array.ofSeq
                         |> JsonValue.Record
-            let r = KillTransforms.toCargoItem json
+            let r = (KillTransforms.toCargoItem json).Value
             r.Item.Id = id &&
-            r.Quantity = quantity &&
+            r.Quantity = (dropped + destroyed) &&
             r.Location = ItemLocation.Unknown
