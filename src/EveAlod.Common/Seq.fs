@@ -6,7 +6,7 @@
             |> Seq.filter (fun v -> v.IsSome)
             |> Seq.map (fun v -> v.Value)
             
-        // TODO:
+
         let splitBy (f: 'a -> bool) (values: 'a list) =            
             let rec splitLists (values) (left: 'a list) (right: 'a list)=
                 match values with
