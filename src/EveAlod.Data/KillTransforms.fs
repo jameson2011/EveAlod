@@ -132,37 +132,6 @@
                                 |> applyAttackers json
                         r |> Option.Some
                 
-        let toKill2 (msg: string)=
-            let kmJson = jsonToKill.Parse(msg)
-            let package = Some (kmJson.JsonValue.GetProperty("package"))
-            let km = package |> getPropOption "killmail"
-            match km with
-            | Some _ -> 
-            
-                let id = km |> getPropStr "killmail_id" 
-                let occurred = km |> getPropDateTime "killmail_time"
-                let victimJson  = km |> getPropOption "victim"
-                let attackersJson = km |> getPropOption "attackers" |> Option.map (fun j -> j.AsArray())
-                let zkb = package |> getPropOption "zkb"
-                let location = zkb |> getPropStr "locationID" |> EntityTransforms.toEntity
-                let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray()) |> toCargoItems
-                let fittings,cargo = items |> Seq.splitBy (fun i -> EntityTransforms.isFitted i.Location)
-                Some {
-                    Kill.Id = id; 
-                    Occurred = occurred; 
-                    ZkbUri = (sprintf "https://zkillboard.com/kill/%s/" id);
-                    Location = location;
-
-                    Victim = toCharacter victimJson;
-                    VictimShip = victimJson |> getPropStr "ship_type_id" |> EntityTransforms.toEntity;
-                    TotalValue = zkb |> getPropFloat "totalValue";
-                    Fittings = fittings;
-                    Cargo = cargo; 
-                    Attackers = attackersJson |> toAttackers;                
-                    Tags = (toStandardTags zkb);
-                    AlodScore = 0.;
-                }
-            | _ -> None
             
             
 
