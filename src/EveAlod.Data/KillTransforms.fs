@@ -79,8 +79,60 @@
             | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> List.ofSeq
             | None -> []
 
+        let asKillPackage msg = 
+            let kmJson = jsonToKill.Parse(msg)
+            Some (kmJson.JsonValue.GetProperty("package"))
+            
+        let asKill = getPropOption "killmail"
 
-        let toKill (msg: string)=
+        let applyMeta (package: JsonValue option) (km: Kill)=
+            let kmJson = package |> asKill
+            let zkb = package |> getPropOption "zkb"
+            let id = kmJson |> getPropStr "killmail_id"
+            let location = zkb |> getPropStr "locationID" |> EntityTransforms.toEntity
+
+            { km with Id = id;
+                        Occurred = kmJson |> getPropDateTime "killmail_time";
+                        ZkbUri = (sprintf "https://zkillboard.com/kill/%s/" id);
+                        Location = location;
+                        TotalValue = zkb |> getPropFloat "totalValue";
+                        Tags = (toStandardTags zkb);
+                }
+            
+
+        let applyVictim (package: JsonValue option) (km: Kill)=
+            let victimJson = package |> asKill
+                                    |> getPropOption "victim"
+
+            let victim = victimJson |> toCharacter 
+            let victimShip = victimJson |> getPropStr "ship_type_id" |> EntityTransforms.toEntity;
+            let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray()) |> toCargoItems
+            let fittings,cargo = items |> Seq.splitBy (fun i -> EntityTransforms.isFitted i.Location)
+
+            { km with Victim = victim;
+                        VictimShip = victimShip;
+                        Fittings = fittings;
+                        Cargo = cargo;
+            }
+            
+        let applyAttackers (package: JsonValue option) (km: Kill)=
+            let attackersJson = package 
+                                    |> asKill 
+                                    |> getPropOption "attackers" 
+                                    |> Option.map (fun j -> j.AsArray())
+            {  km with Attackers = attackersJson |> toAttackers; }                           
+        
+        let toKill msg = 
+            let json = msg |> asKillPackage
+            match json with
+            | None -> None
+            | Some _ -> let r = defaultKill() 
+                                |> applyMeta json 
+                                |> applyVictim json 
+                                |> applyAttackers json
+                        r |> Option.Some
+                
+        let toKill2 (msg: string)=
             let kmJson = jsonToKill.Parse(msg)
             let package = Some (kmJson.JsonValue.GetProperty("package"))
             let km = package |> getPropOption "killmail"
