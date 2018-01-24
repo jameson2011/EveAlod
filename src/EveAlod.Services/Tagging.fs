@@ -73,8 +73,7 @@
             |> Seq.exists pred
         
         let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
-            km.Cargo
-            |> Seq.filter (fun i -> i.Location |> EntityTransforms.isFitted)            
+            km.Fittings
             |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
             

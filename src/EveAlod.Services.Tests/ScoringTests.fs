@@ -9,23 +9,11 @@
         open EveAlod.Services
         open FsCheck.Random
         
-        let defaultKill() =
-            { Kill.Id = "";
-                Occurred = System.DateTime.UtcNow;
-                Tags = [];
-                ZkbUri = "";
-                Location = None;
-                Victim = None;
-                VictimShip = None;
-                AlodScore = 0.;
-                Attackers = [];
-                Cargo = [];
-                TotalValue = 0.;
-            }
+        
 
         [<Property(Verbose=true)>]
         let ``score dependent on tags``(tags: KillTag list)=
-            let kill = { defaultKill() with Tags = tags |> List.distinct}
+            let kill = { KillTransforms.defaultKill() with Tags = tags |> List.distinct}
 
             Scoring.score kill |> ignore
             
@@ -33,22 +21,22 @@
             
         [<Fact>]
         let ``empty tags have zero score``()=            
-            ({ defaultKill() with Tags = [] } |> Scoring.score ) = 0.
+            ({ KillTransforms.defaultKill() with Tags = [] } |> Scoring.score ) = 0.
 
         [<Property(Verbose=true)>]
         let ``all tags have a positive score``(tag: KillTag)=
-            let kill = { defaultKill() with Tags = [ tag ] }
+            let kill = { KillTransforms.defaultKill() with Tags = [ tag ] }
 
             (Scoring.score kill) > 0.
 
         [<Property(Verbose=true, Replay="(193286329,296399112)")>]
         let ``tag scores are accumulative``(tags: KillTag list)=
             let tags = tags |> List.distinct
-            let kill tag = { defaultKill() with Tags = [ tag ] }
+            let kill tag = { KillTransforms.defaultKill() with Tags = [ tag ] }
             let tagScores = tags    |> List.map kill
                                     |> List.map Scoring.score
                                     
-            let tagsScore = { defaultKill() with Tags = tags}
+            let tagsScore = { KillTransforms.defaultKill() with Tags = tags}
                                 |> Scoring.score
             
             tagsScore >= (tagScores |> Seq.sum)

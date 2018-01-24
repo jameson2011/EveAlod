@@ -97,6 +97,7 @@
 
                     Victim: Character option;
                     VictimShip: Entity option;
+                    Fittings: CargoItem list;
                     Cargo: CargoItem list;
                     TotalValue: float;
 

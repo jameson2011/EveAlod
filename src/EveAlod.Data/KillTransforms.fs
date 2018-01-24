@@ -8,6 +8,20 @@
 
         type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
 
+        let defaultKill() =
+            { Kill.Id = "";
+                Occurred = System.DateTime.UtcNow;
+                Tags = [];
+                ZkbUri = "";
+                Location = None;
+                Victim = None;
+                VictimShip = None;
+                AlodScore = 0.;
+                Attackers = [];
+                Fittings = [];
+                Cargo = [];
+                TotalValue = 0.;
+            }
         
         let toCharacter (json: JsonValue option) =
             let char =  json |> getPropStr "character_id" |> EntityTransforms.toEntity
@@ -79,8 +93,8 @@
                 let attackersJson = km |> getPropOption "attackers" |> Option.map (fun j -> j.AsArray())
                 let zkb = package |> getPropOption "zkb"
                 let location = zkb |> getPropOption "locationID" |> getString |> EntityTransforms.toEntity
-                let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray())
-
+                let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray()) |> toCargoItems
+                let fittings,cargo = items |> Seq.splitBy (fun i -> EntityTransforms.isFitted i.Location)
                 Some {
                     Kill.Id = id; 
                     Occurred = occurred; 
@@ -90,12 +104,10 @@
                     Victim = toCharacter victimJson;
                     VictimShip = (victimJson |> getPropOption "ship_type_id" |> getString) |> EntityTransforms.toEntity;
                     TotalValue = zkb |> getPropOption "totalValue" |> getFloat;
-                    Cargo = items |> toCargoItems;
-                
-                    Attackers = attackersJson |> toAttackers;
-                
+                    Fittings = fittings;
+                    Cargo = cargo; 
+                    Attackers = attackersJson |> toAttackers;                
                     Tags = (toStandardTags zkb);
-
                     AlodScore = 0.;
                 }
             | _ -> None
