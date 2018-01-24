@@ -55,4 +55,7 @@
             Arb.Default.Float()
             |> Arb.filter (fun x -> x >  0. && x < 10000.)
 
-    
+    type PositiveInts=
+        static member Numbers()=
+            Arb.Default.Int32()
+            |> Arb.filter (fun x -> x > 0 && x < 10000)
