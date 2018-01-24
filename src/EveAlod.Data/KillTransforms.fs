@@ -87,12 +87,12 @@
             match km with
             | Some _ -> 
             
-                let id = km |> getPropOption "killmail_id" |> getString
-                let occurred = km |> getPropOption "killmail_time" |> getDateTime
+                let id = km |> getPropStr "killmail_id" 
+                let occurred = km |> getPropDateTime "killmail_time"
                 let victimJson  = km |> getPropOption "victim"
                 let attackersJson = km |> getPropOption "attackers" |> Option.map (fun j -> j.AsArray())
                 let zkb = package |> getPropOption "zkb"
-                let location = zkb |> getPropOption "locationID" |> getString |> EntityTransforms.toEntity
+                let location = zkb |> getPropStr "locationID" |> EntityTransforms.toEntity
                 let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray()) |> toCargoItems
                 let fittings,cargo = items |> Seq.splitBy (fun i -> EntityTransforms.isFitted i.Location)
                 Some {
@@ -102,8 +102,8 @@
                     Location = location;
 
                     Victim = toCharacter victimJson;
-                    VictimShip = (victimJson |> getPropOption "ship_type_id" |> getString) |> EntityTransforms.toEntity;
-                    TotalValue = zkb |> getPropOption "totalValue" |> getFloat;
+                    VictimShip = victimJson |> getPropStr "ship_type_id" |> EntityTransforms.toEntity;
+                    TotalValue = zkb |> getPropFloat "totalValue";
                     Fittings = fittings;
                     Cargo = cargo; 
                     Attackers = attackersJson |> toAttackers;                
