@@ -5,6 +5,7 @@
         open EveAlod.Common
         open EveAlod.Common.Json
         open FSharp.Data
+        open EveAlod.Common.Strings
 
         type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
 
@@ -68,15 +69,17 @@
             | None -> []
 
         let toAttacker (json: JsonValue option) = 
-            {
-                Attacker.Char = json |> toCharacter;
-                Damage = json |> getPropInt "damage_done";
-                Ship = json |> getPropStr "ship_type_id" |> EntityTransforms.toEntity 
-            }
+            match json |> toCharacter with
+            | Some char -> Some {
+                                Attacker.Char = Some char;
+                                Damage = json |> getPropInt "damage_done";
+                                Ship = json |> getPropStr "ship_type_id" |> EntityTransforms.toEntity 
+                            }
+            | _ -> None
 
         let toAttackers (json: JsonValue[] option) = 
             match json with
-            | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> List.ofSeq
+            | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> Seq.mapSomes |> List.ofSeq
             | None -> []
 
         let asKillPackage msg = 
@@ -122,15 +125,21 @@
                                     |> Option.map (fun j -> j.AsArray())
             {  km with Attackers = attackersJson |> toAttackers; }                           
         
+        let isValid (km) = 
+            match km.Id with
+            | NullOrWhitespace _ -> None
+            | _ -> Some km
+
         let toKill msg = 
             let json = msg |> asKillPackage
             match json with
             | None -> None
-            | Some _ -> let r = defaultKill() 
-                                |> applyMeta json 
-                                |> applyVictim json 
-                                |> applyAttackers json
-                        r |> Option.Some
+            | Some _ -> defaultKill() 
+                            |> applyMeta json 
+                            |> applyVictim json 
+                            |> applyAttackers json
+                            |> isValid
+                        
                 
             
             

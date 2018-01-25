@@ -27,4 +27,5 @@
             |> Option.defaultValue 0                
                 
             
-
+        let (|NullOrWhitespace|_|) str=
+            if String.IsNullOrWhiteSpace str then Some str else None
