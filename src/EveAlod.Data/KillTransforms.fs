@@ -42,7 +42,7 @@
                 match map with
                 | [] -> result
                 | (name,tag)::t -> 
-                        let r = match json |> getPropOption name |> getBool with
+                        let r = match json |> getPropBool name with
                                 | true -> tag :: result
                                 | _ -> result
                         addTags json t r
