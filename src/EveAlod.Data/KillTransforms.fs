@@ -79,7 +79,7 @@
 
         let toAttackers (json: JsonValue[] option) = 
             match json with
-            | Some xs -> xs |> Seq.map (fun j -> Some j |> toAttacker) |> Seq.mapSomes |> List.ofSeq
+            | Some xs -> xs |> Seq.map (Some >> toAttacker) |> Seq.mapSomes |> List.ofSeq
             | None -> []
 
         let asKillPackage msg = 

@@ -1,5 +1,6 @@
 ﻿namespace EveAlod.Services
 
+    open EveAlod.Common
     open EveAlod.Common.Combinators
     open EveAlod.Data
 
@@ -15,8 +16,7 @@
         let getAttackerCorpIds(km: Kill)=
             km.Attackers
             |> Seq.map getAttackerCorpId
-            |> Seq.filter (fun s -> s.IsSome)                                    
-            |> Seq.map (fun c -> c.Value)
+            |> Seq.mapSomes
             |> Set.ofSeq
 
         let getAttackerCorpsDamage(km: Kill)=
@@ -25,7 +25,7 @@
                         |> Seq.filter (fun (_,s) -> s.IsSome)                                    
                         |> Seq.map (fun (dmg,corpId) -> (dmg, corpId.Value) )                        
                         |> Seq.groupBy (fun (_,corpId) -> corpId)
-                        |> Seq.map (fun (corpId, xs) -> (corpId, xs |> Seq.map (fun (dmg,_) -> dmg) |> Seq.sum ))
+                        |> Seq.map (fun (corpId, xs) -> (corpId, xs |> Seq.sumBy (fun (dmg,_) -> dmg) ))
                         |> Map.ofSeq
             r
 

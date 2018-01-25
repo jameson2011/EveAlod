@@ -148,3 +148,36 @@
             r.Item.Id = id &&
             r.Quantity = (dropped + destroyed) &&
             r.Location = ItemLocation.Unknown
+
+        [<Property(Verbose = true, Arbitrary = [| typeof<PositiveInts> |])>]
+        let ``toAttackers invalidAttackers`` (corpId: int)=
+            let char = [ ""; str corpId ]
+                        |> Seq.zip [ "character_id"; "corporation_id";  ]
+                        |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
+                        |> Array.ofSeq
+                        |> JsonValue.Record
+            let chars = Some [| char |]
+
+            let r = KillTransforms.toAttackers chars
+
+            match r with
+            | [] -> true
+            | _ -> false
+            
+
+        [<Property(Verbose = true, Arbitrary = [| typeof<PositiveInts> |])>]
+        let ``toAttackers validAttackers``(id: int) (corpId: int)=
+            let char = [ str id; str corpId ]
+                        |> Seq.zip [ "character_id"; "corporation_id";  ]
+                        |> Seq.map (fun (p,v) -> (p, JsonValue.String(v)))
+                        |> Array.ofSeq
+                        |> JsonValue.Record
+            
+            let chars = Some [| char |]
+
+            let r = KillTransforms.toAttackers chars
+
+            match r with
+            | [] -> false
+            | _ -> true            
+            

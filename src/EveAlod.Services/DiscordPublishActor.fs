@@ -20,8 +20,8 @@
                                 Some (ActorMessage.Error ("Discord", "Unauthorized")) 
                             | HttpStatus.OK _ ->  
                                 None)  
-
-            logMsg |> Option.iter (fun msg -> log msg)
+            
+            logMsg |> Option.iter log
 
         let sendToDiscord (wait: TimeSpan) (msg) : Async<TimeSpan> =
             async {

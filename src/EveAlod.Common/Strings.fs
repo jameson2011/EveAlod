@@ -9,7 +9,7 @@
             let rec concat txts (result: string) =
                 match txts with                
                 | [] -> result
-                | h::[] ->  if result.Length > 0 then
+                | [h] ->  if result.Length > 0 then
                                 result + " & " + h
                             else 
                                 h

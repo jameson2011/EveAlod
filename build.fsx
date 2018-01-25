@@ -24,7 +24,7 @@ Target "LintApp" (fun _ ->
                             !! "src/**/*.fsproj"
                             -- "src/**/*.Tests.fsproj"
                             |> Seq.iter (FSharpLint 
-                                            (fun o -> { o with FailBuildIfAnyWarnings = false }))
+                                            (fun o -> { o with FailBuildIfAnyWarnings = true }))
                 )
 Target "BuildTests" (fun _ -> 
                             !! "src/**/*.Tests.fsproj"
@@ -47,11 +47,15 @@ Target "Default" (fun _ -> trace "Done!" )
 
 // Dependencies
 
-"ScrubArtifacts" 
-==> "LintApp"
+"LintApp"
+==> "ScrubArtifacts" 
 ==> "BuildApp"
-==> "BuildTests"
+==> "Default"
+
+"BuildTests"
 ==> "RunUnitTests"
 ==> "Default"
+
+
 
 RunTargetOrDefault "Default"
