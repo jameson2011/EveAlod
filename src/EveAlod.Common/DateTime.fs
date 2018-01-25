@@ -4,7 +4,7 @@
 
     module DateTime=
         
-        let epochStart = new DateTime(1970, 1, 1)
+        let epochStart = DateTime(1970, 1, 1)
 
         let getUtcFromEpoch (seconds) = epochStart.AddSeconds(float seconds)
 

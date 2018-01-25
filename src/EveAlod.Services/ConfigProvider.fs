@@ -4,7 +4,7 @@
     open FSharp.Data
     open EveAlod.Data
 
-    type configJson = JsonProvider<"./SampleConfig.json">
+    type JsonConfigProvider = JsonProvider<"./SampleConfig.json">
 
     type ConfigProvider()=
         
@@ -12,7 +12,7 @@
         let configFilePath = Path.Combine(configFolder, "settings.json")
        
         let loadConfig(filePath: string) =
-            let c = configJson.Load filePath
+            let c = JsonConfigProvider.Load filePath
             { Configuration.MinimumScore = (float c.MinimumScore);
                 CorpId = c.CorpId;
                 ChannelId = c.ChannelId;

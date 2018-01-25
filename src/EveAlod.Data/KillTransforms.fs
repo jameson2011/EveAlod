@@ -7,7 +7,7 @@
         open FSharp.Data
         open EveAlod.Common.Strings
 
-        type jsonToKill = JsonProvider<"./SampleRedisqKillmail.json">
+        type JsonKillProvider = JsonProvider<"./SampleRedisqKillmail.json">
 
         let defaultKill() =
             { Kill.Id = "";
@@ -83,7 +83,7 @@
             | None -> []
 
         let asKillPackage msg = 
-            let kmJson = jsonToKill.Parse(msg)
+            let kmJson = JsonKillProvider.Parse(msg)
             Some (kmJson.JsonValue.GetProperty("package"))
             
         let asKill = getPropOption "killmail"

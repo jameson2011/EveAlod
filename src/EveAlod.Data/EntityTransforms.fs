@@ -2,15 +2,14 @@
 
     module EntityTransforms=
 
-        open EveAlod.Common.Json
         open FSharp.Data
         open System
 
-        type jsonToSolarSystem = JsonProvider<"./SampleSolarSystem.json">
-        type jsonGroupIdProvider = JsonProvider<"./SampleIds.json">
-        type jsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
-        type jsonEntityProvider = JsonProvider<"./SampleEntity.json">
-        type jsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
+        type JsonSolarSystemProvider = JsonProvider<"./SampleSolarSystem.json">
+        type JsonGroupIdProvider = JsonProvider<"./SampleIds.json">
+        type JsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
+        type JsonEntityProvider = JsonProvider<"./SampleEntity.json">
+        type JsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
 
 
         let toEntity =
@@ -76,7 +75,7 @@
                         | _ -> SpaceSecurity.Nullsec        
 
         let parseCharacter id json = 
-            let root = (jsonCharacterProvider.Parse(json))
+            let root = (JsonCharacterProvider.Parse(json))
             Some {Character.Char = {Entity.Id = id; Name = root.Name; };
                     Corp = Some {Entity.Id = root.CorporationId.ToString(); Name = "" };
                     Alliance = None;
@@ -84,20 +83,20 @@
                 }
 
         let parseEntity json =
-            let root = (jsonEntityProvider.Parse(json))
+            let root = (JsonEntityProvider.Parse(json))
             Some {Entity.Id = root.TypeId.ToString(); 
                         Name = root.Name;
                   }
 
         let parseEntityGroup json =
-            let root = (jsonGroupProvider.Parse(json))
+            let root = (JsonGroupProvider.Parse(json))
             Some {EntityGroup.Id = root.GroupId.ToString(); 
                         Name = root.Name;
                         EntityIds = root.Types |> Seq.map (fun i -> i.ToString()) |> Array.ofSeq
                 }
 
         let parseSolarSystem json =
-            let o = jsonToSolarSystem.Parse(json)            
+            let o = JsonSolarSystemProvider.Parse(json)            
             Some { SolarSystem.Id = o.SystemId.ToString();
                         Name = o.Name;
                         Security = getSecurityStatus o.Name o.SecurityStatus}

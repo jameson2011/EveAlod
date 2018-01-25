@@ -8,30 +8,30 @@
         let config = configProvider()
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
-        let dataProvider = new StaticEntityProvider() :> IStaticEntityProvider
-        let logger = new LogPublishActor()
-        let dataActor = new StaticDataActor(logger.Post, dataProvider)
+        let dataProvider = StaticEntityProvider() :> IStaticEntityProvider
+        let logger = LogPublishActor()
+        let dataActor = StaticDataActor(logger.Post, dataProvider)
         
-        let discordPublisher = new DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
+        let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
-        let killPublisher = new KillPublisherActor(logger.Post, 
-                                                    new KillMessageBuilder(dataActor, config.CorpId), 
+        let killPublisher = KillPublisherActor(logger.Post, 
+                                                    KillMessageBuilder(dataActor, config.CorpId), 
                                                     Actors.forward SendToDiscord discordPublisher.Post
                                                     )
         
-        let killFilter = new KillFilterActor(logger.Post, 
+        let killFilter = KillFilterActor(logger.Post, 
                                                 config.MinimumScore, 
                                                 Actors.forward Publish killPublisher.Post)
 
-        let killScorer = new KillScorerActor(logger.Post, 
+        let killScorer = KillScorerActor(logger.Post, 
                                                 fun km ->   logger.Post (Log km)
                                                             killFilter.Post (Scored km)) 
         
-        let killTagger = new KillTaggerActor(logger.Post, 
-                                                new KillTagger(dataActor, config.CorpId), 
+        let killTagger = KillTaggerActor(logger.Post, 
+                                                KillTagger(dataActor, config.CorpId), 
                                                 Actors.forward Score killScorer.Post)
 
-        let killSource = new KillSourceActor(logger.Post,
+        let killSource = KillSourceActor(logger.Post,
                                                 Actors.forward Tag killTagger.Post,
                                                 EveAlod.Common.Web.getData,
                                                 "https://redisq.zkillboard.com/listen.php?ttw=10")

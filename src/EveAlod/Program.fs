@@ -12,7 +12,7 @@ let main argv =
         
         let c = (fun () -> Bootstrap.config webhook)
         
-        let factory = new EveAlod.Services.ServiceFactory(c)
+        let factory = EveAlod.Services.ServiceFactory(c)
         let source = factory.KillSource
         let log = factory.Log
 

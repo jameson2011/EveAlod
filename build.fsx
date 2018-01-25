@@ -1,6 +1,8 @@
 #r @"packages/FAKE/tools/FakeLib.dll"
+#r @"packages/FSharpLint.Fake/tools/FSharpLint.Fake.dll"
 
 open Fake
+open FSharpLint.Fake
 open Fake.Testing.XUnit2
 
 let buildDir = "./artifacts/"
@@ -17,6 +19,11 @@ Target "BuildApp" (fun _ ->
                             |> MSBuildRelease buildDir "Build"
                             |> Log "AppBuild-Output: ")
 
+Target "LintApp" (fun _ ->
+                            !! "src/**/*.fsproj"
+                            -- "src/**/*.Tests.fsproj"
+                            |> Seq.iter (FSharpLint id)
+                )
 Target "BuildTests" (fun _ -> 
                             !! "src/**/*.Tests.fsproj"
                             |> MSBuildRelease buildTestsDir "Build"
@@ -39,6 +46,7 @@ Target "Default" (fun _ -> trace "Done!" )
 // Dependencies
 
 "ScrubArtifacts" 
+==> "LintApp"
 ==> "BuildApp"
 ==> "BuildTests"
 ==> "RunUnitTests"

@@ -6,7 +6,7 @@
 
     type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         
-        let rnd = new System.Random()
+        let rnd = System.Random()
         let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
         
         let composeCharNames (characters: Character list) = 

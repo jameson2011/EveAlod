@@ -15,7 +15,7 @@
             
 
         let config (webhookUri: string)=
-            let c = (new ConfigProvider()).Configuration()
+            let c = ConfigProvider().Configuration()
             match webhookUri with
             | "" -> c
             | _ -> webhookUri |> getDiscordChannel |> (applyDiscord c)
