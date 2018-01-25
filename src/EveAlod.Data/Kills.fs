@@ -9,19 +9,21 @@
         | Capsule
 
     type KillTag =
-        | Awox
-        | Solo
-        | Npc
+        | AwoxKill
+        | SoloKill
+        | NpcKill
+        | PlayerKill
         | CorpKill
         | CorpLoss
         | PlexInHold
         | SkillInjectorInHold
-        | Ecm
+        | EcmFitted
         | FailFit
         | Pod
         | Spendy
         | Expensive
         | Cheap
+        | ZeroValue
 
     
     type SpaceSecurity = 

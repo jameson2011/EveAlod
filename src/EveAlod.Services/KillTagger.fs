@@ -21,12 +21,14 @@
                             Tagging.isCorpKill 0.5 corpId;
                             Tagging.isCorpLoss corpId;
                             Tagging.hasPlex isPlex;
-                            Tagging.hasSkillInjector isSkillInjector;
-                            Tagging.hasEcm isEcm;               
+                            Tagging.hasItemInHold KillTag.SkillInjectorInHold isSkillInjector;
+                            Tagging.hasItemFitted KillTag.EcmFitted isEcm;               
                             Tagging.isPod isPod;
+                            Tagging.isPlayer;
                             Tagging.isExpensive;
                             Tagging.isSpendy;
-                            Tagging.isCheap;                            
+                            Tagging.isCheap; 
+                            Tagging.isZeroValue;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

@@ -35,9 +35,9 @@
             
         
         let toStandardTags (json: JsonValue option) =
-            let tagMap = [ "npc", KillTag.Npc;
-                        "solo", KillTag.Solo;
-                        "awox", KillTag.Awox]
+            let tagMap = [ "npc", KillTag.NpcKill;
+                        "solo", KillTag.SoloKill;
+                        "awox", KillTag.AwoxKill]
             let rec addTags (json) (map) result=
                 match map with
                 | [] -> result

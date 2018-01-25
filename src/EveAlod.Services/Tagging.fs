@@ -5,7 +5,14 @@
     open EveAlod.Data
 
     module Tagging=
-                
+
+        let private expensiveLimit =    10000000000.
+        let private spendyLimit =       1000000000.
+        let private cheapLimit =        10000000.
+
+        let tagPresent (tag: KillTag) kill=        
+            kill.Tags |> Seq.exists (fun t -> t = tag) 
+            
         let getCorpId (character: Character option)=
             character |> Option.bind (fun c -> c.Corp 
                                                 |> Option.map (fun c -> c.Id))
@@ -86,23 +93,30 @@
         let hasPlex (pred: Entity -> bool) =
             (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo pred)
 
-        let hasSkillInjector (pred: Entity -> bool) =
-            (tagOnTrue KillTag.SkillInjectorInHold) (hasItemsInCargo pred)
+        let hasItemInHold tag (pred: Entity -> bool) =
+            (tagOnTrue tag) (hasItemsInCargo pred)
             
-        let hasEcm (pred: Entity -> bool) =
-            (tagOnTrue KillTag.Ecm) (hasItemsFitted pred)
+        let hasItemFitted tag (pred: Entity -> bool) =
+            (tagOnTrue tag) (hasItemsFitted pred)
             
         let isPod isPod = 
             (tagOnTrue KillTag.Pod) (isVictimInPod isPod)
-            
+
+        let isPlayer =
+            (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)
+
         let isExpensive =
-            (tagOnTrue KillTag.Expensive) (isTotalValueOver 10000000000.)
+            (tagOnTrue KillTag.Expensive) (isTotalValueOver expensiveLimit)
             
         let isSpendy =
-            (tagOnTrue KillTag.Spendy) ((isTotalValueOver 1000000000.) <&&> (isTotalValueUnder 10000000000.))
+            (tagOnTrue KillTag.Spendy) ((isTotalValueOver spendyLimit) <&&> (isTotalValueUnder expensiveLimit))
                         
+        let isZeroValue = 
+            (tagOnTrue KillTag.ZeroValue) (isTotalValueUnder cheapLimit)
+
         let isCheap = 
-            (tagOnTrue KillTag.Cheap) (isTotalValueUnder 10000000.)
+            (tagOnTrue KillTag.Cheap) ((isTotalValueOver cheapLimit) <&&>
+                                        (isTotalValueUnder spendyLimit))
 
         let isCorpLoss corpId =
             (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
@@ -122,8 +136,8 @@
                 KillTag.Pod, [| "Someone should have bought pod insurance"; "Someone needs his implants back"; |];
                 KillTag.PlexInHold, [| "Plex in hold!"; "BWAHAHAHAHAHA!"; "Plex vaults - they exist"; "RMT DOWN" |];
                 KillTag.SkillInjectorInHold, [| "Skill injector in hold!"; "FFS"; "No comment needed" |];
-                KillTag.Awox, [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];
-                KillTag.Ecm, [| "ECM is illegal"; "Doing God's work" |];
+                KillTag.AwoxKill, [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];
+                KillTag.EcmFitted, [| "ECM is illegal"; "Doing God's work" |];
                 KillTag.Expensive, [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
                 KillTag.Spendy, [| "Oops"; "DEPLOY CREDIT CARD" |];
             ]

@@ -80,9 +80,9 @@
 
             let tags = KillTransforms.toStandardTags (Some json)
             
-            (tags |> Seq.contains KillTag.Awox) = awox &&
-            (tags |> Seq.contains KillTag.Solo) = solo &&
-            (tags |> Seq.contains KillTag.Npc) = npc
+            (tags |> Seq.contains KillTag.AwoxKill) = awox &&
+            (tags |> Seq.contains KillTag.SoloKill) = solo &&
+            (tags |> Seq.contains KillTag.NpcKill) = npc
             
         [<Fact>]
         let ``toStandardTags None returns Empty ``()=

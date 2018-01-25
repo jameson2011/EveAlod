@@ -11,12 +11,14 @@
             | PlexInHold | SkillInjectorInHold -> 100.
             | Expensive -> 100.
             | Spendy -> 40.
+            | ZeroValue -> 1.
             | Cheap -> 1.
-            | Npc -> 1.
+            | PlayerKill -> 2.
+            | NpcKill -> 1.
             | Pod  -> 10.
-            | Ecm -> 10.
-            | Awox -> 10.
-            | Solo -> 10.
+            | EcmFitted -> 10.
+            | AwoxKill -> 10.
+            | SoloKill -> 10.
             | FailFit -> 20.            
 
         let private tagsScore = Seq.map tagScore >> Seq.sum
