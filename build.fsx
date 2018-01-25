@@ -1,4 +1,5 @@
 #r @"packages/FAKE/tools/FakeLib.dll"
+#r @"packages/FSharpLint.Fake/tools/FSharpLint.Core.dll"
 #r @"packages/FSharpLint.Fake/tools/FSharpLint.Fake.dll"
 
 open Fake
@@ -22,7 +23,8 @@ Target "BuildApp" (fun _ ->
 Target "LintApp" (fun _ ->
                             !! "src/**/*.fsproj"
                             -- "src/**/*.Tests.fsproj"
-                            |> Seq.iter (FSharpLint id)
+                            |> Seq.iter (FSharpLint 
+                                            (fun o -> { o with FailBuildIfAnyWarnings = false }))
                 )
 Target "BuildTests" (fun _ -> 
                             !! "src/**/*.Tests.fsproj"
