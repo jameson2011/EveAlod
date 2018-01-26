@@ -26,7 +26,7 @@
                                     | EveAlod.Common.HttpStatus.OK -> 
                                             match resp.Message |> KillTransforms.toKill with
                                             | Some k -> forward k
-                                            | _ -> Messages.info "No data received from zKB" |> log
+                                            | _ -> ActorMessage.Info "No data received from zKB" |> log
                                             TimeSpan.Zero
                                     | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
@@ -51,12 +51,12 @@
                 let! cont = async {
                                     match msg with
                                     | Stop ->   
-                                        "Stopped kill source." |> Messages.info |> log
+                                        "Stopped kill source." |> ActorMessage.Info |> log
                                         return false
 
                                     | x -> match x with
                                             | Start ->  
-                                                "Started kill source." |> Messages.info |> log
+                                                "Started kill source." |> ActorMessage.Info |> log
                                                 inbox.Post (GetNext (sourceUri, TimeSpan.Zero))
                                                 return true
                                             | GetNext (url, wait) ->    
@@ -80,11 +80,11 @@
         do pipe.Error.Add(logException)
         
         member this.Start() = 
-            "Starting kill source..." |> Messages.info |> log
+            "Starting kill source..." |> ActorMessage.Info |> log
             pipe.Post Start
         
         member this.Stop() = 
-            "Stopping kill source..." |> Messages.info |> log
+            "Stopping kill source..." |> ActorMessage.Info |> log
             pipe.Post Stop
 
         member this.Post(msg: ActorMessage) = pipe.Post msg

@@ -21,5 +21,4 @@
         | Warning of string * string
         
 
-    module Messages =
-        let info = ActorMessage.Info
+    
