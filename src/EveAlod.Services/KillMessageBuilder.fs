@@ -7,7 +7,7 @@
     type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         
         let rnd = System.Random()
-        let getTagText = (Tagging.getTagText rnd) |> Tagging.getTagsText 
+        let getTagText = (Commentary.getTagText rnd) |> Commentary.getTagsText 
         
         let composeCharNames (characters: Character list) = 
             let names = characters 
