@@ -14,6 +14,7 @@
                 [| KillTag.SoloKill; KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY"; "Glorious solo victory"; |];
                 [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Someone needs to be call the boss. Deviant found"; |];
                 [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves a plex for this"; |];
+                [| KillTag.CorpLoss; KillTag.CorpKill |], [| "Oh dear"; |];
                 [| KillTag.CorpLoss |], [| "CORPIE DOWN"; "RIP" |];
                 [| KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
                 [| KillTag.Pod |], [| "Someone should have bought pod insurance"; "Someone needs his implants back"; |];
