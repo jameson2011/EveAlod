@@ -5,10 +5,11 @@
     open EveAlod.Common.Strings
 
     type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
-        
-        let rnd = System.Random()
-        let getTagText = (Commentary.getTagText rnd) |> Commentary.getTagsText 
-        
+                
+        //let getTagText = Commentary.getTagText |> Commentary.getTagsText 
+
+        let getTagText =  Commentary.getText |> Commentary.getConjunctiveTagsText 
+         
         let composeCharNames (characters: Character list) = 
             let names = characters 
                         |> Seq.map (fun c -> c.Char.Name)
