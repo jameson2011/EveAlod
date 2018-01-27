@@ -6,9 +6,7 @@
 
     type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
                 
-        //let getTagText = Commentary.getTagText |> Commentary.getTagsText 
-
-        let getTagText =  Commentary.getText |> Commentary.getConjunctiveTagsText 
+        let getTagText =  Commentary.getText |> Commentary.getTagsText 
          
         let composeCharNames (characters: Character list) = 
             let names = characters 

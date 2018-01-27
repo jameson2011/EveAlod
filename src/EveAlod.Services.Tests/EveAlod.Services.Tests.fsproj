@@ -89,7 +89,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ScoringTests.fs" />
-    <Compile Include="CommentaryTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
