@@ -20,7 +20,7 @@
             let tags = [                            
                             Tagging.isCorpKill 0.5 corpId;
                             Tagging.isCorpLoss corpId;
-                            Tagging.hasPlex isPlex;
+                            Tagging.hasItemInHold KillTag.PlexInHold isPlex;
                             Tagging.hasItemInHold KillTag.SkillInjectorInHold isSkillInjector;
                             Tagging.hasItemFitted KillTag.EcmFitted isEcm;               
                             Tagging.isPod isPod;

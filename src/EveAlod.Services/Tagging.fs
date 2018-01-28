@@ -89,10 +89,7 @@
             match pred km with
             | true -> Some tag
             | _ -> None
-            
-        let hasPlex (pred: Entity -> bool) =
-            (tagOnTrue KillTag.PlexInHold) (hasItemsInCargo pred)
-
+          
         let hasItemInHold tag (pred: Entity -> bool) =
             (tagOnTrue tag) (hasItemsInCargo pred)
             
