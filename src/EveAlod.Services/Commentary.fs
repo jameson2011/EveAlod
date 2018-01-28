@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Services
+namespace EveAlod.Services
 
     open EveAlod.Common
     open EveAlod.Data
@@ -12,7 +12,7 @@
                 [| KillTag.SoloKill; KillTag.Expensive|], [| "NICE"; "A thing of beauty is a joy forever" |];
                 [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?"; "Someone worked hard for his ship." |];
                 [| KillTag.SoloKill; KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY"; "Glorious solo victory"; |];
-                [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Someone needs to be call the boss."; |];
+                [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Someone needs to call the boss."; |];
                 [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves a plex for this"; |];
                 [| KillTag.CorpLoss; KillTag.CorpKill |], [| "Oh dear"; |];
                 [| KillTag.CorpLoss |], [| "CORPIE DOWN"; "RIP" |];
