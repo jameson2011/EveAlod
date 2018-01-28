@@ -11,7 +11,8 @@
         let dataProvider = StaticEntityProvider() :> IStaticEntityProvider
         let logger = LogPublishActor()
         let dataActor = StaticDataActor(logger.Post, dataProvider)
-        
+        let dumpActor = KillDumpActor(logger.Post, config.DumpFolder)
+
         let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
         let killPublisher = KillPublisherActor(logger.Post, 
@@ -31,8 +32,12 @@
                                                 KillTagger(dataActor, config.CorpId), 
                                                 Actors.forward Score killScorer.Post)
 
+        let forward km = Actors.forward New dumpActor.Post km
+                         Actors.forward Tag killTagger.Post km 
+                         
+
         let killSource = KillSourceActor(logger.Post,
-                                                Actors.forward Tag killTagger.Post,
+                                                forward,
                                                 EveAlod.Common.Web.getData,
                                                 "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             

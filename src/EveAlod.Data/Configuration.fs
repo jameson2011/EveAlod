@@ -10,5 +10,6 @@
                     CorpId: string;
                     ChannelId: string;
                     ChannelToken: string;
+                    DumpFolder: string;
                     }
 
