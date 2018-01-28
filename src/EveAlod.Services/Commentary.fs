@@ -10,7 +10,7 @@ namespace EveAlod.Services
                 [| KillTag.NpcKill; KillTag.Spendy |], [| "No permit = no ship"; "AFK carebear dead carebear" |];
                 [| KillTag.NpcKill; KillTag.Expensive |], [| "Bot down!"; "Don't go AFK Mr carebear" |];
                 [| KillTag.SoloKill; KillTag.Expensive|], [| "NICE"; "A thing of beauty is a joy forever" |];
-                [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?"; "Someone worked hard for his ship." |];
+                [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?"; "Someone worked hard for this."; |];
                 [| KillTag.SoloKill; KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY"; "Glorious solo victory"; |];
                 [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Someone needs to call the boss."; |];
                 [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves a plex for this"; |];
