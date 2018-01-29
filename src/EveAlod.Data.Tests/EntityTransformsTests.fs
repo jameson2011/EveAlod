@@ -47,12 +47,12 @@
         let ``toEntity id applied to Entity Id``(id: string)=
             let r = (EntityTransforms.toEntity id).Value.Id             
             r = id
-            
+        
         [<Property(Verbose = true, Arbitrary = [| typeof<NonDigitStrings> |])>]
         let ``toItemLocation non-integer value yields Unknown``(id)=
-            let r = EntityTransforms.toItemLocation id
+            let r = EntityTransforms.toItemLocation id           
             r = ItemLocation.Unknown
-
+                    
         
         [<Property(Verbose = true, Arbitrary = [| typeof<PositiveInts> |])>]
         let ``toItemLocation integer value yields without crash``(id: int)=
