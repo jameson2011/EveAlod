@@ -21,8 +21,7 @@
                     | KillJson json -> 
                         match KillTransforms.toKill json with
                         | Some k -> k |> forward
-                        | _ ->  
-                            ActorMessage.Info "No data received from zKB" |> log                            
+                        | _ ->  ignore 0
                     | _ -> ignore 0
                 with e -> logException e
 

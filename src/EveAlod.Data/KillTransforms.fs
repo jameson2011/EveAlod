@@ -139,8 +139,13 @@
                             |> applyVictim json 
                             |> applyAttackers json
                             |> isValid
-                        
-                
+        
+        let isKill msg = 
+            let id = msg |> asKillPackage |> getPropStr "killID" 
+            id <> ""
+            
+            
+            
             
             
 

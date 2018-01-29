@@ -23,7 +23,9 @@
 
                 let waitTime = match resp.Status with
                                     | EveAlod.Common.HttpStatus.OK -> 
-                                        resp.Message |> forward 
+                                        match KillTransforms.isKill resp.Message with
+                                        | true -> resp.Message |> forward
+                                        | _ -> ActorMessage.Info "No data received from zKB" |> log
                                         TimeSpan.Zero
                                     | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
