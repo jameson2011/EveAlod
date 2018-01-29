@@ -17,7 +17,7 @@
         | GetEntityGroup of EntityGroupKey * AsyncReplyChannel<Set<string> option>
         
 
-    type StaticDataActor(log: Post, provider: IStaticEntityProvider)=
+    type StaticDataActor(log: PostMessage, provider: IStaticEntityProvider)=
         
         let onException = Actors.postException typeof<StaticDataActor>.Name log
 

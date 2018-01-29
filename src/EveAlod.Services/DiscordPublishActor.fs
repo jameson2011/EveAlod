@@ -5,7 +5,7 @@
     open EveAlod.Data
     open System.Net.Http
     
-    type DiscordPublishActor(log: Post, channel: DiscordChannel,  sendDiscord: HttpClient-> string -> string -> string -> Async<WebResponse>)= 
+    type DiscordPublishActor(log: PostMessage, channel: DiscordChannel,  sendDiscord: HttpClient-> string -> string -> string -> Async<WebResponse>)= 
     
         let httpClient = Web.httpClient()
         let post = sendDiscord httpClient channel.Id channel.Token 
@@ -36,7 +36,7 @@
                 return wait
             }
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext(wait: TimeSpan) = async {
                 
                 let! inMsg = inbox.Receive()

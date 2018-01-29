@@ -25,7 +25,7 @@
 
         let onException = logException typeof<LogPublishActor>.Name 
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 

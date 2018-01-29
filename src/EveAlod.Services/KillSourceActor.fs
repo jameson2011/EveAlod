@@ -4,10 +4,9 @@
     open EveAlod.Common
     open EveAlod.Data
         
-    type Inbox = MailboxProcessor<ActorMessage>
-
-    type KillSourceActor(log: Post,
-                            forward: Kill -> unit, 
+    
+    type KillSourceActor(log: PostMessage,
+                            forward: PostKill, 
                             getKmData: System.Net.Http.HttpClient -> string -> Async<WebResponse>, 
                             sourceUri: string)= 
         
@@ -18,7 +17,7 @@
         let getData = getKmData httpClient
 
 
-        let onNext (inbox: Inbox) url = 
+        let onNext (inbox: MessageInbox) url = 
             async {                                
                 let! resp = getData url
 
@@ -41,7 +40,7 @@
 
             }
             
-        let pipe = Inbox.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
 
 
             let rec getNextFromInbox() = async {

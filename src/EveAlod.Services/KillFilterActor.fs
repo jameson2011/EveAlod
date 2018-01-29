@@ -2,11 +2,11 @@
 
     open EveAlod.Data
 
-    type KillFilterActor(log: Post, minScore: float, forward: Kill -> unit) =
+    type KillFilterActor(log: PostMessage, minScore: float, forward: PostKill) =
 
         let onException = Actors.postException typeof<KillFilterActor>.Name log
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
                 
                 let! msg = inbox.Receive()

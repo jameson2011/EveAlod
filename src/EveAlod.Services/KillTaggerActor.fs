@@ -3,11 +3,11 @@
     open EveAlod.Data
     
     
-    type KillTaggerActor(log: Post, tagger: KillTagger, forward: Kill -> unit) =
+    type KillTaggerActor(log: PostMessage, tagger: KillTagger, forward: PostKill) =
 
         let onException = Actors.postException typeof<KillTaggerActor>.Name log
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
                 try

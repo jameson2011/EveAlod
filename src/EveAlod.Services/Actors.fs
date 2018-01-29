@@ -2,16 +2,14 @@
 
     open EveAlod.Data
 
-    type Post= ActorMessage -> unit
+    type PostMessage= ActorMessage -> unit
+    type PostKill = Kill -> unit
+    type MessageInbox = MailboxProcessor<ActorMessage>
 
     module Actors = 
-        (*
-        let forward (msg: 'a -> ActorMessage) (post: ActorMessage -> unit) value =
-            value |> msg |> post
-        *)
-        let forwardMany  (getMsg: 'a -> ActorMessage) (posts: (ActorMessage -> unit) list) value =
+        let forwardMany  (getMsg: 'a -> ActorMessage) (posts: (PostMessage) list) value =
             let msg = getMsg value
             posts |> List.iter (fun p -> p msg)            
 
-        let postException name (log: ActorMessage -> unit) ex = (ActorMessage.Exception (name, ex)) |> log
+        let postException name (log: PostMessage) ex = (ActorMessage.Exception (name, ex)) |> log
         

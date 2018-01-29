@@ -2,9 +2,9 @@
 
     open EveAlod.Data
     
-    type KillScorerActor(log: Post, forward: Kill -> unit) =
+    type KillScorerActor(log: PostMessage, forward: PostKill) =
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
                 let! msg = inbox.Receive()
 

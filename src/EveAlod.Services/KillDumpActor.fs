@@ -3,7 +3,7 @@
     open System.IO
     open EveAlod.Data
     
-    type KillDumpActor(log: Post, folder)=
+    type KillDumpActor(log: PostMessage, folder)=
         
         let logException = Actors.postException typeof<KillSourceActor>.Name log
 
@@ -19,7 +19,7 @@
             
         let write = Serialization.killToJson >> writeJson
 
-        let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
+        let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
                 
                 let! msg = inbox.Receive()

@@ -82,6 +82,7 @@
     <Compile Include="DiscordPublishActor.fs" />
     <Compile Include="KillFilterActor.fs" />
     <Compile Include="KillScorerActor.fs" />
+    <Compile Include="KillTransformActor.fs" />
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillDumpActor.fs" />
     <Compile Include="KillTagger.fs" />
