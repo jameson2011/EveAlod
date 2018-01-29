@@ -17,7 +17,7 @@
             let filePath = Path.Combine(folder, name)
             File.AppendAllText(filePath, json)
             
-        let write = Serialization.toJson >> writeJson
+        let write = Serialization.killToJson >> writeJson
 
         let pipe = MailboxProcessor<ActorMessage>.Start(fun inbox -> 
             let rec getNext() = async {

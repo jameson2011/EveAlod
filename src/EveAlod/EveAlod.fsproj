@@ -59,10 +59,10 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <None Include="App.config" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Bootstrap.fs" />
     <Compile Include="Program.fs" />
-    <None Include="App.config" />
     <Content Include="packages.config" />
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

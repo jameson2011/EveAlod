@@ -181,8 +181,3 @@
             | [] -> false
             | _ -> true            
             
-        [<Property(Verbose = true)>]
-        let ``toJson``(kill: Kill) =
-            let id, json = Serialization.toJson kill
-
-            id = kill.Id

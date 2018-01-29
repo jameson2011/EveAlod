@@ -5,21 +5,18 @@
     open FSharp.Data
 
     module Serialization=
-        let private jsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof<Kill>)
-        
-        let toJson(kill: Kill)=
-            (*
-            @ in name (unions?) causes failure
+        open MBrace.FsPickler.Json
 
-            use ms = new MemoryStream()
+        let private jsonSerializer = FsPickler.CreateJsonSerializer(indent = false)
 
-            jsonSerializer.WriteObject(ms, kill)
-
-            let json = Encoding.UTF8.GetString(ms.ToArray())
-            *)
-            
-            let json = kill.ZkbUri
+        let killToJson(kill: Kill)=
+            let json = jsonSerializer.PickleToString kill    
             
             (kill.Id, json)
+
+        let killFromJson (json: string) : Kill=
+            let r = jsonSerializer.UnPickleOfString json
+
+            r
             
 

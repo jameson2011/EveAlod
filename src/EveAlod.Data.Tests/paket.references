@@ -2,3 +2,4 @@ FSharp.Data
 xunit
 FsCheck
 FsCheck.Xunit
+Newtonsoft.Json
