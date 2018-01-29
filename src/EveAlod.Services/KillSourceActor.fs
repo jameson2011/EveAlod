@@ -6,7 +6,7 @@
         
     
     type KillSourceActor(log: PostMessage,
-                            forward: PostKill, 
+                            forward: PostString, 
                             getKmData: System.Net.Http.HttpClient -> string -> Async<WebResponse>, 
                             sourceUri: string)= 
         
@@ -23,10 +23,8 @@
 
                 let waitTime = match resp.Status with
                                     | EveAlod.Common.HttpStatus.OK -> 
-                                            match resp.Message |> KillTransforms.toKill with
-                                            | Some k -> forward k
-                                            | _ -> ActorMessage.Info "No data received from zKB" |> log
-                                            TimeSpan.Zero
+                                        resp.Message |> forward 
+                                        TimeSpan.Zero
                                     | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
                                         standoffWait

@@ -17,26 +17,24 @@
         
         let killPublisher = KillPublisherActor(logger.Post, 
                                                     KillMessageBuilder(dataActor, config.CorpId), 
-                                                    [ discordPublisher.Post; ] |> Actors.forwardMany (SendToDiscord)
-                                                    )
+                                                    [ discordPublisher.Post; ] |> Actors.forwardMany (SendToDiscord))
         
         let killFilter = KillFilterActor(logger.Post, 
                                                 config.MinimumScore, 
                                                 [ killPublisher.Post; ] |> Actors.forwardMany (Kill))
 
         let killScorer = KillScorerActor(logger.Post, 
-                                                [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Kill)
-                                                ) 
+                                                [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Kill)) 
         
         let killTagger = KillTaggerActor(logger.Post, 
                                                 KillTagger(dataActor, config.CorpId), 
-                                                //Actors.forward Kill killScorer.Post
-                                                [ killScorer.Post ] |> Actors.forwardMany (Kill)
-                                                )
+                                                [ killScorer.Post ] |> Actors.forwardMany (Kill))
                
-
+        let killTransform = KillTransformActor(logger.Post, 
+                                                [ dumpActor.Post; killTagger.Post ] |> Actors.forwardMany (Kill))
+       
         let killSource = KillSourceActor(logger.Post,
-                                                [ dumpActor.Post; killTagger.Post ] |> Actors.forwardMany (Kill),
+                                                Actors.forwardMany (ActorMessage.KillJson) [ killTransform.Post ],
                                                 EveAlod.Common.Web.getData,
                                                 "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             

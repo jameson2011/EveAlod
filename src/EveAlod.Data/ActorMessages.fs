@@ -5,7 +5,7 @@
         | Start
         | Stop
         | GetNextKill of string * TimeSpan
-        | KillSource of string
+        | KillJson of string
         | Kill of Kill
         | SendToDiscord of string
         | Info of string

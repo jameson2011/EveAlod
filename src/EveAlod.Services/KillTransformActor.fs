@@ -18,10 +18,11 @@
 
                 try
                     match msg with
-                    | KillSource json -> 
+                    | KillJson json -> 
                         match KillTransforms.toKill json with
                         | Some k -> k |> forward
-                        | _ -> ignore 0
+                        | _ ->  
+                            ActorMessage.Info "No data received from zKB" |> log                            
                     | _ -> ignore 0
                 with e -> logException e
 
@@ -33,5 +34,5 @@
 
         do pipe.Error.Add(logException)
 
-        member __this.Post() =
-            pipe.Post
+        member __this.Post(msg) =
+            pipe.Post msg

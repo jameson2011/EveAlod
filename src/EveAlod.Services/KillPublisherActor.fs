@@ -2,7 +2,7 @@
 
     open EveAlod.Data
 
-    type KillPublisherActor(log: PostMessage, msgFactory: KillMessageBuilder, forward: string -> unit)=
+    type KillPublisherActor(log: PostMessage, msgFactory: KillMessageBuilder, forward: PostString)=
 
         let onException = Actors.postException typeof<KillPublisherActor>.Name log
         

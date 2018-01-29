@@ -4,6 +4,7 @@
 
     type PostMessage= ActorMessage -> unit
     type PostKill = Kill -> unit
+    type PostString = string -> unit
     type MessageInbox = MailboxProcessor<ActorMessage>
 
     module Actors = 
