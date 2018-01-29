@@ -17,27 +17,26 @@
         
         let killPublisher = KillPublisherActor(logger.Post, 
                                                     KillMessageBuilder(dataActor, config.CorpId), 
-                                                    Actors.forward SendToDiscord discordPublisher.Post
+                                                    [ discordPublisher.Post; ] |> Actors.forwardMany (SendToDiscord)
                                                     )
         
         let killFilter = KillFilterActor(logger.Post, 
                                                 config.MinimumScore, 
-                                                Actors.forward Kill killPublisher.Post)
+                                                [ killPublisher.Post; ] |> Actors.forwardMany (Kill))
 
         let killScorer = KillScorerActor(logger.Post, 
-                                                fun km ->   logger.Post (Kill km)
-                                                            killFilter.Post (Kill km)) 
+                                                [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Kill)
+                                                ) 
         
         let killTagger = KillTaggerActor(logger.Post, 
                                                 KillTagger(dataActor, config.CorpId), 
-                                                Actors.forward Kill killScorer.Post)
-
-        let forward km = Actors.forward Kill dumpActor.Post km
-                         Actors.forward Kill killTagger.Post km 
-                         
+                                                //Actors.forward Kill killScorer.Post
+                                                [ killScorer.Post ] |> Actors.forwardMany (Kill)
+                                                )
+               
 
         let killSource = KillSourceActor(logger.Post,
-                                                forward,
+                                                [ dumpActor.Post; killTagger.Post ] |> Actors.forwardMany (Kill),
                                                 EveAlod.Common.Web.getData,
                                                 "https://redisq.zkillboard.com/listen.php?ttw=10")
                                             
