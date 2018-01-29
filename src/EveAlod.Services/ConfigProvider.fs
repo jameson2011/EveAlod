@@ -2,6 +2,7 @@
     
     open System.IO
     open FSharp.Data
+    open EveAlod.Common.IO
     open EveAlod.Common.Strings
     open EveAlod.Data
 
@@ -18,10 +19,15 @@
                 CorpId = c.CorpId;
                 ChannelId = c.ChannelId;
                 ChannelToken = c.ChannelToken;
-                DumpFolder = match c.DumpFolder with        
-                                | NullOrWhitespace _ -> Path.Combine(configFolder, "kills")
-                                | s -> s;
+                DumpFolder = c.DumpFolder;
             }
 
-        member this.Configuration() = loadConfig configFilePath
+        let setDumpFolder (config: Configuration) =
+            let folder = ( match config.DumpFolder with       
+                            | NullOrWhitespace _ -> configFolder |> combine "kills"
+                            | f -> f ) |> createDirectory
+            
+            { config with DumpFolder = folder }
+
+        member __.Configuration() = loadConfig configFilePath |> setDumpFolder
 
