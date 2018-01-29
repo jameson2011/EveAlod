@@ -37,7 +37,7 @@
                                     | HttpStatus.Error ->                                         
                                         ActorMessage.Error ("zKB", resp.Message) |> log
                                         standoffWait
-                inbox.Post (GetNext (url, waitTime))
+                inbox.Post (GetNextKill (url, waitTime))
 
             }
             
@@ -57,9 +57,9 @@
                                     | x -> match x with
                                             | Start ->  
                                                 "Started kill source." |> ActorMessage.Info |> log
-                                                inbox.Post (GetNext (sourceUri, TimeSpan.Zero))
+                                                inbox.Post (GetNextKill (sourceUri, TimeSpan.Zero))
                                                 return true
-                                            | GetNext (url, wait) ->    
+                                            | GetNextKill (url, wait) ->    
                                                 let! w = Async.Sleep((int wait.TotalMilliseconds))
                                                 
                                                 try

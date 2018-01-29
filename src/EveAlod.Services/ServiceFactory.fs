@@ -22,18 +22,18 @@
         
         let killFilter = KillFilterActor(logger.Post, 
                                                 config.MinimumScore, 
-                                                Actors.forward Publish killPublisher.Post)
+                                                Actors.forward Kill killPublisher.Post)
 
         let killScorer = KillScorerActor(logger.Post, 
-                                                fun km ->   logger.Post (Log km)
-                                                            killFilter.Post (Scored km)) 
+                                                fun km ->   logger.Post (Kill km)
+                                                            killFilter.Post (Kill km)) 
         
         let killTagger = KillTaggerActor(logger.Post, 
                                                 KillTagger(dataActor, config.CorpId), 
-                                                Actors.forward Score killScorer.Post)
+                                                Actors.forward Kill killScorer.Post)
 
-        let forward km = Actors.forward New dumpActor.Post km
-                         Actors.forward Tag killTagger.Post km 
+        let forward km = Actors.forward Kill dumpActor.Post km
+                         Actors.forward Kill killTagger.Post km 
                          
 
         let killSource = KillSourceActor(logger.Post,

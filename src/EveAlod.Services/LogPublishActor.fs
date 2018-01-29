@@ -31,7 +31,7 @@
 
                 try
                     match msg with
-                    | Log km ->                 getMsg km |> logInfo
+                    | Kill km ->                 getMsg km |> logInfo
                     | Warning (source,msg) ->   ("[" + source + "]: " + msg) |> logWarn
                     | Error (source, msg) ->    ("[" + source + "]: " + msg) |> logError
                     | Exception (source, ex) -> logException source ex               

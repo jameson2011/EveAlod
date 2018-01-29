@@ -9,7 +9,7 @@
                 let! msg = inbox.Receive()
 
                 match msg with                                    
-                | Score km ->    
+                | Kill km ->    
                             try
                                 let score = Scoring.score km
                                 let km = { km with AlodScore = score}

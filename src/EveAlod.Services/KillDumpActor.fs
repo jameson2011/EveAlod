@@ -26,7 +26,7 @@
 
                 try
                     match msg with
-                    | New km -> 
+                    | Kill km -> 
                         write km                    
                     | _ -> ignore 0
                 with e -> logException e

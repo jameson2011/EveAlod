@@ -13,7 +13,7 @@
 
                 try
                     match msg with                                    
-                    | Scored km ->    
+                    | Kill km ->    
                                 if km.AlodScore >= minScore then
                                     forward km          
                     | _ ->      ignore 0
