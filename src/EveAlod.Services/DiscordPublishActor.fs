@@ -9,6 +9,7 @@
     
         let httpClient = Web.httpClient()
         let post = sendDiscord httpClient channel.Id channel.Token 
+        let minWait = TimeSpan.FromSeconds(3.)
 
         let logResponse (response: WebResponse) =            
             let logMsg = (match response.Status with
@@ -25,10 +26,10 @@
 
         let sendToDiscord (wait: TimeSpan) (msg) : Async<TimeSpan> =
             async {
-                let! r = Async.Sleep(int wait.TotalMilliseconds)
+                let! _ = Async.Sleep(int wait.TotalMilliseconds)
                     
                 let! response = post msg
-                let wait = response.Retry |> Option.defaultValue (max wait (TimeSpan.FromSeconds(3.)))
+                let wait = response.Retry |> Option.defaultValue minWait |> max minWait
                 logResponse response
                 
                 // Do not try to resend. The queue will accumulate, and keeping Discord happy is more important
