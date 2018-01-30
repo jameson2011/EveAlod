@@ -11,18 +11,20 @@
         let post = sendDiscord httpClient channel.Id channel.Token 
         let minWait = TimeSpan.FromSeconds(3.)
 
-        let logResponse (response: WebResponse) =            
-            let logMsg = (match response.Status with
-                            | HttpStatus.TooManyRequests -> 
-                                Some (ActorMessage.Warning ("Discord", "Too many requests")) 
-                            | HttpStatus.Error -> 
-                                Some (ActorMessage.Error ("Discord", response.Message)) 
-                            | HttpStatus.Unauthorized ->
-                                Some (ActorMessage.Error ("Discord", "Unauthorized")) 
-                            | HttpStatus.OK _ ->  
-                                None)  
-            
-            logMsg |> Option.iter log
+        let logResponse (msg, response: WebResponse) =            
+            (match response.Status with
+            | HttpStatus.TooManyRequests -> 
+                Some (ActorMessage.Warning ("Discord", "Too many requests")) 
+            | HttpStatus.Error -> 
+                Some (ActorMessage.Error ("Discord", response.Message)) 
+            | HttpStatus.Unauthorized ->
+                Some (ActorMessage.Error ("Discord", "Unauthorized")) 
+            | HttpStatus.OK _ ->                                  
+                msg |> sprintf "Sent to Discord: <%s>"  
+                    |> (fun m -> ActorMessage.Trace ("Discord", m)  )
+                    |> Some
+            )  
+            |> Option.iter log
 
         let sendToDiscord (wait: TimeSpan) (msg) : Async<TimeSpan> =
             async {
@@ -30,7 +32,7 @@
                     
                 let! response = post msg
                 let wait = response.Retry |> Option.defaultValue minWait |> max minWait
-                logResponse response
+                logResponse (msg,response)
                 
                 // Do not try to resend. The queue will accumulate, and keeping Discord happy is more important
                 
@@ -58,8 +60,8 @@
 
         do pipe.Error.Add(Actors.postException typeof<DiscordPublishActor>.Name log)
                 
-        member this.Start() = pipe.Post Start
+        member __.Start() = pipe.Post Start
         
-        member this.Stop() = pipe.Post Stop
+        member __.Stop() = pipe.Post Stop
 
-        member this.Post(msg: ActorMessage) = pipe.Post msg
+        member __.Post(msg: ActorMessage) = pipe.Post msg

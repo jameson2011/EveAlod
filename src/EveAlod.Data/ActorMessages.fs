@@ -8,6 +8,7 @@
         | KillJson of string
         | Kill of Kill
         | SendToDiscord of string
+        | Trace of string * string
         | Info of string
         | Exception of string * Exception
         | Error of string * string
