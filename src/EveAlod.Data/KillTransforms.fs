@@ -9,6 +9,7 @@
 
         type JsonKillProvider = JsonProvider<"./SampleRedisqKillmail.json">
 
+        (*
         let defaultKill() =
             { Kill.Id = "";
                 Occurred = System.DateTime.UtcNow;
@@ -23,7 +24,7 @@
                 Cargo = [];
                 TotalValue = 0.;
             }
-        
+        *)
         let toCharacter (json: JsonValue option) =
             let char =  json |> getPropStr "character_id" |> EntityTransforms.toEntity
             let corp = json |> getPropStr "corporation_id" |> EntityTransforms.toEntity
@@ -134,7 +135,7 @@
             let json = msg |> asKillPackage
             match json with
             | None -> None
-            | Some _ -> defaultKill() 
+            | Some _ -> Kill.empty 
                             |> applyMeta json 
                             |> applyVictim json 
                             |> applyAttackers json

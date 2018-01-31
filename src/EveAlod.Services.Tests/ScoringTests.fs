@@ -13,7 +13,7 @@
 
         [<Property(Verbose=true)>]
         let ``score dependent on tags``(tags: KillTag list)=
-            let kill = { KillTransforms.defaultKill() with Tags = tags |> List.distinct}
+            let kill = { Kill.empty with Tags = tags |> List.distinct}
 
             Scoring.score kill |> ignore
             
@@ -21,22 +21,22 @@
             
         [<Fact>]
         let ``empty tags have zero score``()=            
-            ({ KillTransforms.defaultKill() with Tags = [] } |> Scoring.score ) = 0.
+            ({ Kill.empty with Tags = [] } |> Scoring.score ) = 0.
 
         [<Property(Verbose=true)>]
         let ``all tags have a positive score``(tag: KillTag)=
-            let kill = { KillTransforms.defaultKill() with Tags = [ tag ] }
+            let kill = { Kill.empty with Tags = [ tag ] }
 
             (Scoring.score kill) > 0.
 
         [<Property(Verbose=true, Replay="(193286329,296399112)")>]
         let ``tag scores are accumulative``(tags: KillTag list)=
             let tags = tags |> List.distinct
-            let kill tag = { KillTransforms.defaultKill() with Tags = [ tag ] }
+            let kill tag = { Kill.empty with Tags = [ tag ] }
             let tagScores = tags    |> List.map kill
                                     |> List.map Scoring.score
                                     
-            let tagsScore = { KillTransforms.defaultKill() with Tags = tags}
+            let tagsScore = { Kill.empty with Tags = tags}
                                 |> Scoring.score
             
             tagsScore >= (tagScores |> Seq.sum)
