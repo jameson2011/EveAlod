@@ -19,7 +19,6 @@
                 CorpId = c.CorpId;
                 ChannelId = c.ChannelId;
                 ChannelToken = c.ChannelToken;
-                DumpFolder = c.DumpFolder;
                 KillSourceUri = c.KillSourceUri;
             }
 
@@ -29,12 +28,5 @@
                         | u -> u
             { config with KillSourceUri = uri }
 
-        let setDumpFolder (config: Configuration) =
-            let folder = ( match config.DumpFolder with       
-                            | NullOrWhitespace _ -> configFolder |> combine "kills"
-                            | f -> f ) |> createDirectory
-            
-            { config with DumpFolder = folder }
-
-        member __.Configuration() = loadConfig configFilePath |> setDumpFolder |> setKillSourceUri
+        member __.Configuration() = loadConfig configFilePath |> setKillSourceUri
 
