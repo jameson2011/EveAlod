@@ -36,7 +36,7 @@
         let killSource = KillSourceActor(logger.Post,
                                                 [ dumpActor.Post; killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillJson) ,
                                                 EveAlod.Common.Web.getData,
-                                                "https://redisq.zkillboard.com/listen.php?ttw=10")
+                                                config.KillSourceUri)
                                             
         member this.KillSource = killSource
 

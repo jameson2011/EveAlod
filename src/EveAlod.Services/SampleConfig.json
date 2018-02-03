@@ -3,5 +3,6 @@
   "corpId": "corpId",
   "channelId": "discordChannel",
   "channelToken": "discordToken",
-  "dumpFolder":  "C:\\"
+  "dumpFolder": "C:\\",
+  "killSourceUri":  "http://127.0.0.1"
 }

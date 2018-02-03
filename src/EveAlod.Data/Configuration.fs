@@ -11,5 +11,6 @@
                     ChannelId: string;
                     ChannelToken: string;
                     DumpFolder: string;
+                    KillSourceUri: string;
                     }
 

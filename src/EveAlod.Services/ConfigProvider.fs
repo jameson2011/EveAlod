@@ -20,7 +20,14 @@
                 ChannelId = c.ChannelId;
                 ChannelToken = c.ChannelToken;
                 DumpFolder = c.DumpFolder;
+                KillSourceUri = c.KillSourceUri;
             }
+
+        let setKillSourceUri(config: Configuration)=
+            let uri = match config.KillSourceUri with     
+                        | NullOrWhitespace _ -> "https://redisq.zkillboard.com/listen.php?ttw=10"
+                        | u -> u
+            { config with KillSourceUri = uri }
 
         let setDumpFolder (config: Configuration) =
             let folder = ( match config.DumpFolder with       
@@ -29,5 +36,5 @@
             
             { config with DumpFolder = folder }
 
-        member __.Configuration() = loadConfig configFilePath |> setDumpFolder
+        member __.Configuration() = loadConfig configFilePath |> setDumpFolder |> setKillSourceUri
 
