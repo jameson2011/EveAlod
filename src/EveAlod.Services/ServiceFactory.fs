@@ -11,7 +11,6 @@
         let dataProvider = StaticEntityProvider() :> IStaticEntityProvider
         let logger = LogPublishActor()
         let dataActor = StaticDataActor(logger.Post, dataProvider)
-        let dumpActor = KillDumpActor(logger.Post, config.DumpFolder)
 
         let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
         
@@ -31,10 +30,10 @@
                                                 [ killScorer.Post ] |> Actors.forwardMany (Kill))
                
         let killTransform = KillTransformActor(logger.Post, 
-                                                [ dumpActor.Post; killTagger.Post ] |> Actors.forwardMany (Kill))
+                                                [ killTagger.Post ] |> Actors.forwardMany (Kill))
        
         let killSource = KillSourceActor(logger.Post,
-                                                [ dumpActor.Post; killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillJson) ,
+                                                [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillJson) ,
                                                 EveAlod.Common.Web.getData,
                                                 config.KillSourceUri)
                                             
