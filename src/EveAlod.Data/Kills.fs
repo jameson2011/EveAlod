@@ -110,18 +110,18 @@
                     AlodScore: float;
                     }
         with static member empty =
-            { 
-                Kill.Id = "";
-                Occurred = System.DateTime.UtcNow;
-                Tags = [];
-                ZkbUri = "";
-                Location = None;
-                Victim = None;
-                VictimShip = None;
-                AlodScore = 0.;
-                Attackers = [];
-                Fittings = [];
-                Cargo = [];
-                TotalValue = 0.;
-            }            
+                { 
+                    Kill.Id = "";
+                    Occurred = System.DateTime.UtcNow;
+                    Tags = [];
+                    ZkbUri = "";
+                    Location = None;
+                    Victim = None;
+                    VictimShip = None;
+                    AlodScore = 0.;
+                    Attackers = [];
+                    Fittings = [];
+                    Cargo = [];
+                    TotalValue = 0.;
+                }            
 
