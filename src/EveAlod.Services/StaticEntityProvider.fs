@@ -71,6 +71,16 @@
                         | _ -> None
                 }
 
+        let getCorpByTicker(ticker: string)=
+            async{
+                let uri = sprintf "https://esi.tech.ccp.is/latest/search/?categories=corporation&datasource=tranquility&language=en-us&search=%s&strict=true" ticker
+                let! response = getData uri
+                return match response.Status with
+                        | EveAlod.Common.HttpStatus.OK -> 
+                            response.Message |> EntityTransforms.parseCorpSearchResult
+                        | _ -> None
+                }
+
         interface IStaticEntityProvider with
             member this.EntityIds(key: EntityGroupKey) = groupEntityIds key
 
@@ -80,4 +90,5 @@
 
             member this.SolarSystem(id: string) = getSolarSystem id
 
+            member this.CorporationByTicker(ticker: string) = getCorpByTicker ticker
             

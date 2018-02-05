@@ -1,8 +1,9 @@
 ﻿{
   "minimumScore": 0.0,
   "corpId": "corpId",
+  "corpTicker": "ABCDE",
+  "discordWebhookUri":  "http://discordapp.com",
   "channelId": "discordChannel",
   "channelToken": "discordToken",
-  "dumpFolder": "C:\\",
   "killSourceUri":  "http://127.0.0.1"
 }

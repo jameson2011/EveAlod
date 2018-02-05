@@ -61,7 +61,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Bootstrap.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
     <Content Include="log4net.config">

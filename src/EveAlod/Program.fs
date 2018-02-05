@@ -4,29 +4,22 @@ open EveAlod
 
 [<EntryPoint>]
 let main argv =
-        
-    try       
-        let webhook = match argv with           
-                        | [| x |] -> x
-                        | _ -> ""
-        
-        let c = (fun () -> Bootstrap.config webhook)
-        
-        let factory = EveAlod.Services.ServiceFactory(c)
-        let source = factory.KillSource
+            
+    try               
+        let factory = EveAlod.Services.ServiceFactory()
         let log = factory.Log
 
-        ActorMessage.Info "Starting EveAlod..." |> log
-
+        let source = factory.KillSource
+        
         source.Start()
         
+        ActorMessage.Info "Started EveAlod." |> log
+
         System.Console.Out.WriteLine("ENTER to quit")
         System.Console.ReadLine() |> ignore
 
         ActorMessage.Info "Stopping EveAlod..." |> log
-
         source.Stop()
-
         ActorMessage.Info "Stopped EveAlod." |> log
 
         0

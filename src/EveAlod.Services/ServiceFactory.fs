@@ -3,13 +3,19 @@
     open System
     open EveAlod.Data
 
-    type ServiceFactory(configProvider: unit -> Configuration)=
+    type ServiceFactory()=
     
-        let config = configProvider()
-        let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
-
         let dataProvider = StaticEntityProvider() :> IStaticEntityProvider
         let logger = LogPublishActor()
+        
+        do ActorMessage.Info "Starting EveAlod..." |> logger.Post
+        
+        let configProvider = new ConfigProvider(logger.Post, dataProvider)
+
+        let config = configProvider.Configuration()
+
+        let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
+
         let dataActor = StaticDataActor(logger.Post, dataProvider)
 
         let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)

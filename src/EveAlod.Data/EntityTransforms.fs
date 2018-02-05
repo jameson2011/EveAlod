@@ -5,6 +5,7 @@
         open FSharp.Data
         open System
 
+        type JsonCorpSearchProvider = JsonProvider<"""{ "corporation": [ 234 ] }""">
         type JsonSolarSystemProvider = JsonProvider<"./SampleSolarSystem.json">
         type JsonGroupIdProvider = JsonProvider<"./SampleIds.json">
         type JsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
@@ -100,3 +101,10 @@
             Some { SolarSystem.Id = o.SystemId.ToString();
                         Name = o.Name;
                         Security = getSecurityStatus o.Name o.SecurityStatus}
+
+        let parseCorpSearchResult json = 
+            let o = JsonCorpSearchProvider.Parse(json)
+
+            match o.Corporation with
+            | [| x |] ->    Some { Entity.Id = x.ToString(); Name = "" }
+            | _ ->          None
