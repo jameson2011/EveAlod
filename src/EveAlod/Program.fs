@@ -1,11 +1,11 @@
 ﻿open System
 open EveAlod.Data
+
 open EveAlod
 
-[<EntryPoint>]
-let main argv =
-            
-    try               
+module Program=
+
+    let private runService (app)= 
         let factory = EveAlod.Services.ServiceFactory()
         let log = factory.Log
 
@@ -22,8 +22,27 @@ let main argv =
         source.Stop()
         ActorMessage.Info "Stopped EveAlod." |> log
 
-        0
+        true
+
+
+    let private createAppTemplate()=
+        let app = CommandLine.createApp()
+                    |> CommandLine.addRun runService
+                    |> CommandLine.setHelp
     
-    with e -> 
-        Console.Error.WriteLine e.Message
-        2
+        app.OnExecute(fun () -> app.ShowHelp()
+                                0)
+        app
+        
+
+    [<EntryPoint>]
+    let main argv =
+        let app = createAppTemplate()
+    
+        app.OnExecute(fun () -> app.ShowHelp()
+                                0)
+        try
+                app.Execute(argv)
+        with    
+        | ex -> Console.Error.WriteLine ex.Message   
+                2
