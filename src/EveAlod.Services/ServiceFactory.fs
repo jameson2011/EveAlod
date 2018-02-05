@@ -10,9 +10,12 @@
         
         do ActorMessage.Info "Starting EveAlod..." |> logger.Post
         
-        let configProvider = new ConfigProvider(logger.Post, dataProvider)
+        let configProvider = ConfigProvider(logger.Post, dataProvider)
 
-        let config = configProvider.Configuration()
+        let config = configProvider.Configuration() 
+                                    |> Config.validate
+                                    |> Config.report logger.Post
+        
 
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 

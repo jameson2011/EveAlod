@@ -76,6 +76,7 @@
     <Compile Include="Scoring.fs" />
     <Compile Include="Tagging.fs" />
     <Compile Include="Commentary.fs" />
+    <Compile Include="Config.fs" />
     <Compile Include="ConfigProvider.fs" />
     <Compile Include="StaticEntityProvider.fs" />
     <Compile Include="StaticDataActor.fs" />

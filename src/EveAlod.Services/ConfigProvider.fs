@@ -10,8 +10,8 @@
 
     type ConfigProvider(log: PostMessage, dataProvider: IStaticEntityProvider)=
         
-        let configFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-        let configFilePath = Path.Combine(configFolder, "settings.json")
+        let configFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+                                |> combine "settings.json"
 
         let info = ActorMessage.Info >> log
        
@@ -41,7 +41,7 @@
         let applyDiscord config = 
             match config.DiscordWebhookUri with 
             | NullOrWhitespace _ -> config
-            | u ->  info "Resolving Discord webhook..."
+            | u ->  sprintf "Resolving Discord webhook %s..." u |> info
                     let channel = getDiscordChannel u
                     info "Discord webhook resolved."
                     { config with ChannelId = channel.Id; ChannelToken = channel.Token }
@@ -49,7 +49,7 @@
         let applyCorp config = 
             match config.CorpTicker with
             | NullOrWhitespace _ -> config
-            | ticker ->     info "Resolving corp ticker..."
+            | ticker ->     sprintf "Resolving corp ticker %s..." ticker |> info
                             let corpId = getCorpId ticker       
                             info "Corp ticker resolved."
                             { config with CorpId = corpId }
@@ -58,11 +58,11 @@
             let uri = match config.KillSourceUri with     
                         | NullOrWhitespace _ -> "https://redisq.zkillboard.com/listen.php?ttw=10"
                         | u -> u
-            { config with KillSourceUri = uri }
-        
+            { config with KillSourceUri = uri }       
+            
         member __.Configuration() = 
             loadConfig configFilePath 
                 |> applyDiscord
                 |> applyCorp
-                |> setKillSourceUri
-
+                |> setKillSourceUri                
+                

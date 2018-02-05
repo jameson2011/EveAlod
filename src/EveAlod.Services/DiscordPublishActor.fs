@@ -8,7 +8,7 @@
     type DiscordPublishActor(log: PostMessage, channel: DiscordChannel,  sendDiscord: HttpClient-> string -> string -> string -> Async<WebResponse>)= 
     
         let httpClient = Web.httpClient()
-        let post = sendDiscord httpClient channel.Id channel.Token 
+        let post = sendDiscord httpClient channel.Id channel.Token         
         let minWait = TimeSpan.FromSeconds(3.)
 
         let logResponse (msg, response: WebResponse) =            

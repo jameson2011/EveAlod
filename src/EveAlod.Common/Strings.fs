@@ -26,6 +26,11 @@
             |> Option.map (fun (ok,value) -> if ok then value else 0)
             |> Option.defaultValue 0                
                 
+        let isNullWhitespace str =
+            String.IsNullOrWhiteSpace(str)
             
         let (|NullOrWhitespace|_|) str=
-            if String.IsNullOrWhiteSpace str then Some str else None
+            if isNullWhitespace str then Some str else None
+
+        let join (delimiter: string) (values: seq<string>) = 
+            System.String.Join(delimiter, values)
