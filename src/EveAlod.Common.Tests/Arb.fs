@@ -42,6 +42,7 @@
             Arb.Default.String()
             |> Arb.filter ((=) null >> not)
             |> Arb.filter (fun s -> s |> Seq.exists (Char.IsControl >> not))
+            |> Arb.filter (fun s -> s |> Seq.exists (Char.IsWhiteSpace >> not))
             |> Arb.filter (fun s -> s |> Seq.exists (Char.IsDigit >> not))
 
     type UniqueNonEmptyStrings=        
