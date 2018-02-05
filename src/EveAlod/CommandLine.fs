@@ -14,7 +14,7 @@ module CommandLine=
         app
 
     let addSingleOption (name: string) fullName desc (app:App)=
-        let pad = new String(' ', max 0 (4 - name.Length) )
+        let pad = String(' ', max 0 (4 - name.Length) )
         let tag = sprintf "-%s%s | --%s" name pad fullName
         app.Option(tag, desc,CommandLineUtils.CommandOptionType.SingleValue) |> ignore
         app
