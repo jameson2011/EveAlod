@@ -2,12 +2,6 @@
 cls
 
 
-.paket\paket.exe restore
-if errorlevel 1 (
-  exit /b %errorlevel%
-)
-
-
 SET TARGET="BuildRunUnitTests"
 
 IF NOT [%1]==[] (set TARGET="%1")

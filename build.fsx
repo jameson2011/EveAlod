@@ -29,13 +29,17 @@ Target "LintApp" (fun _ ->
                                             (fun o -> { o with FailBuildIfAnyWarnings = true }))
                 )
 
-Target "BuildTests" (fun _ -> 
+Target "BuildUnitTests" (fun _ -> 
                             !! "src/**/*.Tests.fsproj"
-                            ++ "src/**/*.IntegrationTests.fsproj"
                             |> MSBuildRelease buildTestsDir "Build"
-                            |> Log "BuildTests-Output: ")
+                            |> Log "BuildUnitTests-Output: ")
 
-Target "RunUnitTests" (fun _ -> 
+Target "BuildIntTests" (fun _ -> 
+                            !!  "src/**/*.IntegrationTests.fsproj"
+                            |> MSBuildRelease buildTestsDir "Build"
+                            |> Log "BuildIntTests-Output: ")
+
+Target "UnitTests" (fun _ -> 
                             !! (buildTestsDir @@ "*.Tests.dll")
                             |> xUnit2 (fun p ->
                                             { p with 
@@ -45,7 +49,7 @@ Target "RunUnitTests" (fun _ ->
                                         )                            
                             )
 
-Target "RunIntegrationTests" (fun _ -> 
+Target "IntTests" (fun _ -> 
                             !! (buildTestsDir @@ "*.IntegrationTests.dll")
                             |> xUnit2 (fun p ->
                                             { p with 
@@ -55,21 +59,30 @@ Target "RunIntegrationTests" (fun _ ->
                                         )                            
                             )
 
-Target "Default" (fun _ -> trace "Done!" )
 
+Target "BuildRunUnitTests" (fun _ -> trace "Built and unit tests run" )
+Target "All" (fun _ -> trace "Built and all tests run" )
 
 // Dependencies
 
 "LintApp"
 ==> "ScrubArtifacts" 
 ==> "BuildApp"
-==> "Default"
 
-"BuildTests"
-==> "RunUnitTests"
-==> "Default"
 
-"BuildTests"
-==> "RunIntegrationTests"
+// RunUnitTests only needs tests built
+"BuildUnitTests"    ==> "UnitTests"
 
-RunTargetOrDefault "Default"
+// RunIntTests only needs tests built
+"BuildIntTests"     ==> "IntTests"
+
+// BuildRunUnitTests needs build, unit tests run
+"BuildApp"          ==> "BuildRunUnitTests"
+"BuildIntTests"     ==> "BuildRunUnitTests"
+"UnitTests"      ==> "BuildRunUnitTests"
+
+// "All" needs build, unit tests run, integration tests run
+"BuildRunUnitTests" ==> "All"
+"IntTests"          ==> "All"
+
+RunTargetOrDefault "BuildRunUnitTests"

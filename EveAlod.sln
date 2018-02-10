@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CCP.MD = CCP.MD
 		LICENSE = LICENSE
 		README.md = README.md
+		run.bat = run.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61B1713F-B16E-4E9F-80AA-42EB0944AC95}"
