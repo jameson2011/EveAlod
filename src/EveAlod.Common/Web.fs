@@ -14,22 +14,22 @@
             Retry: TimeSpan option;
             Message: string
         } with
-        static member ok retry message =
+        static member Ok retry message =
                 {   WebResponse.Status = HttpStatus.OK;
                     Retry = retry;
                     Message = message
                 }
-        static member unauthorized retry = 
+        static member Unauthorized retry = 
                 {   Status = HttpStatus.Unauthorized;
                     Retry = retry;
                     Message = "";
                 }
-        static member tooManyRequests retry = 
+        static member TooManyRequests retry = 
                 {   Status = HttpStatus.TooManyRequests;
                     Retry = retry;
                     Message = "";
                 }
-        static member error retry error = 
+        static member Error retry error = 
                 {   Status = HttpStatus.Error;
                     Retry = retry;
                     Message = (sprintf "Error %s getting data" (error.ToString()) );
@@ -86,15 +86,15 @@
                             | HttpStatusCode.OK -> 
                                     use content = resp.Content
                                     let! s = content.ReadAsStringAsync() |> Async.AwaitTask
-                                    return (WebResponse.ok retry s)
+                                    return (WebResponse.Ok retry s)
                             | x when (int x) = 429 -> 
-                                    return (WebResponse.tooManyRequests retry)
+                                    return (WebResponse.TooManyRequests retry)
                             | HttpStatusCode.Unauthorized -> 
-                                    return (WebResponse.unauthorized retry)
+                                    return (WebResponse.Unauthorized retry)
                             | x -> 
-                                    return (WebResponse.error retry x)
+                                    return (WebResponse.Error retry x)
                              }
                     return result
                 with e -> 
-                    return (WebResponse.error None (e.Message + e.StackTrace))
+                    return (WebResponse.Error None (e.Message + e.StackTrace))
             }

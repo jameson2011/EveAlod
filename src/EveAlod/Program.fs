@@ -1,6 +1,5 @@
 ﻿open System
 open EveAlod.Data
-open EveAlod.Common.CommandLine
 open EveAlod
 
 module Program=
