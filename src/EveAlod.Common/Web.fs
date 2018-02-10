@@ -13,15 +13,36 @@
             Status: HttpStatus;
             Retry: TimeSpan option;
             Message: string
-        }
-
+        } with
+        static member ok retry message =
+                {   WebResponse.Status = HttpStatus.OK;
+                    Retry = retry;
+                    Message = message
+                }
+        static member unauthorized retry = 
+                {   Status = HttpStatus.Unauthorized;
+                    Retry = retry;
+                    Message = "";
+                }
+        static member tooManyRequests retry = 
+                {   Status = HttpStatus.TooManyRequests;
+                    Retry = retry;
+                    Message = "";
+                }
+        static member error retry error = 
+                {   Status = HttpStatus.Error;
+                    Retry = retry;
+                    Message = (sprintf "Error %s getting data" (error.ToString()) );
+                }
+        
     module Web=
 
         open System.Net
         open System.Net.Http
                 
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
-
+        
+            
         let httpClient()=
             let client = new System.Net.Http.HttpClient()
             client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)            
@@ -52,14 +73,7 @@
             getServerTime response
                 |> Option.map2 (DateTime.diff) expires 
                 |> Option.map (max TimeSpan.Zero)
-            
-            
-
-        
-        
-        
-        
-        
+                    
         let getData (client: HttpClient) (url: string) =
             async {
                 try                    
@@ -71,32 +85,16 @@
                             match resp.StatusCode with
                             | HttpStatusCode.OK -> 
                                     use content = resp.Content
-                                    let! s = content.ReadAsStringAsync() |> Async.AwaitTask                    
-                                    
-                                    return { WebResponse.Status = HttpStatus.OK;
-                                                Retry = retry;
-                                                Message = s
-                                            }
+                                    let! s = content.ReadAsStringAsync() |> Async.AwaitTask
+                                    return (WebResponse.ok retry s)
                             | x when (int x) = 429 -> 
-                                    return { Status = HttpStatus.TooManyRequests;
-                                                Retry = retry;
-                                                Message = "";
-                                            }
+                                    return (WebResponse.tooManyRequests retry)
                             | HttpStatusCode.Unauthorized -> 
-                                    return { Status = HttpStatus.Unauthorized;
-                                                Retry = retry;
-                                                Message = "";
-                                            }
+                                    return (WebResponse.unauthorized retry)
                             | x -> 
-                                    return { Status = HttpStatus.Error;
-                                                Retry = retry;
-                                                Message = (sprintf "Error %s getting data" (x.ToString()) );
-                                            }
+                                    return (WebResponse.error retry x)
                              }
                     return result
                 with e -> 
-                    return { Status = HttpStatus.Error;
-                                                Retry = None;
-                                                Message = (e.Message + e.StackTrace);
-                                            }
+                    return (WebResponse.error None (e.Message + e.StackTrace))
             }
