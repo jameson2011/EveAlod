@@ -13,30 +13,30 @@
             |> JsonValue.Record
 
         [<Property(Verbose = true, Arbitrary = [| typeof<NonEmptyStrings> |])>]
-        let ``getPropOption value located by name``(name: string) (value: string)=
+        let ``prop value located by name``(name: string) (value: string)=
             let json =  toJsonValue name value|> Some                            
 
-            let propValue = json |> getPropOption name
+            let propValue = json |> prop name
             
             match propValue with
             | Some pv -> pv.AsString() = value
             | _ -> false
 
         [<Property(Verbose = true, Arbitrary = [| typeof<NonEmptyStrings> |])>]
-        let ``getPropOption options``(name: string) isSome (value: string)=
+        let ``prop options``(name: string) isSome (value: string)=
             let json =  match isSome with
                         | true -> toJsonValue name value |> Some                            
                         | _ -> None
 
-            let propValue = json |> getPropOption name
+            let propValue = json |> prop name
             
             match propValue with
             | Some pv -> pv.AsString() = value
             | _ -> not isSome
 
-        let ``getPropStr`` name value =
+        let ``propStr`` name value =
             let json = toJsonValue name value
 
-            let result = Some json |> (getPropStr name)
+            let result = Some json |> (propStr name)
 
             value = result

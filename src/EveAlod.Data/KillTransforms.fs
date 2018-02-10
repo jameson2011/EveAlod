@@ -2,33 +2,18 @@
     
     module KillTransforms=
 
+        open FSharp.Data
         open EveAlod.Common
         open EveAlod.Common.Json
-        open FSharp.Data
         open EveAlod.Common.Strings
+        open EveAlod.Data.EntityTransforms
 
-        type JsonKillProvider = JsonProvider<"./SampleRedisqKillmail.json">
-
-        (*
-        let defaultKill() =
-            { Kill.Id = "";
-                Occurred = System.DateTime.UtcNow;
-                Tags = [];
-                ZkbUri = "";
-                Location = None;
-                Victim = None;
-                VictimShip = None;
-                AlodScore = 0.;
-                Attackers = [];
-                Fittings = [];
-                Cargo = [];
-                TotalValue = 0.;
-            }
-        *)
+        type JsonKillProvider = JsonProvider<"./SampleRedisqKillmail.json">   
+        
         let toCharacter (json: JsonValue option) =
-            let char =  json |> getPropStr "character_id" |> EntityTransforms.toEntity
-            let corp = json |> getPropStr "corporation_id" |> EntityTransforms.toEntity
-            let alliance = json |> getPropStr "alliance_id" |> EntityTransforms.toEntity
+            let char =  json |> propStr "character_id" |> toEntity
+            let corp = json |> propStr "corporation_id" |> toEntity
+            let alliance = json |> propStr "alliance_id" |> toEntity
 
             match char with
             | Some c -> Some { Character.Char = c; Corp = corp; Alliance = alliance }
@@ -43,7 +28,7 @@
                 match map with
                 | [] -> result
                 | (name,tag)::t -> 
-                        let r = match json |> getPropBool name with
+                        let r = match json |> propBool name with
                                 | true -> tag :: result
                                 | _ -> result
                         addTags json t r
@@ -52,15 +37,15 @@
         
         let toCargoItem (json: JsonValue) = 
             let json = Some json
-            let item = json |> getPropStr "item_type_id" |> EntityTransforms.toEntity;
+            let item = json |> propStr "item_type_id" |> toEntity;
             match item with
             | Some i -> 
-                let destroyed = json |> getPropInt "quantity_destroyed" 
-                let dropped = json |> getPropInt "quantity_dropped" 
+                let destroyed = json |> propInt "quantity_destroyed" 
+                let dropped = json |> propInt "quantity_dropped" 
                 let quantity = (destroyed + dropped)
                 Some { CargoItem.Item =  i;
                             Quantity =  quantity;
-                            Location = json |> getPropStr "flag" |> EntityTransforms.toItemLocation
+                            Location = json |> propStr "flag" |> toItemLocation
                             }                        
             | _ -> None
 
@@ -73,8 +58,8 @@
             match json |> toCharacter with
             | Some char -> Some {
                                 Attacker.Char = Some char;
-                                Damage = json |> getPropInt "damage_done";
-                                Ship = json |> getPropStr "ship_type_id" |> EntityTransforms.toEntity 
+                                Damage = json |> propInt "damage_done";
+                                Ship = json |> propStr "ship_type_id" |> toEntity 
                             }
             | _ -> None
 
@@ -87,31 +72,29 @@
             let kmJson = JsonKillProvider.Parse(msg)
             Some (kmJson.JsonValue.GetProperty("package"))
             
-        let asKill = getPropOption "killmail"
+        let asKill = prop "killmail"
 
         let applyMeta (package: JsonValue option) (km: Kill)=
             let kmJson = package |> asKill
-            let zkb = package |> getPropOption "zkb"
-            let id = kmJson |> getPropStr "killmail_id"
-            let location = zkb |> getPropStr "locationID" |> EntityTransforms.toEntity
+            let zkb = package |> prop "zkb"
+            let id = kmJson |> propStr "killmail_id"
+            let location = zkb |> propStr "locationID" |> toEntity
 
             { km with Id = id;
-                        Occurred = kmJson |> getPropDateTime "killmail_time";
+                        Occurred = kmJson |> propDateTime "killmail_time";
                         ZkbUri = (sprintf "https://zkillboard.com/kill/%s/" id);
                         Location = location;
-                        TotalValue = zkb |> getPropFloat "totalValue";
+                        TotalValue = zkb |> propFloat "totalValue";
                         Tags = (toStandardTags zkb);
                 }
             
 
         let applyVictim (package: JsonValue option) (km: Kill)=
-            let victimJson = package |> asKill
-                                    |> getPropOption "victim"
-
+            let victimJson = package |> asKill |> prop "victim"
             let victim = victimJson |> toCharacter 
-            let victimShip = victimJson |> getPropStr "ship_type_id" |> EntityTransforms.toEntity;
-            let items = victimJson |> getPropOption "items" |> Option.map (fun j -> j.AsArray()) |> toCargoItems
-            let fittings,cargo = items |> Seq.splitBy (fun i -> EntityTransforms.isFitted i.Location)
+            let victimShip = victimJson |> propStr "ship_type_id" |> toEntity;
+            let items = victimJson |> prop "items" |> Option.map asArray |> toCargoItems
+            let fittings,cargo = items |> Seq.splitBy (fun i -> isFitted i.Location)
 
             { km with Victim = victim;
                         VictimShip = victimShip;
@@ -122,8 +105,8 @@
         let applyAttackers (package: JsonValue option) (km: Kill)=
             let attackersJson = package 
                                     |> asKill 
-                                    |> getPropOption "attackers" 
-                                    |> Option.map (fun j -> j.AsArray())
+                                    |> prop "attackers" 
+                                    |> Option.map asArray
             {  km with Attackers = attackersJson |> toAttackers; }                           
         
         let isValid (km) = 
@@ -142,7 +125,7 @@
                             |> isValid
         
         let isKill msg = 
-            let id = msg |> asKillPackage |> getPropStr "killID" 
+            let id = msg |> asKillPackage |> propStr "killID" 
             id <> ""
             
             
