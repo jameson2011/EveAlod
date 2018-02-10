@@ -60,7 +60,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Constants.fs" />
     <Compile Include="StaticDataProviderTests.fs" />
+    <Compile Include="StaticDataActorTest.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

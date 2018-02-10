@@ -1,16 +1,14 @@
 ﻿namespace EveAlod.Services.IntegrationTests
 
 open Xunit
-open FsCheck
-open FsCheck.Xunit
+open EveAlod.Data
 open EveAlod.Services
+open EveAlod.Services.IntegrationTests.Constants
 
 module StaticDataProviderTests=
-    open EveAlod.Data
-    open System.Runtime.InteropServices
+    
     
     let staticProvider = StaticEntityProvider() :> IStaticEntityProvider
-    let rifterId = "587"
 
     [<Fact>]
     let ``CorporationByTicker returns corpId``() =
@@ -18,7 +16,7 @@ module StaticDataProviderTests=
 
         let corpId = corp |> Option.map (fun c -> c.Id) |> Option.defaultValue "" 
         
-        Assert.Equal(corpId, "423280073")
+        Assert.Equal(corpId, testCorpId)
 
     [<Fact>]
     let ``CorporationByTicker returns None``() =
@@ -31,13 +29,12 @@ module StaticDataProviderTests=
     [<Fact>]
     let ``Character returns character``() =
         let name = "Jameson2011"
-        let id = "90230509"
-        let char = staticProvider.Character(id) |> Async.RunSynchronously
+        let char = staticProvider.Character(testCharId) |> Async.RunSynchronously
 
         let charId = char |> Option.map (fun c -> c.Char.Id) |> Option.defaultValue "" 
         let charName = char |> Option.map (fun c -> c.Char.Name) |> Option.defaultValue "" 
 
-        Assert.Equal(charId, id)
+        Assert.Equal(charId, testCharId)
         Assert.Equal(charName, name)
 
     [<Fact>]
@@ -91,12 +88,11 @@ module StaticDataProviderTests=
 
     [<Fact>]
     let ``SolarSystem Jita is Jita``() =
-        let id = "30000142"
-        let system = match staticProvider.SolarSystem(id) |> Async.RunSynchronously with
+        let system = match staticProvider.SolarSystem(jitaId) |> Async.RunSynchronously with
                         | Some s -> s
                         | _ -> failwith "not Some"
         
-        Assert.Equal(id, system.Id)
+        Assert.Equal(jitaId, system.Id)
         Assert.Equal("Jita", system.Name)
         Assert.Equal(SpaceSecurity.Highsec, system.Security)
 
