@@ -1,6 +1,6 @@
 ﻿open System
 open EveAlod.Data
-
+open EveAlod.Common.CommandLine
 open EveAlod
 
 module Program=
@@ -27,11 +27,8 @@ module Program=
 
     let private createAppTemplate()=
         let app = CommandLine.createApp()
-                    |> CommandLine.addRun runService
-                    |> CommandLine.setHelp
-    
-        app.OnExecute(fun () -> app.ShowHelp()
-                                0)
+                    |> CommandLine.addRun runService                    
+            
         app
         
 
@@ -39,8 +36,6 @@ module Program=
     let main argv =
         let app = createAppTemplate()
     
-        app.OnExecute(fun () -> app.ShowHelp()
-                                0)
         try
                 app.Execute(argv)
         with    
