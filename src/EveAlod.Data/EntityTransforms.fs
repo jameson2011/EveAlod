@@ -8,6 +8,7 @@
         type JsonCorpSearchProvider = JsonProvider<"""{ "corporation": [ 234 ] }""">
         type JsonSolarSystemProvider = JsonProvider<"./SampleSolarSystem.json">
         type JsonGroupIdProvider = JsonProvider<"./SampleIds.json">
+        type JsonCategoryProvider = JsonProvider<"./SampleCategory.json">
         type JsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
         type JsonEntityProvider = JsonProvider<"./SampleEntity.json">
         type JsonCharacterProvider = JsonProvider<"./SampleCharacter.json">
@@ -80,7 +81,6 @@
             Some {Character.Char = {Entity.Id = id; Name = root.Name; };
                     Corp = Some {Entity.Id = root.CorporationId.ToString(); Name = "" };
                     Alliance = None;
-                    //Alliance = Some { Entity.Id = root.AllianceId.ToString(); Name = ""};
                 }
 
         let parseEntity json =
@@ -95,6 +95,10 @@
                         Name = root.Name;
                         EntityIds = root.Types |> Seq.map (fun i -> i.ToString()) |> Array.ofSeq
                 }
+
+        let parseCategoryGroupIds json =
+            let root = (JsonCategoryProvider.Parse(json))
+            root.Groups |> Seq.map (fun v -> v.ToString()) |> List.ofSeq
 
         let parseSolarSystem json =
             let o = JsonSolarSystemProvider.Parse(json)            

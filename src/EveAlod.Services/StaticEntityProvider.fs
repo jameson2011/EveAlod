@@ -3,6 +3,8 @@
     open System
     open EveAlod.Common
     open EveAlod.Data
+    open FSharp.Control.AsyncSeqExtensions
+    open FSharp.Control
 
 
     type StaticEntityProvider()=
@@ -11,10 +13,12 @@
         let plexGroupId = "1875"
         let skillInjectorGroupId = "1739"
         let capsuleGroupId = "29"
+        let shipCategoryId = "6"
 
         let httpClient = Web.httpClient()
         let getData = Web.getData httpClient
 
+        
         let getGroupEntity(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
@@ -31,16 +35,16 @@
             | EntityGroupKey.Plex ->  plexGroupId
             | EntityGroupKey.SkillInjector -> skillInjectorGroupId
             | EntityGroupKey.Capsule -> capsuleGroupId
+            | EntityGroupKey.Ship -> failwith "Unrecognised"
         
-        let groupEntityIds (key: EntityGroupKey)=            
+        let groupEntityIds (id)=            
             async {  
-                    let! entity = key |> entityGroupId |> getGroupEntity
+                    let! entity = id |> getGroupEntity
                     match entity with
                     | Some e -> return Some (e.EntityIds |> Set.ofSeq)
                     | _ -> return None    
                 }
-            
-
+        
         let getEntity(id: string)=
             async {
                 let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/types/%s/?datasource=tranquility&language=en-us" id)
@@ -81,14 +85,49 @@
                         | _ -> None
                 }
 
-        interface IStaticEntityProvider with
-            member this.EntityIds(key: EntityGroupKey) = groupEntityIds key
+        let getCategoryGroupIds id =
+            async {
+                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/categories/%s/?datasource=tranquility&language=en-us" id)
+                let! resp = getData uri
+                return match resp.Status with
+                        | EveAlod.Common.HttpStatus.OK -> 
+                            resp.Message |> EntityTransforms.parseCategoryGroupIds
+                        | _ -> []
+            }
 
-            member this.Entity (id: string) = getEntity id
-
-            member this.Character(id: string) = getCharacter id
-
-            member this.SolarSystem(id: string) = getSolarSystem id
-
-            member this.CorporationByTicker(ticker: string) = getCorpByTicker ticker
+        let getGroupEntityIds(groupIds: Async<string list>)=
+            async {
+                let! ids = groupIds
+                let entityIds = asyncSeq {
+                                    for id in ids do
+                                        let! ids = groupEntityIds id 
+                                        let result = (match ids with 
+                                                        | Some xs -> xs |> List.ofSeq
+                                                        | _ -> [] )
+                                        yield result
+                                }
+                
+                let entityIds = entityIds |> AsyncSeq.fold List.append []
+                let! result = entityIds 
+                return result |> Set.ofList |> Some
+                }
             
+        
+
+        interface IStaticEntityProvider with
+            member __.EntityIds(key: EntityGroupKey) = 
+                match key with
+                | Ship -> 
+                    shipCategoryId |> getCategoryGroupIds |> getGroupEntityIds
+                | _ -> 
+                    key |> entityGroupId |> groupEntityIds
+
+            member __.Entity (id: string) = getEntity id
+
+            member __.Character(id: string) = getCharacter id
+
+            member __.SolarSystem(id: string) = getSolarSystem id
+
+            member __.CorporationByTicker(ticker: string) = getCorpByTicker ticker
+            
+ 

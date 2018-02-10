@@ -7,6 +7,7 @@
         | SkillInjector
         | Ecm
         | Capsule
+        | Ship
 
     type KillTag =
         | AwoxKill

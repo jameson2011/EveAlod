@@ -7,8 +7,10 @@ open EveAlod.Services
 
 module StaticDataProviderTests=
     open EveAlod.Data
+    open System.Runtime.InteropServices
     
     let staticProvider = StaticEntityProvider() :> IStaticEntityProvider
+    let rifterId = "587"
 
     [<Fact>]
     let ``CorporationByTicker returns corpId``() =
@@ -74,6 +76,20 @@ module StaticDataProviderTests=
         Assert.NotEqual(0, count)
 
     [<Fact>]
+    let ``EntityIds Ships``() =
+        let allIds = staticProvider.EntityIds(EntityGroupKey.Ship) |> Async.RunSynchronously
+        
+        let ids = match allIds with
+                    | Some xs -> xs
+                    | _ -> failwith "not Some"
+
+        let count = ids.Count
+        
+        Assert.NotEqual(0, count)
+        
+        Assert.True(ids |> Set.contains rifterId)
+
+    [<Fact>]
     let ``SolarSystem Jita is Jita``() =
         let id = "30000142"
         let system = match staticProvider.SolarSystem(id) |> Async.RunSynchronously with
@@ -125,13 +141,12 @@ module StaticDataProviderTests=
         Assert.True(system |> Option.isNone)
         
     [<Fact>]
-    let ``Entity returns Rifter``() =
-        let id = "587"
-        let entity = match staticProvider.Entity(id) |> Async.RunSynchronously with
+    let ``Entity returns Rifter``() =        
+        let entity = match staticProvider.Entity(rifterId) |> Async.RunSynchronously with
                      | Some e -> e
                      | _ -> failwith "not Some"
         
-        Assert.Equal(id, entity.Id)
+        Assert.Equal(rifterId, entity.Id)
         Assert.Equal("Rifter", entity.Name)
 
     [<Fact>]

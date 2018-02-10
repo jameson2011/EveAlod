@@ -33,3 +33,8 @@
             Option.isSome hits
             
             
+    module Set=
+        let rec append (xs: 'a list) (acc: Set<'a>) =
+            match xs with
+            | [] -> acc
+            | h::t -> acc.Add(h) |> append t 
