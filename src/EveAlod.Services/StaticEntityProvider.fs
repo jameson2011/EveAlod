@@ -18,11 +18,17 @@
         let httpClient = Web.httpClient()
         let getData = Web.getData httpClient
 
-        
-        let getGroupEntity(id: string)=
+        let universeUri group = (sprintf "https://esi.tech.ccp.is/latest/universe/%s/%s/?datasource=tranquility&language=en-us" group)
+        let entityGroupUri = "groups" |> universeUri
+        let entityTypesUri = "types" |> universeUri
+        let systemsUri = "systems" |> universeUri
+        let groupCategoriesUri = "categories" |> universeUri
+        let charactersUri = sprintf "https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us" 
+        let corpSearchUri = sprintf "https://esi.tech.ccp.is/latest/search/?categories=corporation&datasource=tranquility&language=en-us&search=%s&strict=true"
+
+        let getEntityGroup(id: string)=
             async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/groups/%s/?datasource=tranquility&language=en-us" id)
-                let! resp = getData uri
+                let! resp = id |> entityGroupUri |> getData
                 return match resp.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                             resp.Message |> EntityTransforms.parseEntityGroup
@@ -39,7 +45,7 @@
         
         let groupEntityIds (id)=            
             async {  
-                    let! entity = id |> getGroupEntity
+                    let! entity = id |> getEntityGroup
                     match entity with
                     | Some e -> return Some (e.EntityIds |> Set.ofSeq)
                     | _ -> return None    
@@ -47,8 +53,7 @@
         
         let getEntity(id: string)=
             async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/types/%s/?datasource=tranquility&language=en-us" id)
-                let! response = getData uri
+                let! response = id |> entityTypesUri |> getData
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                                     response.Message |> EntityTransforms.parseEntity
@@ -57,8 +62,7 @@
 
         let getCharacter(id: string)=
             async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us" id)
-                let! response = getData uri
+                let! response = id |> charactersUri |> getData
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                             response.Message |> EntityTransforms.parseCharacter id
@@ -67,8 +71,7 @@
 
         let getSolarSystem(id: string)=
             async{
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/systems/%s/?datasource=tranquility&language=en-us" id)
-                let! response = getData uri
+                let! response = id |> systemsUri |> getData
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                             response.Message |> EntityTransforms.parseSolarSystem
@@ -77,8 +80,7 @@
 
         let getCorpByTicker(ticker: string)=
             async{
-                let uri = sprintf "https://esi.tech.ccp.is/latest/search/?categories=corporation&datasource=tranquility&language=en-us&search=%s&strict=true" ticker
-                let! response = getData uri
+                let! response = ticker |> corpSearchUri |> getData
                 return match response.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                             response.Message |> EntityTransforms.parseCorpSearchResult
@@ -87,8 +89,7 @@
 
         let getCategoryGroupIds id =
             async {
-                let uri = (sprintf "https://esi.tech.ccp.is/latest/universe/categories/%s/?datasource=tranquility&language=en-us" id)
-                let! resp = getData uri
+                let! resp = id |> groupCategoriesUri |> getData
                 return match resp.Status with
                         | EveAlod.Common.HttpStatus.OK -> 
                             resp.Message |> EntityTransforms.parseCategoryGroupIds
@@ -107,8 +108,8 @@
                                         yield result
                                 }
                 
-                let entityIds = entityIds |> AsyncSeq.fold List.append []
-                let! result = entityIds 
+                let! result = entityIds |> AsyncSeq.fold List.append []
+                
                 return result |> Set.ofList |> Some
                 }
             
