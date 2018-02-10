@@ -34,7 +34,7 @@
             | Some corp -> corp.Id
 
         let getDiscordChannel webhook = 
-            match (EveAlod.Common.Web.getDiscordChannel webhook |> Async.RunSynchronously) with
+            match (EveAlod.Common.Discord.getDiscordChannel webhook |> Async.RunSynchronously) with
             | Choice1Of2 (id, token) -> { DiscordChannel.Id = id; Token = token } 
             | Choice2Of2 msg -> failwith ("Error connecting to Discord: " + msg)
 

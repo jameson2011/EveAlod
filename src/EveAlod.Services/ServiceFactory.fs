@@ -21,7 +21,7 @@
 
         let dataActor = StaticDataActor(logger.Post, dataProvider)
 
-        let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Web.sendDiscord)
+        let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Discord.sendDiscord)
         
         let killPublisher = KillPublisherActor(logger.Post, 
                                                     KillMessageBuilder(dataActor, config.CorpId), 

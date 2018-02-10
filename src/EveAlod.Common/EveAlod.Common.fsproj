@@ -74,6 +74,7 @@
     <Compile Include="Web.fs" />
     <Compile Include="Json.fs" />
     <Compile Include="CommandLine.fs" />
+    <Compile Include="Discord.fs" />
     <None Include="SampleDiscordWebhookResponse.json" />
   </ItemGroup>
   <ItemGroup>
