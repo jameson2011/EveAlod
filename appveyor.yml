@@ -16,7 +16,7 @@ before_build:
 
 build_script:
 - cmd: >-
-    ./build.bat
+    ./build.bat all
 
 test: off
 
