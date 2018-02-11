@@ -6,8 +6,16 @@ open Fake
 open FSharpLint.Fake
 open Fake.Testing.XUnit2
 
+
+// Definitions
 let buildDir = "./artifacts/"
 let buildTestsDir = "./testartifacts/"
+
+let unitTestProjects =  !! "src/**/*.Tests.fsproj"
+let intTestProjects =   !! "src/**/*.IntegrationTests.fsproj"
+let appProjects =       !! "src/**/*.fsproj"
+                        -- "src/**/*.Tests.fsproj"
+                        -- "src/**/*.IntegrationTests.fsproj"
 
 // Targets
 Target "ScrubArtifacts" (fun _ -> CleanDirs [ buildDir;
@@ -15,27 +23,23 @@ Target "ScrubArtifacts" (fun _ -> CleanDirs [ buildDir;
                                               ])
 
 Target "BuildApp" (fun _ -> 
-                            !! "src/**/*.fsproj"
-                            -- "src/**/*.Tests.fsproj"
-                            -- "src/**/*.IntegrationTests.fsproj"
+                            appProjects
                             |> MSBuildRelease buildDir "Build"
                             |> Log "AppBuild-Output: ")
 
 Target "LintApp" (fun _ ->
-                            !! "src/**/*.fsproj"
-                            -- "src/**/*.Tests.fsproj"
-                            -- "src/**/*.IntegrationTests.fsproj"
+                            appProjects
                             |> Seq.iter (FSharpLint 
                                             (fun o -> { o with FailBuildIfAnyWarnings = true }))
                 )
 
 Target "BuildUnitTests" (fun _ -> 
-                            !! "src/**/*.Tests.fsproj"
+                            unitTestProjects
                             |> MSBuildRelease buildTestsDir "Build"
                             |> Log "BuildUnitTests-Output: ")
 
 Target "BuildIntTests" (fun _ -> 
-                            !!  "src/**/*.IntegrationTests.fsproj"
+                            intTestProjects
                             |> MSBuildRelease buildTestsDir "Build"
                             |> Log "BuildIntTests-Output: ")
 
