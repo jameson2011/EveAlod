@@ -32,6 +32,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Data.Tests", "src\E
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Services.IntegrationTests", "src\EveAlod.Services.IntegrationTests\EveAlod.Services.IntegrationTests.fsproj", "{30B9EC54-FF95-4B64-9B59-06E269488FB2}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Valuation", "src\EveAlod.Valuation\EveAlod.Valuation.fsproj", "{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Valuation.IntegrationTests", "src\EveAlod.Valuation.IntegrationTests\EveAlod.Valuation.IntegrationTests.fsproj", "{C0CC92F9-F75D-42B9-A363-1771021F3CB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +74,14 @@ Global
 		{30B9EC54-FF95-4B64-9B59-06E269488FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30B9EC54-FF95-4B64-9B59-06E269488FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30B9EC54-FF95-4B64-9B59-06E269488FB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +91,7 @@ Global
 		{2DE59415-AFA8-4ED3-BD20-10BD7D247F92} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
 		{689F1E0F-B8EF-4C15-8BE3-5938A4EEF368} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
 		{30B9EC54-FF95-4B64-9B59-06E269488FB2} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
+		{C0CC92F9-F75D-42B9-A363-1771021F3CB7} = {61B1713F-B16E-4E9F-80AA-42EB0944AC95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FF0F849-EC12-4523-8B22-F5DF8F531259}

@@ -20,6 +20,10 @@
         let propInt (name : string) =            
             (prop name) >> Option.map FSharp.Data.JsonExtensions.AsInteger >> Option.defArg 0
 
+        let propInt64 (name : string) =            
+            (prop name) >> Option.map FSharp.Data.JsonExtensions.AsInteger64 >> Option.defArg 0L
+
+
         let propBool (name : string) =            
             (prop name) >> Option.map FSharp.Data.JsonExtensions.AsBoolean >> Option.defArg false
 
