@@ -11,59 +11,103 @@ module StaticDataActorTest=
 
     let staticProvider = StaticEntityProvider() :> IStaticEntityProvider
     let log (msg: ActorMessage) = ignore 0
-    
+    let get (get: 'k -> Async<'a option>) id =         
+        match get(id) |> Async.RunSynchronously with 
+        | Some c -> c
+        | _ -> failwith "not Some"
+    let getNone (get: 'k -> Async<'a option>) id =         
+        match get(id) |> Async.RunSynchronously with 
+        | None -> None
+        | _ -> failwith "not None"
 
     [<Fact>]
     let ``Ship IDs returned from cache``()=
 
         let actor = StaticDataActor(log, staticProvider)
-        let getIds() = match actor.EntityIds(EntityGroupKey.Ship) |> Async.RunSynchronously with         
-                        | Some xs -> xs |> List.ofSeq
-                        | _ -> failwith "Not Some"
-        
-        let shipIds = getIds()
-        let shipIds2 = getIds()
-        let shipIds3 = getIds()
+        let id = EntityGroupKey.Ship
 
-        Assert.Equal(shipIds.Length, shipIds2.Length)
-        Assert.Equal(shipIds.Length, shipIds3.Length)
+        let getEntity = get actor.EntityIds
+
+        let entity = getEntity id
+        let entity2 = getEntity id
+        let entity3 = getEntity id
+        
+        Assert.Equal(entity.Count, entity2.Count)
+        Assert.Equal(entity.Count, entity3.Count)
+
 
     [<Fact>]
     let ``Plex IDs returned from cache``()=
 
-        let actor = StaticDataActor(log, staticProvider)
-        let getIds() = match actor.EntityIds(EntityGroupKey.Plex) |> Async.RunSynchronously with         
-                        | Some xs -> xs |> List.ofSeq
-                        | _ -> failwith "Not Some"
-        
-        let entityIds = getIds()
-        let entityIds = getIds()
-        let entityIds = getIds()
+        let actor = StaticDataActor(log, staticProvider)        
+        let id = EntityGroupKey.Plex
 
-        Assert.Equal(entityIds.Length, entityIds.Length)
-        Assert.Equal(entityIds.Length, entityIds.Length)
+        let getEntity = get actor.EntityIds
+
+        let entity = getEntity id
+        let entity2 = getEntity id
+        let entity3 = getEntity id
+        
+        Assert.Equal(entity.Count, entity2.Count)
+        Assert.Equal(entity.Count, entity3.Count)
 
         
     [<Fact>]
     let ``Character returns character``() =
         let actor = StaticDataActor(log, staticProvider)
+        let id = testCharId
 
-        let char = match actor.Character(testCharId) |> Async.RunSynchronously with 
-                    | Some c -> c
-                    | _ -> failwith "not Some"
+        let getEntity = get actor.Character
 
-        Assert.Equal(testCharId, char.Char.Id)
+        let entity = getEntity id
+        let entity2 = getEntity id
+
+        Assert.Equal(id, entity.Char.Id)
+        Assert.Equal(id, entity2.Char.Id)
+
+    
+    [<Fact>]
+    let ``Character returns None``() =
+        let actor = StaticDataActor(log, staticProvider)
+        let id = System.Guid.NewGuid().ToString()
+
+        let getEntity = getNone actor.Character
+
+        let entity = getEntity id
+        let entity2 = getEntity id
+        let entity3 = getEntity id
+
+        Assert.True(Option.isNone entity)
+        Assert.True(Option.isNone entity2)
+        Assert.True(Option.isNone entity3)
 
     [<Fact>]
     let ``SolarSystem returns entity``() =
         let actor = StaticDataActor(log, staticProvider)
+        let id = jitaId
 
-        let entity = match actor.SolarSystem(jitaId) |> Async.RunSynchronously with 
-                        | Some c -> c
-                        | _ -> failwith "not Some"
+        let getEntity = get actor.SolarSystem 
 
-        Assert.Equal(jitaId, entity.Id)
+        let entity = getEntity id
+        let entity2 = getEntity id
 
+        Assert.Equal(id, entity.Id)
+        Assert.Equal(id, entity2.Id)
+
+    [<Fact>]
+    let ``SolarSystem returns None``() =
+        let actor = StaticDataActor(log, staticProvider)
+        let id = System.Guid.NewGuid().ToString()
+
+        let getEntity = getNone actor.SolarSystem 
+
+        let entity = getEntity id
+        let entity2 = getEntity id
+        let entity3 = getEntity id
+
+        Assert.True(Option.isNone entity)
+        Assert.True(Option.isNone entity2)
+        Assert.True(Option.isNone entity3)
 
         
 
