@@ -2,8 +2,7 @@
 
 open System
 
-// TODO: name
-type Statistics=
+type ValueStatistics=
     {
         Count: int64
         Value: float
@@ -15,23 +14,21 @@ type Statistics=
                             AverageValue = 0.
                             }
 
-type ShipKillStatistics=
+type ShipValueStatistics=
     {
         Period: DateTime        
-        Losses: Statistics
-        Kills: Statistics        
+        Losses: ValueStatistics
+        Kills: ValueStatistics        
     } with 
     static member Empty = {
                             Period = System.DateTime.MinValue;
-                            Losses = Statistics.Empty;
-                            Kills = Statistics.Empty
-                            }
+                            Losses = ValueStatistics.Empty;
+                            Kills = ValueStatistics.Empty
+                            }    
 
 type ShipStatistics=
     {
         ShipId: string
-        Kills: ShipKillStatistics list
+        Values: ShipValueStatistics []
     }
-
-
 

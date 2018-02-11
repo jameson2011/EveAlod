@@ -1,10 +1,9 @@
 ﻿namespace EveAlod.Valuation
 
 open System
-open FSharp.Data
 open EveAlod.Common.Json
+open FSharp.Data
 
-type ShipStatisticsProvider = JsonProvider<Samples.ShipStatsSample>
 
 module EntityTransforms=
     
@@ -14,7 +13,7 @@ module EntityTransforms=
         let avg = match count with
                         | 0L -> 0.
                         | _ -> value / float count
-        { Statistics.Count = count; Value = value; AverageValue = avg }        
+        { ValueStatistics.Count = count; Value = value; AverageValue = avg }        
 
     let toMonthlyShipStats (json: JsonValue option)=
         
@@ -24,7 +23,7 @@ module EntityTransforms=
         let losses = json  |> toStatistics "shipsLost" "iskLost"
         let kills = json |> toStatistics "shipsDestroyed" "iskDestroyed"
 
-        { ShipKillStatistics.Period = period;
+        { ShipValueStatistics.Period = period;
             Kills = kills;
             Losses = losses }
         
@@ -34,10 +33,17 @@ module EntityTransforms=
         let monthStats = root.JsonValue |> Some |> prop "months"
                         |> Option.map (fun j -> j.Properties() 
                                                 |> Seq.map (fun (_,v) -> v |> Some |> toMonthlyShipStats)
-                                                |> List.ofSeq)
+                                                |> Array.ofSeq)
         monthStats 
         |> Option.map (fun stats -> { ShipStatistics.ShipId = root.Id.ToString(); 
-                                    Kills = stats })
-        
-        
+                                    Values = stats })
+           
+    let latestLosses age (shipStats: ShipStatistics) =
+        shipStats.Values 
+        |> Seq.rev
+        |> Seq.map (fun s -> (s.Period, s.Losses.AverageValue) )
+        |> Seq.truncate age 
+        |> Map.ofSeq
+
+
 

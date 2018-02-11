@@ -1,5 +1,7 @@
 ﻿namespace EveAlod.Valuation
 
+open FSharp.Data
+
 module Samples=
 
     [<Literal>]
@@ -367,3 +369,4 @@ module Samples=
     }
     """
 
+type ShipStatisticsProvider = JsonProvider<Samples.ShipStatsSample>

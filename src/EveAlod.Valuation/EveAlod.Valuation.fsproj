@@ -55,13 +55,18 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Entities.fs" />
-    <Compile Include="Samples.fs" />
+    <Compile Include="TypeProviders.fs" />
     <Compile Include="EntityTransforms.fs" />
     <Compile Include="DataProvider.fs" />
     <Content Include="packages.config" />
     <None Include="SampleShipStatistics.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EveAlod.Data\EveAlod.Data.fsproj">
+      <Name>EveAlod.Data</Name>
+      <Project>{bd16ae68-f3bb-4a45-a6bf-2925676f8d03}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -5,25 +5,22 @@ open EveAlod.Common
 open EveAlod.Common.Web
 
 type DataProvider()=
-    let client = httpClient()
-    let getData = getData client
 
-    let shipStatsUri = 
-        sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/"
+    let getData = httpClient() |> getData
+    let shipStatsUri = sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/"
 
-    let getShipStats (id: string) =
+    member __.ShipStatistics(shipTypeId: string)=
         async {
-            let! r = id |> shipStatsUri |> getData
+            let! response = shipTypeId |> shipStatsUri |> getData
             
-            let x =     match r.Status with
-                        | HttpStatus.OK -> 
-                            let json = r.Message
-                            json |> EntityTransforms.toShipStats 
-                        | _ ->
-                            None
-
-            return x
+            return  match response.Status with
+                    | HttpStatus.OK ->  response.Message |> EntityTransforms.toShipStats 
+                    | _ ->              None                    
         }
 
-    member __.ShipStatistics(id: string)=
-        getShipStats id
+    member this.LatestShipLossStatistics(shipTypeId: string) =
+        async {
+            let! stats = this.ShipStatistics shipTypeId
+
+            return stats |> Option.map (EntityTransforms.latestLosses 12)
+        }
