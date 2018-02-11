@@ -39,14 +39,32 @@
 
         open System.Net
         open System.Net.Http
+        open System.IO
+        open System.IO.Compression
                 
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
-        
+        let private gzip = "gzip"        
             
         let httpClient()=
             let client = new System.Net.Http.HttpClient()
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)            
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent)
+            client.DefaultRequestHeaders.AcceptEncoding.Add(System.Net.Http.Headers.StringWithQualityHeaderValue(gzip))
             client
+
+        let decompressGzip(content: HttpContent)=
+            async {
+                use! stream = content.ReadAsStreamAsync() |> Async.AwaitTask
+                use gzipStream = new GZipStream(stream, CompressionMode.Decompress)
+                use rdr = new StreamReader(gzipStream)
+                return! rdr.ReadToEndAsync() |> Async.AwaitTask
+            }
+
+        let extractContent (content: HttpContent) =
+            let isGzip = content.Headers.ContentEncoding
+                            |> Seq.contains(gzip)
+            match isGzip with
+            | false -> content.ReadAsStringAsync() |> Async.AwaitTask
+            | _ -> decompressGzip content
 
         let getHeaderValue name (response: Http.HttpResponseMessage) = 
             response.Headers
@@ -83,9 +101,9 @@
                         async {                       
                             let retry = getWait resp
                             match resp.StatusCode with
-                            | HttpStatusCode.OK -> 
+                            | HttpStatusCode.OK ->                                     
                                     use content = resp.Content
-                                    let! s = content.ReadAsStringAsync() |> Async.AwaitTask
+                                    let! s = extractContent content
                                     return (WebResponse.Ok retry s)
                             | x when (int x) = 429 -> 
                                     return (WebResponse.TooManyRequests retry)

@@ -58,7 +58,7 @@ module Discord=
             async {
                 match response.StatusCode with
                 | HttpStatusCode.OK  -> 
-                    let! json = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+                    let! json = extractContent response.Content                     
                     let data = DiscordWebhookPayload.Parse(json)                    
                     return Choice1Of2 (data.Id, data.Token)
                 | HttpStatusCode.Unauthorized ->
