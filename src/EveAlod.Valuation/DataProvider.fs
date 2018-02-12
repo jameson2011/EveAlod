@@ -8,6 +8,7 @@ type DataProvider()=
 
     let getData = httpClient() |> getData
     let shipStatsUri = sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/"
+    let statsAge = 12
 
     member __.ShipStatistics(shipTypeId: string)=
         async {
@@ -22,5 +23,5 @@ type DataProvider()=
         async {
             let! stats = this.ShipStatistics shipTypeId
 
-            return stats |> Option.map (EntityTransforms.latestLosses 12)
+            return stats |> Option.map (EntityTransforms.latestLosses statsAge)
         }
