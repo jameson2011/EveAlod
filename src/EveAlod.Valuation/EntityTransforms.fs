@@ -29,14 +29,18 @@ module EntityTransforms=
         
 
     let toShipStats json =
-        let root = ShipStatisticsProvider.Parse(json)
-        let monthStats = root.JsonValue |> Some |> prop "months"
-                        |> Option.map (fun j -> j.Properties() 
-                                                |> Seq.map (fun (_,v) -> v |> Some |> toMonthlyShipStats)
-                                                |> Array.ofSeq)
-        monthStats 
-        |> Option.map (fun stats -> { ShipStatistics.ShipId = root.Id.ToString(); 
-                                    Values = stats })
+        let root = ShipStatisticsProvider.Parse(json).JsonValue |> Some
+        let id = root |> prop "id"
+        let months = root
+                        |> prop "months"
+                        |> Option.map (fun j -> j.Properties() |> Seq.map (fun (_,v) -> v |> Some))
+        match id, months with
+        | Some id, Some months -> 
+            Some { ShipStatistics.ShipId = asStr id; 
+                                Values = months |> Seq.map toMonthlyShipStats |> Array.ofSeq }
+        |  _ -> None
+
+        
            
     let latestLosses age (shipStats: ShipStatistics) =
         shipStats.Values 
