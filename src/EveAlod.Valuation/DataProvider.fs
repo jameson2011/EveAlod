@@ -8,7 +8,6 @@ type DataProvider()=
 
     let getData = httpClient() |> getData
     let shipStatsUri = sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/"
-    [<Literal>]
     let statsAge = 12
 
     member __.ShipStatistics(shipTypeId: string)=
