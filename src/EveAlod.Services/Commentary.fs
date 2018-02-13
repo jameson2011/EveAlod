@@ -7,6 +7,7 @@ namespace EveAlod.Services
         
         let private conjunctiveTagTexts =
             [|
+                [| KillTag.NpcKill; KillTag.CorpLoss |], [| "Someone in corp has died to a rat. Corpie is primary." |];
                 [| KillTag.NpcKill; KillTag.Spendy |], [| "No permit = no ship"; "AFK carebear dead carebear" |];
                 [| KillTag.NpcKill; KillTag.Expensive |], [| "Bot down!"; "Don't go AFK Mr carebear" |];
                 [| KillTag.SoloKill; KillTag.Expensive|], [| "NICE"; "A thing of beauty is a joy forever" |];
