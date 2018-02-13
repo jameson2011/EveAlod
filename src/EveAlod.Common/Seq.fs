@@ -5,6 +5,13 @@
             values
             |> Seq.filter (fun v -> v.IsSome)
             |> Seq.map (fun v -> v.Value)
+                    
+        let splitTuples values =
+            let rec splitInner values left right =
+                match values with
+                | [] -> left|> List.rev, right |> List.rev
+                | (l,r)::t -> splitInner t (l::left) (r:: right)
+            splitInner values [] [] 
             
 
         let splitBy (f: 'a -> bool) (values: 'a list) =            

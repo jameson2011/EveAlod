@@ -32,4 +32,8 @@
         let propDateTime (name : string) =            
             (prop name) >> Option.map FSharp.Data.JsonExtensions.AsDateTime >> Option.defArg DateTime.MinValue
 
+        let propValues (json: JsonValue)=
+            json.Properties() |> Seq.map (fun (_,v) -> v)
+
         let asStr = JsonExtensions.AsString
+        let asInt = JsonExtensions.AsInteger
