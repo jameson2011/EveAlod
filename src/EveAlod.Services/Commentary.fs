@@ -8,7 +8,7 @@ namespace EveAlod.Services
         let private conjunctiveTagTexts =
             [|
                 [| KillTag.NpcKill; KillTag.CorpLoss |], [| "Someone in corp has died to a rat. Corpie is primary." |];
-                [| KillTag.NpcKill; KillTag.Spendy |], [| "No permit = no ship"; "AFK carebear dead carebear" |];
+                [| KillTag.NpcKill; KillTag.Spendy |], [| "No permit = no ship"; "AFK carebear dead carebear"; "Someone worked hard for this"; |];
                 [| KillTag.NpcKill; KillTag.Expensive |], [| "Bot down!"; "Don't go AFK Mr carebear" |];
                 [| KillTag.Pod; KillTag.CorpKill; KillTag.Expensive |], [| "Remember: we extract all implants at 50% cost"; |];
                 [| KillTag.Pod; KillTag.CorpKill; KillTag.Spendy |], [| "Nom nom nom"; |];
@@ -16,9 +16,9 @@ namespace EveAlod.Services
                 [| KillTag.SoloKill; KillTag.CorpKill; KillTag.Spendy |], [| "GLORIOUS"; |];
                 [| KillTag.SoloKill; KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY"; "Glorious solo victory"; |];
                 [| KillTag.SoloKill; KillTag.Expensive|], [| "NICE"; "A thing of beauty is a joy forever" |];
-                [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?"; "Someone worked hard for this."; |];                
+                [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?";  |];
                 [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Call the boss: PADDLING INCOMING"; |];
-                [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves a plex for this"; |];
+                [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves Plex for this"; |];
                 [| KillTag.CorpLoss; KillTag.CorpKill |], [| "Oh dear"; |];
                 [| KillTag.CorpLoss |], [| "CORPIE DOWN"; "RIP" |];
                 [| KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
