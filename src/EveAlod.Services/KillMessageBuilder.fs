@@ -65,7 +65,7 @@
                             | _ -> ""
                             
             if charNames.Length > 0 then
-                String.Format("{0} By {1} {2} {3:N} ISK", tags, charNames, uri, value).Trim()
+                String.Format("{0} by {1} {2} {3:N} ISK", tags, charNames, uri, value).Trim()
             else
                 String.Format("{0} {1} {2:N} ISK", tags, uri, value).Trim()
             
