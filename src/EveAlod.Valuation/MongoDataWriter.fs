@@ -2,21 +2,18 @@
 
 open System
 open MongoDB.Driver
-open EveAlod.Common.Bson
+open EveAlod.Common
 open EveAlod.Common.MongoDb
 
-type MongoDataWriter(serverName: string, dbName: string, colName: string)=
+type MongoDataWriter(connection: MongoConnection)=
 
     let col =   
         lazy (
-                connectionString serverName
-                        |> EveAlod.Common.MongoDb.initCollection dbName colName
+                EveAlod.Common.MongoDb.initCollection connection
             )
     
     let insertOne = col.Value.InsertOne
 
-    // TODO: need to set.... 
-
-    member __.Write(stats) =
-        // TODO:
+    // TODO: WIP
+    member __.Write(stats) =        
         ignore 0

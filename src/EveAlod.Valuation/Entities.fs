@@ -16,9 +16,7 @@ type ValueStatistics=
                             AverageValue = 0.;
                             RollingAverageValue = 0.
                             }
-
-    
-                            
+                                                        
 type PeriodValueStatistics=
     {
         Period: DateTime        
@@ -28,8 +26,7 @@ type PeriodValueStatistics=
                             Period = System.DateTime.MinValue;
                             Value = ValueStatistics.Empty;
                             }    
-
-
+                            
 type ShipStatistics=
     {
         ShipId: string

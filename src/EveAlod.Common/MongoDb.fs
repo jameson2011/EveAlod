@@ -3,12 +3,39 @@
 open System
 open MongoDB.Bson
 open MongoDB.Driver
+open EveAlod.Common.Strings
+
+type MongoConnection = 
+    {
+        Server: string
+        DbName: string
+        CollectionName: string
+        UserName: string
+        Password: string
+    }
 
 module MongoDb=
+    let private defaultMongoPort = 27017
     
-    let connectionString server = 
-        sprintf "mongodb://%s:27017" server            
-        
+    let appendPort server = 
+        match server |> split ":" with
+        | [| name; port |] -> server
+        | _ -> sprintf "%s:%i" server defaultMongoPort            
+
+    let resolveServerPorts = 
+        split "," >> Seq.map appendPort >> join ","
+    
+    let connectionString userName password server = 
+        let servers = resolveServerPorts server
+        match userName with
+        | NullOrWhitespace _ -> sprintf "mongodb://%s" servers
+        | name -> sprintf "mongodb://%s:%s@%s" name password servers
+    
+    let setDbConnection dbName connectionString =
+        match dbName with
+        | NullOrWhitespace _ -> connectionString
+        | x -> sprintf "%s/%s" connectionString dbName
+                
     let pingDb (db: IMongoDatabase) = 
         new MongoDB.Driver.BsonDocumentCommand<Object>(BsonDocument.Parse("{ping:1}"))
                     |> db.RunCommand 
@@ -32,11 +59,11 @@ module MongoDb=
     let getCollection colName (db: IMongoDatabase) =
         db.GetCollection(colName)                
                             
-    let initCollection server dbName collectionName =
-        server
-        |> connectionString
-        |> initDb dbName
-        |> getCollection collectionName
+    let initCollection (connection: MongoConnection)=
+        connectionString connection.Server connection.UserName connection.Password
+        |> setDbConnection connection.DbName
+        |> initDb connection.DbName
+        |> getCollection connection.CollectionName
         
 
 module Bson =
