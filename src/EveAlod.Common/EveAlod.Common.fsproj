@@ -83,6 +83,7 @@
     <Compile Include="CommandLine.fs" />
     <Compile Include="MongoDb.fs" />
     <Compile Include="Discord.fs" />
+    <Compile Include="TimerActor.fs" />
     <None Include="SampleDiscordWebhookResponse.json" />
   </ItemGroup>
   <ItemGroup>

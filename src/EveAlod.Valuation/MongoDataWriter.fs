@@ -15,5 +15,5 @@ type MongoDataWriter(connection: MongoConnection)=
     let insertOne = col.Value.InsertOne
 
     // TODO: WIP
-    member __.Write(stats) =        
+    member __.Write(value) =        
         ignore 0

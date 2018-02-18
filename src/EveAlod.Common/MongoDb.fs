@@ -12,7 +12,8 @@ type MongoConnection =
         CollectionName: string
         UserName: string
         Password: string
-    }
+    } with
+    static member Empty = { Server = ""; DbName = ""; CollectionName = ""; UserName = ""; Password = "" }
 
 module MongoDb=
     let private defaultMongoPort = 27017
