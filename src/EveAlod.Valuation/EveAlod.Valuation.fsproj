@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="Configuration.fs" />
     <Compile Include="TypeProviders.fs" />
     <Compile Include="EntityTransforms.fs" />
     <Compile Include="DataProvider.fs" />

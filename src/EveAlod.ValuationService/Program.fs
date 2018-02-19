@@ -1,31 +1,34 @@
 ﻿open System
-open EveAlod.Common.CommandLine
 
-let private createApp()=
-    let app = app()
-    app.Name <- "EveAlod.ValuationService"
-    app.Description <- "Provide valuations of kills"
-    app        
+open EveAlod.Valuation
+open EveAlod.ValuationService
+open EveAlod.ValuationService.CommandLine
 
-let private addRun cmd (app: App) =
-    let f = setDesc "Run the service" 
-                    >> setAction cmd
-    app.Command("run", (composeAppPipe f)) |> ignore
-    app
+let private configFromStartApp(app)=
+    { EveAlod.Valuation.Configuration.Empty with
+        KillSourceUri = getKillSourceValue app;
+        MongoServer = getMongoServerValue app;
+        MongoDb = getMongoDbValue app;
+        MongoCollection = getMongoCollectionValue app;
+        MongoUser = getMongoUserValue app;
+        MongoPassword = getMongoPasswordValue app;
+        WebPort = getWebPortValue app
+        } 
 
 let private runService (app)= 
+    
+    let config = configFromStartApp app
 
+    // TODO: 
+    
     System.Console.Out.WriteLine("ENTER to quit")
     System.Console.ReadLine() |> ignore
 
     true
 
 let private createAppTemplate()=
-    let app = createApp()
-                |> addRun runService                    
-                |> setHelp
-    
-    app
+    CommandLine.createApp()
+        |> CommandLine.addRun runService    
         
 
 [<EntryPoint>]
