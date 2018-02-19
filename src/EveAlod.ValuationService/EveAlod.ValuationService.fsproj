@@ -64,6 +64,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="CommandLine.fs" />
+    <Compile Include="WebServices.fs" />
+    <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

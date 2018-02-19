@@ -37,3 +37,6 @@
 
         let split (delim: string) (value: string) = 
             value.Split(delim.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+
+        let toString (value: 'a) = value.ToString()
+        
