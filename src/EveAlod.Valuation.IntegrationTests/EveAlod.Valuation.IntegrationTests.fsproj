@@ -66,6 +66,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EveAlod.Common">
+      <HintPath>..\..\artifacts\EveAlod.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -76,11 +80,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EveAlod.Common\EveAlod.Common.fsproj">
-      <Name>EveAlod.Common</Name>
-      <Project>{9dac1ac4-c86b-451e-808d-97d28c2972fa}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\EveAlod.Valuation\EveAlod.Valuation.fsproj">
       <Name>EveAlod.Valuation</Name>
       <Project>{d9263cf0-cb59-4fe1-95e7-d8e658cc3f23}</Project>
