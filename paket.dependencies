@@ -11,6 +11,7 @@ nuget FSharpLint.Fake
 nuget log4net
 nuget Microsoft.Extensions.CommandLineUtils 1.1.1 restriction: >= net461
 nuget mongocsharpdriver 2.5.0
+nuget suave
 nuget xunit
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio

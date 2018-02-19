@@ -35,7 +35,7 @@ module CommandLine=
         | Some x -> 
             match UInt16.TryParse(x) with
             | (true,x) -> x
-            | _ -> ConfigurationDefaults.webPort
+            | _ -> failwith "Invalid port."
 
     let createApp()=
         let app = app()
