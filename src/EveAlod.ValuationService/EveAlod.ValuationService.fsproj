@@ -66,13 +66,25 @@
     <Compile Include="CommandLine.fs" />
     <Compile Include="WebServices.fs" />
     <Compile Include="WebApp.fs" />
+    <Compile Include="ServiceFactory.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EveAlod.Common">
       <HintPath>..\..\artifacts\EveAlod.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EveAlod.Data">
+      <HintPath>..\..\artifacts\EveAlod.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EveAlod.Services">
+      <HintPath>..\..\artifacts\EveAlod.Services.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
