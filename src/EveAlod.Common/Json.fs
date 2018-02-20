@@ -37,3 +37,6 @@
 
         let asStr = JsonExtensions.AsString
         let asInt = JsonExtensions.AsInteger
+        let asDateTime = JsonExtensions.AsDateTime
+        let asFloat = JsonExtensions.AsFloat
+        

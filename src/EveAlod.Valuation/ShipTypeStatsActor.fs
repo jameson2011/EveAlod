@@ -7,24 +7,22 @@ open EveAlod.Data
 type ShipTypeStatsActor(log: PostMessage, shipTypeId: string)=
 
     let fittedValue = 
-        KillTransforms.asKillPackage >> prop "zkb" >> propFloat "fittedValue"
+        KillTransforms.asKillPackage >> prop "zkb" >> prop "fittedValue" >> Option.map asFloat
 
     let killDate = 
-        KillTransforms.asKillPackage >> prop "killmail" >> propDateTime "killmail_time" >> DateTime.date
+        KillTransforms.asKillPackage >> prop "killmail" >> prop "killmail_time" >> Option.map (asDateTime >> DateTime.date)
 
     let pipe = MessageInbox.Start(fun inbox -> 
-        let rec loop() = async {
-                
-                let! msg = inbox.Receive()
-                match msg with
-                | ImportKillJson json -> 
-                    // TODO:
-                    let fittedValue = json |> fittedValue
-                    let killDate = json |> killDate
-                    ignore 0
+        let rec loop() = async {                
+            let! msg = inbox.Receive()
+            match msg with
+            | ImportKillJson json ->                 
+                match fittedValue json, killDate json with
+                | Some fittedValue, Some killDate -> ignore 0 // TODO: accumulate...
                 | _ -> ignore 0
-                return! loop()
-            }
+            | _ -> ignore 0
+            return! loop()
+        }
         loop()
         )
 
