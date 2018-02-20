@@ -11,23 +11,31 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
     let shipTypeId json = 
         json |> KillTransforms.asKillPackage |> prop "killmail" |> prop "victim" |> propStr "ship_type_id"
 
+    let getAddActor (map: ShipTypeMap) id =
+        let actor = if map.ContainsKey(id) then map.[id]
+                    else ShipTypeStatsActor(config, log, id)
+        map.Add(id, actor), actor
+
     let onImportKillJson (map: ShipTypeMap) json =
         match shipTypeId json with
         | NullOrWhitespace _ -> map
-        | id ->                 let actor = if map.ContainsKey(id) then map.[id]
-                                            else ShipTypeStatsActor(config, log, id)                                
-                                json |> ImportKillJson |> actor.Post                                
-                                map.Add(id, actor)
+        | id ->                 let map,actor = getAddActor map id
+                                json |> ImportKillJson |> actor.Post
+                                map
 
-                                
+    let onGetShipTypeStats map id ch =
+        let map,actor = getAddActor map id
+        GetShipTypeStats (id,ch) |> actor.Post
+        map
         
     let pipe = MessageInbox.Start(fun inbox -> 
         let rec loop(map: ShipTypeMap) = async {
                 
                 let! msg = inbox.Receive()
                 let newMap = match msg with
-                                | ImportKillJson json ->    onImportKillJson map json                                    
-                                | _ ->                      map
+                                | ImportKillJson json ->        onImportKillJson map json
+                                | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch
+                                | _ ->                          map
                 return! loop(newMap)
             }
         loop(Map.empty)
@@ -36,3 +44,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
     do pipe.Error.Add(Actors.postException typeof<ShipTypeStatsActor>.Name log)
 
     member __.Post(msg: ValuationActorMessage) = pipe.Post msg
+
+    member __.GetShipStats(typeId: string)=        
+        pipe.PostAndAsyncReply (fun ch -> ValuationActorMessage.GetShipTypeStats (typeId, ch))
+

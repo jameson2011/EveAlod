@@ -28,7 +28,7 @@ let private runService (app)=
     serviceFactory.Source.Start()
 
     "Starting web app..." |> EveAlod.Data.ActorMessage.Info |> logger        
-    let listening,server = startWebServerAsync (WebApp.webConfig config) WebApp.webRoutes
+    let listening,server = startWebServerAsync (WebApp.webConfig config) (WebApp.webRoutes serviceFactory.ShipStats)
 
     Async.Start(server, cts.Token)
        

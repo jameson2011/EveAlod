@@ -17,3 +17,6 @@ type ServiceFactory(config: ValuationConfiguration)=
 
     member __.Source = importActor
 
+    member __.ShipStats = shipStatsActor
+
+

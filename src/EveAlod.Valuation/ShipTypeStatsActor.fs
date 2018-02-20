@@ -27,8 +27,13 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
             let stats = match msg with
                         | ImportKillJson json ->                 
                             match parse json with
-                            | Some (fittedValue, totalValue, killDate) ->   Statistics.rollup stats killDate fittedValue totalValue 
+                            | Some (fittedValue, totalValue, killDate) ->   
+                                // TODO: trim
+                                Statistics.rollup stats killDate fittedValue totalValue 
                             | _ ->                                          stats
+                        | GetShipTypeStats (_,ch) -> 
+                            stats |> ch.Reply
+                            stats
                         | _ ->                                              stats
             
             return! loop(stats)

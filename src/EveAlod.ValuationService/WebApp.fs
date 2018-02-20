@@ -15,10 +15,10 @@ module WebApp=
         { defaultConfig with bindings = [ HttpBinding.create HTTP System.Net.IPAddress.Any port ];  }
 
 
-    let webRoutes = 
+    let webRoutes (ships: ShipStatsActor)= 
         choose
             [   GET  >=> choose [
-                                    pathScan "/stats/%s/" WebServices.getShipTypeStats
+                                    pathScan "/stats/%s/" (WebServices.getShipTypeStats ships)
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
                                 ]
             ]
