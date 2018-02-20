@@ -14,6 +14,9 @@
         let diff (x: DateTime) (y: DateTime) = 
             x - y
 
+        let date (x: DateTime) = 
+            x.Date
+
         let ofDateTimeOffset (defaultTime: DateTime) (time: Nullable<DateTimeOffset>)=            
             if time.HasValue then
                 time.Value.UtcDateTime

@@ -17,7 +17,7 @@ module WebApp=
     let webRoutes = 
         choose
             [   GET  >=> choose [
-                                    pathScan "/stats/%s/" (fun id -> WebServices.getShipTypeStats id) 
+                                    pathScan "/stats/%s/" WebServices.getShipTypeStats//(fun id -> WebServices.getShipTypeStats id) 
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
                                 ]
             ]

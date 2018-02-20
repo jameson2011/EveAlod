@@ -62,11 +62,14 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Entities.fs" />
+    <Compile Include="Actors.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="TypeProviders.fs" />
     <Compile Include="EntityTransforms.fs" />
     <Compile Include="DataProvider.fs" />
     <Compile Include="MongoDataWriter.fs" />
+    <Compile Include="ShipTypeStatsActor.fs" />
+    <Compile Include="ShipStatsActor.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

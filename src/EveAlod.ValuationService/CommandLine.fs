@@ -26,7 +26,7 @@ module CommandLine=
     let getMongoPasswordValue app =     getStringOption dbPasswordArg app |> Option.defaultValue ""
     
     let addKillSourceArg =              addSingleOption killsourceArg killsourceArg "The URI providing zKB kills. By default this is zKB RedisQ"
-    let getKillSourceValue app =        getStringOption dbServerArg app |> Option.defaultValue ConfigurationDefaults.killSourceUri
+    let getKillSourceValue app =        getStringOption killsourceArg app |> Option.defaultValue ConfigurationDefaults.killSourceUri
 
     let addWebPortArg =                 addSingleOption webPortArg webPortArg (sprintf "The proxy's web server port. Default: %i" ConfigurationDefaults.webPort )
     let getWebPortValue app =     

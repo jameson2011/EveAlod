@@ -21,10 +21,12 @@ let private runService (app)=
     let config = configFromStartApp app
     let cts = new System.Threading.CancellationTokenSource()
     
-    let serviceFactory = ServiceFactory()
+    let serviceFactory = ServiceFactory(config)
     let logger = serviceFactory.Log
 
-    
+    "Starting kill source..." |> EveAlod.Data.ActorMessage.Info |> logger        
+    serviceFactory.Source.Start()
+
     "Starting web app..." |> EveAlod.Data.ActorMessage.Info |> logger        
     let listening,server = startWebServerAsync (WebApp.webConfig config) WebApp.webRoutes
 
@@ -33,6 +35,8 @@ let private runService (app)=
     
     System.Console.Out.WriteLine("ENTER to quit")
     System.Console.ReadLine() |> ignore
+
+    serviceFactory.Source.Stop()
 
     true
 
