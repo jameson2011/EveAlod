@@ -8,12 +8,16 @@ type ValueStatistics=
         Count: int64
         TotalValue: float
         AverageValue: float
+        MinValue: float
+        MaxValue: float
         RollingAverageValue: float
     } with
     static member Empty = {
                             Count = 0L;
                             TotalValue = 0.;
                             AverageValue = 0.;
+                            MinValue = 0.;
+                            MaxValue = 0.;
                             RollingAverageValue = 0.
                             }
                                                         
@@ -39,3 +43,9 @@ type ShipStatistics=
                             Kills = Array.empty
                             }
 
+type ShipTypeStatistics=
+    {
+        ShipId: string
+        Losses: Map<DateTime, PeriodValueStatistics>
+    } with 
+    static member Empty = { ShipId = ""; Losses = Map.empty }

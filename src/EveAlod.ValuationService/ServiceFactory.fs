@@ -3,11 +3,11 @@
 open EveAlod.Services
 open EveAlod.Valuation
 
-type ServiceFactory(config: Configuration)=
+type ServiceFactory(config: ValuationConfiguration)=
 
     let logger = LogPublishActor()
 
-    let shipStatsActor = ShipStatsActor(logger.Post)
+    let shipStatsActor = ShipStatsActor(config, logger.Post)
     let sourceForward msg = msg |> ValuationActorMessage.ImportKillJson |> shipStatsActor.Post
 
 

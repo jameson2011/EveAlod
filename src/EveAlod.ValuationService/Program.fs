@@ -6,7 +6,7 @@ open EveAlod.ValuationService
 open EveAlod.ValuationService.CommandLine
 
 let private configFromStartApp(app)=
-    { EveAlod.Valuation.Configuration.Empty with
+    { EveAlod.Valuation.ValuationConfiguration.Empty with
         KillSourceUri = getKillSourceValue app;
         MongoServer = getMongoServerValue app;
         MongoDb = getMongoDbValue app;

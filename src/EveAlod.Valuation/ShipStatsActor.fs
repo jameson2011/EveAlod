@@ -6,7 +6,7 @@ open EveAlod.Common.Strings
 
 type private ShipTypeMap = Map<string, ShipTypeStatsActor>
 
-type ShipStatsActor(log: PostMessage)=
+type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
     
     let shipTypeId json = 
         json |> KillTransforms.asKillPackage |> prop "killmail" |> prop "victim" |> propStr "ship_type_id"
@@ -14,10 +14,8 @@ type ShipStatsActor(log: PostMessage)=
     let onImportKillJson (map: ShipTypeMap) json =
         match shipTypeId json with
         | NullOrWhitespace _ -> map
-        | id ->                 let actor = if map.ContainsKey(id) then
-                                                map.[id]
-                                            else
-                                                ShipTypeStatsActor(log, id)                                
+        | id ->                 let actor = if map.ContainsKey(id) then map.[id]
+                                            else ShipTypeStatsActor(config, log, id)                                
                                 json |> ImportKillJson |> actor.Post                                
                                 map.Add(id, actor)
 
