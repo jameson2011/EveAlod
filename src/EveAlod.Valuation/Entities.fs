@@ -16,8 +16,8 @@ type ValueStatistics=
                             Count = 0L;
                             TotalValue = 0.;
                             AverageValue = 0.;
-                            MinValue = 0.;
-                            MaxValue = 0.;
+                            MinValue = System.Double.MaxValue;
+                            MaxValue = System.Double.MinValue;
                             RollingAverageValue = 0.
                             }
                                                         
@@ -46,6 +46,7 @@ type ShipStatistics=
 type ShipTypeStatistics=
     {
         ShipId: string
-        Losses: Map<DateTime, PeriodValueStatistics>
+        FittedValues: Map<DateTime, PeriodValueStatistics>
+        TotalValues: Map<DateTime, PeriodValueStatistics>
     } with 
-    static member Empty = { ShipId = ""; Losses = Map.empty }
+    static member Empty = { ShipId = ""; FittedValues = Map.empty; TotalValues = Map.empty }

@@ -19,20 +19,21 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
         | _ -> None
 
     
-
     let pipe = MessageInbox.Start(fun inbox -> 
-        // TODO: ShipTypeStatistics
-        let rec loop() = async {                
+        
+        let rec loop(stats: ShipTypeStatistics) = async {                
             let! msg = inbox.Receive()
-            match msg with
-            | ImportKillJson json ->                 
-                match parse json with
-                | Some (fittedValue, totalValue, killDate) -> ignore 0 // TODO: accumulate...
-                | _ -> ignore 0
-            | _ -> ignore 0
-            return! loop()
+            
+            let stats = match msg with
+                        | ImportKillJson json ->                 
+                            match parse json with
+                            | Some (fittedValue, totalValue, killDate) ->   Statistics.rollup stats killDate fittedValue totalValue 
+                            | _ ->                                          stats
+                        | _ ->                                              stats
+            
+            return! loop(stats)
         }
-        loop()
+        loop({ ShipTypeStatistics.Empty with ShipId = shipTypeId })
         )
 
     do pipe.Error.Add(Actors.postException typeof<ShipTypeStatsActor>.Name log)

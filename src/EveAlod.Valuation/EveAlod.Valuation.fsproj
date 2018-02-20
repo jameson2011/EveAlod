@@ -66,6 +66,7 @@
     <Compile Include="ValuationConfiguration.fs" />
     <Compile Include="TypeProviders.fs" />
     <Compile Include="EntityTransforms.fs" />
+    <Compile Include="Statistics.fs" />
     <Compile Include="DataProvider.fs" />
     <Compile Include="MongoDataWriter.fs" />
     <Compile Include="ShipTypeStatsActor.fs" />
