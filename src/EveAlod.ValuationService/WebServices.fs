@@ -13,12 +13,11 @@ module WebServices=
     let setPragmaNoCache = Writers.setHeader "Pragma" "no-cache"
     let setNoCacheControl = Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
 
-    let setCacheControl (age: int) = 
+    let setCacheLimit (age: int) = 
         age * 60 |> toString |> sprintf "public, max-age=%s" |> Writers.setHeader "Cache-Control" 
 
     let setNoCache = setNoCacheControl >=> setPragmaNoCache >=> setExpiry 0
-    let setCache age = setCacheControl age
-
+    
     let getShipTypeStats (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=
         async {
                                 
