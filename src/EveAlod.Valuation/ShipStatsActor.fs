@@ -34,8 +34,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
                 let! msg = inbox.Receive()
                 let newMap = match msg with
                                 | ImportKillJson json ->        onImportKillJson map json
-                                | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch
-                                | _ ->                          map
+                                | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch                                
                 return! loop(newMap)
             }
         loop(Map.empty)

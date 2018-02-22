@@ -33,8 +33,7 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                             | _ ->                                          stats
                         | GetShipTypeStats (_,ch) -> 
                             stats |> ch.Reply
-                            stats
-                        | _ ->                                              stats
+                            stats                        
             
             return! loop(stats)
         }
