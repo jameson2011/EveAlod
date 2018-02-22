@@ -11,8 +11,13 @@ module Statistics=
         { stats with TotalValue = stats.TotalValue + value }
 
     let accumulateMinMax value (stats: ValueStatistics) = 
-        { stats with MinValue = min stats.MinValue value;
-                     MaxValue = max stats.MaxValue value }
+        let minV = min stats.MinValue value
+        let maxV = max stats.MaxValue value
+        let medV = ((maxV - minV) / 2.) + minV
+        { stats with MinValue = minV;
+                     MaxValue = maxV; 
+                     ValueRange = maxV - minV;
+                     MedianValue = medV}
 
     let accumulateAverage (stats: ValueStatistics)  = 
         { stats with AverageValue = stats.TotalValue / float stats.Count }

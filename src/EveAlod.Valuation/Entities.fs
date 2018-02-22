@@ -10,14 +10,18 @@ type ValueStatistics=
         AverageValue: float
         MinValue: float
         MaxValue: float
+        ValueRange: float
+        MedianValue: float
         RollingAverageValue: float
     } with
     static member Empty = {
                             Count = 0L;
                             TotalValue = 0.;
                             AverageValue = 0.;
+                            MedianValue = 0.;
                             MinValue = System.Double.MaxValue;
                             MaxValue = System.Double.MinValue;
+                            ValueRange = 0.;
                             RollingAverageValue = 0.
                             }
                                                         

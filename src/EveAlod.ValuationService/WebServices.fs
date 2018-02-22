@@ -6,7 +6,7 @@ open EveAlod.Common.Strings
 
 module WebServices=
     open EveAlod.Valuation
-
+    
     let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
 
     let setExpiry (age: int ) = age |> toString |> Writers.setHeader "Expires" 
@@ -18,13 +18,15 @@ module WebServices=
 
     let setNoCache = setNoCacheControl >=> setPragmaNoCache >=> setExpiry 0
     
+    
+
     let getShipTypeStats (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=
         async {
                                 
             let! stats = shipStats.GetShipStats id
             
-            // TODO: 
-            let response = sprintf """{ "stats": "%s" }""" id
+            let j = EntityTransforms.shipTypeStatsToJson stats
+                        
+            return! Successful.OK j ctx
             
-            return! Successful.OK response ctx
         }
