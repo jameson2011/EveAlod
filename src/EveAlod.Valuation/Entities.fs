@@ -50,10 +50,12 @@ type ShipStatistics=
 type ShipTypeStatistics=
     {
         ShipId: string
+        ZkbUri: string
+        ZkbApiUri: string
         FittedValues: Map<DateTime, PeriodValueStatistics>
         TotalValues: Map<DateTime, PeriodValueStatistics>
     } with 
-    static member Empty = { ShipId = ""; FittedValues = Map.empty; TotalValues = Map.empty }
+    static member Empty = { ShipId = ""; ZkbUri = ""; ZkbApiUri = ""; FittedValues = Map.empty; TotalValues = Map.empty }
 
 type ShipSummaryStatistics =
     {

@@ -100,10 +100,12 @@ module EntityTransforms=
             (totalValues |> List.append values |> Array.ofSeq) |> JsonValue.Record
             
         let typeId = ("shipTypeId", JsonValue.String(stats.ShipId))
+        let zkbUri = ("zkbHref", JsonValue.String stats.ZkbUri)
+        let zkbApiUri = ("zkbApiHref", JsonValue.String stats.ZkbApiUri)
         let periods = stats.FittedValues    |> Seq.map (fun kvp -> kvp.Key, kvp.Value, (stats.TotalValues.TryFind kvp.Key) )
                                             |> Seq.sortByDescending (fun (k,_,_) -> k)
                                             |> Seq.map (fun (k,f,t) -> toPeriod k f t)
                                             |> Array.ofSeq        
         
-        (JsonValue.Record [| typeId; ("periods", (JsonValue.Array periods) ) |]).ToString()
+        (JsonValue.Record [| typeId; zkbUri; zkbApiUri; ("periods", (JsonValue.Array periods) ) |]).ToString()
 

@@ -43,7 +43,10 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
             
             return! loop(stats)
         }
-        loop({ ShipTypeStatistics.Empty with ShipId = shipTypeId })
+        loop({ ShipTypeStatistics.Empty 
+                with    ShipId = shipTypeId; 
+                        ZkbUri = (sprintf "https://zkillboard.com/ship/%s/" shipTypeId);
+                        ZkbApiUri = (sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/" shipTypeId)})
         )
 
     do pipe.Error.Add(Actors.postException typeof<ShipTypeStatsActor>.Name log)
