@@ -13,7 +13,8 @@ let private configFromStartApp(app)=
         MongoCollection = getMongoCollectionValue app;
         MongoUser = getMongoUserValue app;
         MongoPassword = getMongoPasswordValue app;
-        WebPort = getWebPortValue app
+        WebPort = getWebPortValue app;
+        MaxRollingStatsAge = getMaxAgeValue app;
         } 
 
 let private runService (app)= 

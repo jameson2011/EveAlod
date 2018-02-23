@@ -13,6 +13,7 @@ module CommandLine=
     let private dbPasswordArg = "pw"
     let private webPortArg = "port"
     let private killsourceArg = "killsource"
+    let private maxAgeArg = "maxage" // TODO:
 
     let addMongoServerArg =             addSingleOption dbServerArg "server" (sprintf "The MongoDB server name. Default: %s" ValuationConfigurationDefault.mongoServer)
     let getMongoServerValue app =       getStringOption dbServerArg app  |> Option.defaultValue ValuationConfigurationDefault.mongoServer
@@ -37,6 +38,15 @@ module CommandLine=
             | (true,x) -> x
             | _ -> failwith "Invalid port."
 
+    let addMaxAgeArg =                 addSingleOption maxAgeArg maxAgeArg (sprintf "The maximum cache age, in days. Default: %i" ValuationConfigurationDefault.rollingStatsAge )
+    let getMaxAgeValue app =     
+        match getStringOption maxAgeArg app with
+        | None  -> ValuationConfigurationDefault.rollingStatsAge
+        | Some x -> 
+            match Int32.TryParse(x) with
+            | (true,x) when x > 0 -> x
+            | _ -> failwith "Maximum age must be a positive integer."
+
     let createApp()=
         let app = app()
         app.Name <- "EveAlod.ValuationService"
@@ -54,6 +64,7 @@ module CommandLine=
                         >> addMongoCollectionArg
                         >> addMongoUserArg
                         >> addMongoPasswordArg
+                        >> addMaxAgeArg
                         >> setAction cmd
         app.Command("run", (composeAppPipe f)) |> ignore
         app

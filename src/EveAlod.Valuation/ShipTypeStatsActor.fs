@@ -18,7 +18,9 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
         | Some fittedValue, Some totalValue, Some killDate -> Some (fittedValue, totalValue, killDate)
         | _ -> None
 
-    
+    let isMinAge dt = 
+        dt >= System.DateTime.UtcNow.Date.AddDays(float -config.MaxRollingStatsAge)
+
     let pipe = MessageInbox.Start(fun inbox -> 
         
         let rec loop(stats: ShipTypeStatistics) = async {                
@@ -27,7 +29,7 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
             let stats = match msg with
                         | ImportKillJson json ->                 
                             match parse json with
-                            | Some (fittedValue, totalValue, killDate) ->   
+                            | Some (fittedValue, totalValue, killDate) when isMinAge killDate -> 
                                 stats   |> Statistics.trim config.MaxRollingStatsAge
                                         |> Statistics.rollup killDate fittedValue totalValue 
                             | _ -> stats
