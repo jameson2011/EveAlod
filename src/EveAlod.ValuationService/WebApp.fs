@@ -23,6 +23,8 @@ module WebApp=
 
                                     path "/stats/" >=> WebServices.getShipSummaryStatsJson ships
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
+
+                                    path "/favicon.ico" >=> Suave.Successful.no_content >=> WebServices.setCacheLimit 99999999
                                 ]
             ]
 
