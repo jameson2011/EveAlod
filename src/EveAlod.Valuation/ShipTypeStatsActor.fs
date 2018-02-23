@@ -33,7 +33,13 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                             | _ ->                                          stats
                         | GetShipTypeStats (_,ch) -> 
                             stats |> ch.Reply
-                            stats                        
+                            stats
+                        | GetShipSummaryStats ch -> 
+                            let count = stats.FittedValues |> Seq.sumBy (fun kvp -> kvp.Value.Value.Count)
+                            { ShipSummaryStatistics.Empty with 
+                                TotalKills = count } |> ch.Reply
+                            stats
+                        
             
             return! loop(stats)
         }
@@ -43,3 +49,9 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
     do pipe.Error.Add(Actors.postException typeof<ShipTypeStatsActor>.Name log)
 
     member __.Post(msg: ValuationActorMessage) = pipe.Post msg
+    
+    member __.GetStatsSummary() =
+        pipe.PostAndAsyncReply ValuationActorMessage.GetShipSummaryStats
+
+    member __.GetStats() =
+        pipe.PostAndAsyncReply (fun ch -> ValuationActorMessage.GetShipTypeStats (shipTypeId,ch) )

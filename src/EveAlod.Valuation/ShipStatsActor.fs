@@ -23,6 +23,23 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
                                 json |> ImportKillJson |> actor.Post
                                 map
 
+    let onGetShipSummaryStats (map:ShipTypeMap ) (ch: AsyncReplyChannel<ShipSummaryStatistics>) =        
+        let getActorStats (actor: ShipTypeStatsActor) = 
+            async {
+                return! actor.GetStatsSummary()
+                }
+
+        let allStats = map |> Map.toSeq                        
+                        |> Seq.map (fun (_,actor) -> getActorStats actor)
+                        |> Async.Parallel
+                        |> Async.RunSynchronously
+
+        { ShipSummaryStatistics.Empty with 
+                                ShipTypeCount = map.Count;
+                                TotalKills = allStats |> Seq.sumBy (fun s -> s.TotalKills) }
+                                |>  ch.Reply 
+        map
+        
     let onGetShipTypeStats map id ch =
         let map,actor = getAddActor map id
         GetShipTypeStats (id,ch) |> actor.Post
@@ -35,6 +52,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
                 let newMap = match msg with
                                 | ImportKillJson json ->        onImportKillJson map json
                                 | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch                                
+                                | GetShipSummaryStats (ch) ->   onGetShipSummaryStats map ch
                 return! loop(newMap)
             }
         loop(Map.empty)
@@ -44,6 +62,10 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
 
     member __.Post(msg: ValuationActorMessage) = pipe.Post msg
 
-    member __.GetShipStats(typeId: string)=        
+    member __.GetShipSummaryStats()=
+        pipe.PostAndAsyncReply ValuationActorMessage.GetShipSummaryStats 
+
+
+    member __.GetShipTypeStats(typeId: string)=        
         pipe.PostAndAsyncReply (fun ch -> ValuationActorMessage.GetShipTypeStats (typeId, ch))
 

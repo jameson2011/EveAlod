@@ -54,3 +54,10 @@ type ShipTypeStatistics=
         TotalValues: Map<DateTime, PeriodValueStatistics>
     } with 
     static member Empty = { ShipId = ""; FittedValues = Map.empty; TotalValues = Map.empty }
+
+type ShipSummaryStatistics =
+    {
+        ShipTypeCount: int
+        TotalKills: int64
+    } with
+    static member Empty = { ShipTypeCount = 0; TotalKills = 0L }

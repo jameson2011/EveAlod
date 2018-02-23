@@ -19,11 +19,19 @@ module WebServices=
     let setNoCache = setNoCacheControl >=> setPragmaNoCache >=> setExpiry 0
     
     
+    let getShipSummaryStatsJson (shipStats: ShipStatsActor) (ctx: HttpContext)=
+        async {
+            let! stats = shipStats.GetShipSummaryStats()
 
-    let getShipTypeStats (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=
+            let j = EntityTransforms.shipSummaryStatsToJson stats
+
+            return! Successful.OK j ctx
+        }
+        
+    let getShipTypeStatsJson (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=
         async {
                                 
-            let! stats = shipStats.GetShipStats id
+            let! stats = shipStats.GetShipTypeStats id
             
             let j = EntityTransforms.shipTypeStatsToJson stats
                         

@@ -18,7 +18,10 @@ module WebApp=
     let webRoutes (ships: ShipStatsActor)= 
         choose
             [   GET  >=> choose [
-                                    pathScan "/stats/%s/" (WebServices.getShipTypeStats ships)
+                                    pathScan "/stats/%s/" (WebServices.getShipTypeStatsJson ships)
+                                                            >=> WebServices.setNoCache >=> WebServices.jsonMimeType
+
+                                    path "/stats/" >=> WebServices.getShipSummaryStatsJson ships
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
                                 ]
             ]

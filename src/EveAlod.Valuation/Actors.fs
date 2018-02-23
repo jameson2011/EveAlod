@@ -3,6 +3,7 @@
 type ValuationActorMessage=
     | ImportKillJson of string
     | GetShipTypeStats of string * AsyncReplyChannel<ShipTypeStatistics>
+    | GetShipSummaryStats of AsyncReplyChannel<ShipSummaryStatistics>
 
 type MessageInbox = MailboxProcessor<ValuationActorMessage>
 type PostMessage = EveAlod.Data.ActorMessage -> unit

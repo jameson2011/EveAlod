@@ -58,7 +58,13 @@ module EntityTransforms=
                                             Kills = kills |> rollingAverages age |> Array.ofSeq}
         |  _ -> None
 
-        
+    
+    let shipSummaryStatsToJson (stats: ShipSummaryStatistics)=
+        let j = JsonValue.Record [|
+                                    ("shipTypes", JsonValue.Float(float stats.ShipTypeCount) );
+                                    ("totalKills", JsonValue.Float(float stats.TotalKills) )
+                                |]
+        j.ToString()
 
     let shipTypeStatsToJson (stats: ShipTypeStatistics) =
             
