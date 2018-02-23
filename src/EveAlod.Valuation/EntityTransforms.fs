@@ -74,28 +74,33 @@ module EntityTransforms=
                                 |]
         j.ToString()
 
-    let shipTypeStatsToJson (stats: ShipTypeStatistics) =
-            
-        let valueToJson prefix (value: ValueStatistics)=
-
-            [
+    
+    let valueStatisticsToJson prefix (value: ValueStatistics)=
+        [
             (prefix + "Min", JsonValue.Float(value.MinValue));
             (prefix + "Max", JsonValue.Float(value.MaxValue));
             (prefix + "Range", JsonValue.Float(value.ValueRange));
             (prefix + "Average", JsonValue.Float(value.AverageValue));
             (prefix + "Median", JsonValue.Float(value.MedianValue));
             (prefix + "Total", JsonValue.Float(value.TotalValue)) 
-            ]
+        ]
 
+
+    let shipTypeStatsToJson (stats: ShipTypeStatistics) =
+        let summary prefix stats = 
+            stats
+            |> valueStatisticsToJson prefix
+            |> List.ofSeq
+        
         let toPeriod (period: DateTime) (fitted: PeriodValueStatistics) (total: PeriodValueStatistics option) =
-            let values = valueToJson "fitted" fitted.Value
+            let values = valueStatisticsToJson "fitted" fitted.Value
                                     |> List.append
                                     [
                                         ("date", JsonValue.String(period.ToString("o")));
                                         ("count", JsonValue.Float(float fitted.Value.Count));
                                     ] 
 
-            let totalValues = total |> Option.map (fun v -> valueToJson "total" v.Value) |> Option.defaultValue []
+            let totalValues = total |> Option.map (fun v -> valueStatisticsToJson "total" v.Value) |> Option.defaultValue []
 
             (totalValues |> List.append values |> Array.ofSeq) |> JsonValue.Record
             
@@ -106,6 +111,16 @@ module EntityTransforms=
                                             |> Seq.sortByDescending (fun (k,_,_) -> k)
                                             |> Seq.map (fun (k,f,t) -> toPeriod k f t)
                                             |> Array.ofSeq        
-        
-        (JsonValue.Record [| typeId; zkbUri; zkbApiUri; ("periods", (JsonValue.Array periods) ) |]).ToString()
+    
+        let summaryData = [ ("count", JsonValue.Float(float stats.FittedValuesSummary.Count)) ]
+        let summaryData =   (if stats.FittedValuesSummary.Count > 0L then
+                                (summary "total" stats.TotalValuesSummary)
+                                |> List.append (summary "fitted" stats.FittedValuesSummary )
+                                |> List.append summaryData
+                            else
+                                summaryData) |> Array.ofList
+                              
+        let summary = ("summary", JsonValue.Record summaryData )
+        (JsonValue.Record [| typeId; zkbUri; zkbApiUri; summary;
+                            ("periods", (JsonValue.Array periods) ) |]).ToString()
 

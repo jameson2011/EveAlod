@@ -50,7 +50,29 @@ module Statistics=
         { stats with FittedValues = (trimMap maxAge stats.FittedValues);
                      TotalValues = (trimMap maxAge stats.TotalValues);
         }
-        
+
+    let totals (map: Map<_,PeriodValueStatistics>) =
+        let stats = map |> Seq.map (fun k -> k.Value.Value) |> Array.ofSeq
+        let min = stats |> Seq.map (fun s -> s.MinValue) |> Seq.min
+        let max = stats |> Seq.map (fun s -> s.MaxValue) |> Seq.max
+        let total = stats |> Seq.sumBy (fun s -> s.TotalValue)
+        let count = stats |> Seq.sumBy (fun s -> s.Count)
+        let avg = total  / float count
+        let med = (max - min ) / 2. + min
+
+        { ValueStatistics.Empty with 
+            Count = count; 
+            MinValue = min; 
+            MaxValue = max; 
+            TotalValue = total; 
+            AverageValue = avg;
+            MedianValue = med}
+            
     let rollup period fittedValue totalValue (stats: ShipTypeStatistics) = 
-        { stats with    FittedValues = accumulate stats.FittedValues period fittedValue;
-                        TotalValues = accumulate stats.TotalValues period totalValue }
+        let fittedValues = accumulate stats.FittedValues period fittedValue
+        let totalValues = accumulate stats.TotalValues period totalValue
+
+        { stats with    FittedValues = fittedValues;
+                        FittedValuesSummary = totals fittedValues
+                        TotalValues = totalValues; 
+                        TotalValuesSummary = totals totalValues }
