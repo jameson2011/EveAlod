@@ -70,7 +70,7 @@
     <Compile Include="ServiceFactory.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <Content Include="log4net.config">
+    <Content Include="valuationlog4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="packages.config" />
