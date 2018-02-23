@@ -59,10 +59,18 @@ module EntityTransforms=
         |  _ -> None
 
     
-    let shipSummaryStatsToJson (stats: ShipSummaryStatistics)=
+    let shipSummaryStatsToJson (uri: string -> Uri) (stats: ShipSummaryStatistics)=        
+        
+        let shipTypeUri id =
+            (sprintf "/stats/%s/" id |> uri).ToString()
+
         let j = JsonValue.Record [|
-                                    ("shipTypes", JsonValue.Float(float stats.ShipTypeCount) );
-                                    ("totalKills", JsonValue.Float(float stats.TotalKills) )
+                                    ("totalKills", JsonValue.Float(float stats.TotalKills) );
+                                    ("totalShipTypes", JsonValue.Float(float stats.ShipTypeCount) );                                                                        
+                                    ("shipTypeHrefs", JsonValue.Array (stats.ShipTypeIds 
+                                                                        |> Seq.sort 
+                                                                        |> Seq.map (shipTypeUri >> JsonValue.String)
+                                                                        |> Array.ofSeq));                                    
                                 |]
         j.ToString()
 

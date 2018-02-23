@@ -59,5 +59,6 @@ type ShipSummaryStatistics =
     {
         ShipTypeCount: int
         TotalKills: int64
+        ShipTypeIds: Set<string>
     } with
-    static member Empty = { ShipTypeCount = 0; TotalKills = 0L }
+    static member Empty = { ShipTypeCount = 0; TotalKills = 0L; ShipTypeIds = Set.empty }

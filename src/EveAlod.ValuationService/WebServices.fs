@@ -6,6 +6,7 @@ open EveAlod.Common.Strings
 
 module WebServices=
     open EveAlod.Valuation
+    open System
     
     let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
 
@@ -17,15 +18,22 @@ module WebServices=
         age * 60 |> toString |> sprintf "public, max-age=%s" |> Writers.setHeader "Cache-Control" 
 
     let setNoCache = setNoCacheControl >=> setPragmaNoCache >=> setExpiry 0
-    
+
+    let composeUri (host: Host) (hostRoot: Uri) path =
+        let ub = UriBuilder(hostRoot)
+        ub.Host <- host
+        ub.Path <- path
+        ub.Uri
     
     let getShipSummaryStatsJson (shipStats: ShipStatsActor) (ctx: HttpContext)=
         async {
+            let uri = composeUri ctx.request.host ctx.request.url 
+
             let! stats = shipStats.GetShipSummaryStats()
+            
+            let json = stats |> EntityTransforms.shipSummaryStatsToJson uri
 
-            let j = EntityTransforms.shipSummaryStatsToJson stats
-
-            return! Successful.OK j ctx
+            return! Successful.OK json ctx
         }
         
     let getShipTypeStatsJson (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=

@@ -36,6 +36,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
 
         { ShipSummaryStatistics.Empty with 
                                 ShipTypeCount = map.Count;
+                                ShipTypeIds = (map |> Seq.map (fun k -> k.Key) |> Set.ofSeq);
                                 TotalKills = allStats |> Seq.sumBy (fun s -> s.TotalKills) }
                                 |>  ch.Reply 
         map
