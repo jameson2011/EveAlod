@@ -28,9 +28,9 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                         | ImportKillJson json ->                 
                             match parse json with
                             | Some (fittedValue, totalValue, killDate) ->   
-                                // TODO: trim
-                                Statistics.rollup stats killDate fittedValue totalValue 
-                            | _ ->                                          stats
+                                stats   |> Statistics.trim config.MaxRollingStatsAge
+                                        |> Statistics.rollup killDate fittedValue totalValue 
+                            | _ -> stats
                         | GetShipTypeStats (_,ch) -> 
                             stats |> ch.Reply
                             stats

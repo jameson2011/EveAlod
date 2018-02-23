@@ -38,16 +38,19 @@ module Statistics=
         stats.Add(period, { periodStats with Value = valueStats })
 
 
-    let trim maxAge (stats: Map<_,_>)  = 
+    let trimMap maxAge (stats: Map<_,_>)  = 
         let rec trimPeriods depth (stats: Map<_,_>) (date: DateTime) =
             match depth with
             | 0 ->  stats
-            | _ ->  let k = date.AddDays(float -1)
-                    trimPeriods (depth - 1) (stats.Remove(k)) k
-            
-        if stats.Count >= maxAge then   DateTime.UtcNow.Date.AddDays(-1.) |> trimPeriods 10 stats 
-        else                            stats
+            | _ ->  let k = date.AddDays(-1.)
+                    trimPeriods (depth - 1) (stats.Remove(k)) k        
+        DateTime.UtcNow.Date.AddDays(float -(maxAge+1)) |> trimPeriods 10 stats 
         
-    let rollup (stats: ShipTypeStatistics) period fittedValue totalValue = 
+    let trim maxAge (stats: ShipTypeStatistics)=
+        { stats with FittedValues = (trimMap maxAge stats.FittedValues);
+                     TotalValues = (trimMap maxAge stats.TotalValues);
+        }
+        
+    let rollup period fittedValue totalValue (stats: ShipTypeStatistics) = 
         { stats with    FittedValues = accumulate stats.FittedValues period fittedValue;
                         TotalValues = accumulate stats.TotalValues period totalValue }
