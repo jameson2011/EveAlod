@@ -13,7 +13,7 @@ module CommandLine=
     let private dbPasswordArg = "pw"
     let private webPortArg = "port"
     let private killsourceArg = "killsource"
-    let private maxAgeArg = "maxage" // TODO:
+    let private maxAgeArg = "maxage"
 
     let addMongoServerArg =             addSingleOption dbServerArg "server" (sprintf "The MongoDB server name. Default: %s" ValuationConfigurationDefault.mongoServer)
     let getMongoServerValue app =       getStringOption dbServerArg app  |> Option.defaultValue ValuationConfigurationDefault.mongoServer
