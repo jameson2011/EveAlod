@@ -53,3 +53,8 @@ module EntityTransforms=
                                             Losses = losses |> rollingAverages age |> Array.ofSeq; 
                                             Kills = kills |> rollingAverages age |> Array.ofSeq}
         |  _ -> None
+
+    let toKillmailIds json =
+        let root = KillmailHistoryIdProvider.Parse(json)
+        // TODO:
+        Some []

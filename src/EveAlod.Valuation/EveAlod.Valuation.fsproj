@@ -2212,7 +2212,6 @@
     <Compile Include="Json.fs" />
     <Compile Include="ShipTypeStatsActor.fs" />
     <Compile Include="ShipStatsActor.fs" />
-    <None Include="SampleKillHistory.json" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
