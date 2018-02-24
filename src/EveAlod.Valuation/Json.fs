@@ -1,14 +1,12 @@
 ﻿namespace EveAlod.Valuation
 
 open System
-open EveAlod.Common
-open EveAlod.Common.Combinators
-open EveAlod.Common.Json
 open FSharp.Data
 
 
 module Json=
     
+
     let shipSummaryStatsToJson (uri: string -> Uri) (stats: ShipSummaryStatistics)=        
         
         let shipTypeUri id =
@@ -22,7 +20,7 @@ module Json=
                                                                         |> Seq.map (shipTypeUri >> JsonValue.String)
                                                                         |> Array.ofSeq));                                    
                                 |]
-        j.ToString()
+        j |> ResponsePayload.Json
 
     
     let valueStatisticsToJson prefix (value: ValueStatistics)=
@@ -71,5 +69,5 @@ module Json=
                                 summaryData) |> Array.ofList
                               
         let summary = ("summary", JsonValue.Record summaryData )
-        (JsonValue.Record [| typeId; zkbUri; zkbApiUri; summary;
-                            ("periods", (JsonValue.Array periods) ) |]).ToString()
+        JsonValue.Record [| typeId; zkbUri; zkbApiUri; summary;
+                            ("periods", (JsonValue.Array periods) ) |] |> ResponsePayload.Json

@@ -17,8 +17,6 @@ module EntityTransforms=
                         | _ -> value / float count
         { ValueStatistics.Empty with Count = count; TotalValue = value; AverageValue = avg; }
     
-    
-
     let toMonthlyShipStats (root: JsonValue)=
         let json = Some root
         match json |> (prop "year" <++> prop "month") with
@@ -32,8 +30,6 @@ module EntityTransforms=
 
                                     Some ( losses, kills)
         | _ -> None
-        
-    
            
     let rollingAverages age (stats: seq<PeriodValueStatistics>) =        
         stats   |> Seq.windowed age        
@@ -57,4 +53,3 @@ module EntityTransforms=
                                             Losses = losses |> rollingAverages age |> Array.ofSeq; 
                                             Kills = kills |> rollingAverages age |> Array.ofSeq}
         |  _ -> None
-
