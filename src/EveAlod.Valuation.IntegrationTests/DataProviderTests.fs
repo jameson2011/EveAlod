@@ -74,3 +74,21 @@ module DataProviderTests=
         let result = dp.Kill(killId) |> Async.RunSynchronously
 
         Assert.NotEqual(None, result)
+
+    [<Fact>]
+    let ``Kill returns None with unknown ID``()=
+        let killId = Guid.NewGuid().ToString()
+        let dp = EveAlod.Valuation.DataProvider()
+
+        let result = dp.Kill(killId) |> Async.RunSynchronously
+
+        Assert.Equal(None, result)
+
+    [<Fact>]
+    let ``Kill returns None with bad host``()=
+        let killId = Guid.NewGuid().ToString()
+        let dp = EveAlod.Valuation.DataProvider(Guid.NewGuid().ToString())
+
+        let result = dp.Kill(killId) |> Async.RunSynchronously
+
+        Assert.Equal(None, result)
