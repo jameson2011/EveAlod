@@ -102,12 +102,12 @@
                     VictimShip: Entity option;
                     Fittings: CargoItem list;
                     Cargo: CargoItem list;
-                    TotalValue: float;
-
                     Attackers: Attacker list;
 
                     Tags: KillTag list 
-
+                    FittedValue: float;
+                    TotalValue: float;
+                    
                     AlodScore: float;
                     }
         with static member empty =
@@ -123,6 +123,7 @@
                     Attackers = [];
                     Fittings = [];
                     Cargo = [];
+                    FittedValue = 0.;
                     TotalValue = 0.;
                 }            
 

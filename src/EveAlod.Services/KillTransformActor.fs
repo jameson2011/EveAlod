@@ -18,7 +18,7 @@
 
                 try
                     match msg with
-                    | KillJson json -> 
+                    | KillmailJson json -> 
                         match KillTransforms.toKill json with
                         | Some k -> k |> forward
                         | _ ->  ignore 0

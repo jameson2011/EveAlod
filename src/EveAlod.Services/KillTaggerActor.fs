@@ -12,7 +12,7 @@
                 let! msg = inbox.Receive()
                 try
                     match msg with                                    
-                    | Kill km ->    
+                    | Killmail km ->    
                                 km 
                                 |> tagger.Tag
                                 |> forward

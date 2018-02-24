@@ -33,7 +33,7 @@
 
                 try
                     match msg with
-                    | Kill km ->                 getMsg km |> logInfo
+                    | Killmail km ->                 getMsg km |> logInfo
                     | Warning (source,msg) ->   ("[" + source + "]: " + msg) |> logWarn
                     | Error (source, msg) ->    ("[" + source + "]: " + msg) |> logError
                     | Exception (source, ex) -> logException source ex               
