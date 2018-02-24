@@ -14,7 +14,10 @@ module CommandLine=
     let private webPortArg = "port"
     let private killsourceArg = "killsource"
     let private maxAgeArg = "maxage"
-
+    let private fromDateArg = "from"
+    let private toDateArg = "to"
+    let private destinationUri = "destination"
+    
     let addMongoServerArg =             addSingleOption dbServerArg "server" (sprintf "The MongoDB server name. Default: %s" ValuationConfigurationDefault.mongoServer)
     let getMongoServerValue app =       getStringOption dbServerArg app  |> Option.defaultValue ValuationConfigurationDefault.mongoServer
     let addMongoDbArg =                 addSingleOption dbNameArg dbNameArg (sprintf "The MongoDB DB name. Defaut: %s" ValuationConfigurationDefault.mongoDb)
@@ -47,10 +50,27 @@ module CommandLine=
             | (true,x) when x > 0 -> x
             | _ -> failwith "Maximum age must be a positive integer."
 
+    let addFromDateArg =                addSingleOption fromDateArg fromDateArg "The date to start."
+    let addToDateArg =                  addSingleOption toDateArg toDateArg "The date to finish."
+    let getDateValue argName app =
+        match getStringOption argName app with
+        | None -> None
+        | Some s -> match DateTime.TryParse(s) with
+                    | (true, dt) -> Some dt
+                    | _ -> sprintf "Invalid date for %s." argName |> failwith 
+
+    let getMandatoryDateValue arg app =     
+        getDateValue arg app |> Option.defaultWith (fun () -> sprintf "Missing value for %s" arg |> failwith)
+    let getFromDateValue app = getMandatoryDateValue fromDateArg app
+    let getToDateValue app = getMandatoryDateValue toDateArg app
+
+    let addDestinationUriArg =              addSingleOption destinationUri destinationUri "The URI to send to."
+    let getDestinationUriValue app =        getStringOption destinationUri app |> Option.defaultWith ( fun () -> failwith "Missing destination URI.")
+
     let createApp()=
         let app = app()
         app.Name <- "EveAlod.ValuationService"
-        app.Description <- "Provide valuations of kills"
+        app.Description <- "Provides valuations of kills"
 
         setHelp app        
 
@@ -69,3 +89,12 @@ module CommandLine=
         app.Command("run", (composeAppPipe f)) |> ignore
         app
 
+    let addBackfill cmd (app: App) =
+        let f = setDesc "Backfill stats from zKB"                         
+                        // TODO: How to restart &/or clear?
+                        >> addFromDateArg
+                        >> addToDateArg
+                        >> addDestinationUriArg
+                        >> setAction cmd
+        app.Command("backfill", (composeAppPipe f)) |> ignore
+        app

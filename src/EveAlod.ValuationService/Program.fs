@@ -5,7 +5,19 @@ open EveAlod.Valuation
 open EveAlod.ValuationService
 open EveAlod.ValuationService.CommandLine
 
-let private configFromStartApp(app)=
+let private runBackfill(app) =
+    let fromDate = getFromDateValue app
+    let toDate = getToDateValue app
+    if fromDate >= toDate then
+        failwith "From must precede To"
+    let destinationUri = match Uri.TryCreate(getDestinationUriValue app, UriKind.Absolute) with
+                            | (true, uri) -> uri
+                            | _ -> failwith "Invalid URI"
+    // TODO: 
+    true
+
+
+let private configFromStartValuation(app)=
     { EveAlod.Valuation.ValuationConfiguration.Empty with
         KillSourceUri = getKillSourceValue app;
         MongoServer = getMongoServerValue app;
@@ -17,9 +29,10 @@ let private configFromStartApp(app)=
         MaxRollingStatsAge = getMaxAgeValue app;
         } 
 
+
 let private runService (app)= 
     
-    let config = configFromStartApp app
+    let config = configFromStartValuation app
     let cts = new System.Threading.CancellationTokenSource()
     
     let serviceFactory = ServiceFactory(config)
@@ -44,6 +57,7 @@ let private runService (app)=
 let private createAppTemplate()=
     CommandLine.createApp()
         |> CommandLine.addRun runService    
+        |> CommandLine.addBackfill runBackfill
         
 
 [<EntryPoint>]
