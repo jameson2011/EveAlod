@@ -69,6 +69,7 @@
     <Compile Include="Statistics.fs" />
     <Compile Include="DataProvider.fs" />
     <Compile Include="MongoDataWriter.fs" />
+    <Compile Include="Json.fs" />
     <Compile Include="ShipTypeStatsActor.fs" />
     <Compile Include="ShipStatsActor.fs" />
     <Content Include="packages.config" />

@@ -31,7 +31,7 @@ module WebServices=
 
             let! stats = shipStats.GetShipSummaryStats()
             
-            let json = stats |> EntityTransforms.shipSummaryStatsToJson uri
+            let json = stats |> Json.shipSummaryStatsToJson uri
 
             return! Successful.OK json ctx
         }
@@ -41,7 +41,7 @@ module WebServices=
                                 
             let! stats = shipStats.GetShipTypeStats id
             
-            let j = EntityTransforms.shipTypeStatsToJson stats
+            let j = Json.shipTypeStatsToJson stats
                         
             return! Successful.OK j ctx
             
