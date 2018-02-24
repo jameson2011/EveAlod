@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.ValuationService", "src\EveAlod.ValuationService\EveAlod.ValuationService.fsproj", "{20B8CB48-BDC6-49A8-B876-DDF86CD69A30}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Valuation", "src\EveAlod.Valuation\EveAlod.Valuation.fsproj", "{D9263CF0-CB59-4FE1-95E7-D8E658CC3F23}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Valuation.IntegrationTests", "src\EveAlod.Valuation.IntegrationTests\EveAlod.Valuation.IntegrationTests.fsproj", "{C0CC92F9-F75D-42B9-A363-1771021F3CB7}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EveAlod.Valuation.Backfill", "src\EveAlod.Valuation.Backfill\EveAlod.Valuation.Backfill.fsproj", "{B06B66B3-9D3D-43C4-9609-32D9F62B3C1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0CC92F9-F75D-42B9-A363-1771021F3CB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06B66B3-9D3D-43C4-9609-32D9F62B3C1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06B66B3-9D3D-43C4-9609-32D9F62B3C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06B66B3-9D3D-43C4-9609-32D9F62B3C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06B66B3-9D3D-43C4-9609-32D9F62B3C1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
