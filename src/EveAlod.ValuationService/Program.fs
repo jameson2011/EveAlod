@@ -26,10 +26,9 @@ let private runBackfill(app) =
 
     let crawler = sf.Crawler
 
-    crawler.Start()
-
-    System.Console.Out.WriteLine("ENTER to quit")
-    System.Console.ReadLine() |> ignore
+    crawler.Run() |> Async.RunSynchronously
+    
+    System.Console.Out.WriteLine("Done.")    
     
     true
 

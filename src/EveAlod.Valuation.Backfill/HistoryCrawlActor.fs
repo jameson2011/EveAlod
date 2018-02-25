@@ -3,7 +3,6 @@
 open System
 open EveAlod.Valuation
 open EveAlod.Data
-open EveAlod.Common.Web
 
 
 type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
@@ -20,10 +19,8 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
         //config.DestinationUri
         ignore kill
 
-    let dateInbox = MailboxProcessor<DateTime>.Start(fun inbox -> 
-        let rec loop() = async {        
-            let! date = inbox.Receive()
-            do! Async.Sleep(100)
+    let crawlDate (date: DateTime) =
+        async {
             try
                 date.ToShortDateString() |> sprintf "Fetching kills for %s" |> logInfo
                 let! ids = dp.KillIds date
@@ -33,16 +30,16 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
                                     >> Async.RunSynchronously) |> ignore 
             with 
                 | e -> logException e
-
-            return! loop()
             }
-        loop()
-        )
     
-    do dateInbox.Error.Add(Actors.postException typeof<HistoryCrawlActor>.Name log)
-    
-    member __.Start()=
-        dates |> Seq.iter dateInbox.Post
-        // TODO: signify this is finished
+    member __.Run()=
+        let rec run dates =
+            match dates with
+            | [] -> async { ignore 0 }
+            | date::t ->  async {
+                            do! crawlDate date
+                            do! run t
+                        }        
+        run dates
 
 
