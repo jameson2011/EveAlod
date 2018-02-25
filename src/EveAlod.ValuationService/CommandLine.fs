@@ -101,7 +101,6 @@ module CommandLine=
 
     let addBackfill cmd (app: App) =
         let f = setDesc "Backfill stats from zKB"                         
-                        // TODO: How to restart &/or clear?
                         >> addFromDateArg
                         >> addToDateArg
                         >> addDestinationUriArg

@@ -15,7 +15,7 @@ module HistoryCrawl=
         dates |> Seq.map dp.KillIds 
 
     let randomSamples chance values  = 
-        let rng = new Random()
+        let rng = Random()
         let take(_) = chance >= rng.NextDouble()
         values |> Seq.filter take |> List.ofSeq
 
