@@ -25,6 +25,10 @@ module WebApp=
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
 
                                     path "/favicon.ico" >=> Suave.Successful.no_content >=> WebServices.setCacheLimit 99999999
+                                ];
+
+                POST >=> choose [
+                                    path "/kill/" >=> WebServices.postKill ships >=> WebServices.jsonMimeType
                                 ]
             ]
 

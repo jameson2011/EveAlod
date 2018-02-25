@@ -7,7 +7,9 @@ open EveAlod.Common.Strings
 type private ShipTypeMap = Map<string, ShipTypeStatsActor>
 
 type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
-    
+    let logException e = ActorMessage.Exception (typeof<ShipStatsActor>.Name, e) |> log
+    let logInfo = ActorMessage.Info >> log
+
     let shipTypeId json = 
         json |> KillTransforms.asKillPackage |> prop "killmail" |> prop "victim" |> propStr "ship_type_id"
 
@@ -50,10 +52,14 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
         let rec loop(map: ShipTypeMap) = async {
                 
                 let! msg = inbox.Receive()
-                let newMap = match msg with
-                                | ImportKillJson json ->        onImportKillJson map json
-                                | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch                                
-                                | GetShipSummaryStats (ch) ->   onGetShipSummaryStats map ch
+                let newMap = try
+                                match msg with
+                                    | ImportKillJson json ->        onImportKillJson map json
+                                    | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch                                
+                                    | GetShipSummaryStats (ch) ->   onGetShipSummaryStats map ch
+                                with 
+                                | e ->  logException e
+                                        map
                 return! loop(newMap)
             }
         loop(Map.empty)

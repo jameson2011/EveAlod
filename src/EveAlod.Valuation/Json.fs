@@ -6,6 +6,12 @@ open FSharp.Data
 
 module Json=
     
+    let isValidJson json =
+        try
+            DefaultJsonProvider.Parse(json) |> ignore
+            true
+        with 
+        | e -> false
 
     let shipSummaryStatsToJson (uri: string -> Uri) (stats: ShipSummaryStatistics)=        
         

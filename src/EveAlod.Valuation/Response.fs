@@ -9,6 +9,6 @@ type ResponsePayload =
 module Response =
     let toString (json: ResponsePayload) = 
         match json with
-        | Json j -> json.ToString()
+        | Json j -> j.ToString()
 
 
