@@ -21,10 +21,16 @@ let private runBackfill(app) =
     if config.From >= config.To then    
         failwith "From must precede To."
     
-    // TODO: 
+    let sf = Backfill.ServiceFactory(config)
+
+    let crawler = sf.Crawler
+
+    crawler.Start()
+
+    System.Console.Out.WriteLine("ENTER to quit")
+    System.Console.ReadLine() |> ignore
     
     true
-
 
 let private valuationConfig(app)=
     { EveAlod.Valuation.ValuationConfiguration.Empty with
@@ -37,7 +43,6 @@ let private valuationConfig(app)=
         WebPort = getWebPortValue app;
         MaxRollingStatsAge = getMaxAgeValue app;
         } 
-
 
 let private runService (app)= 
     

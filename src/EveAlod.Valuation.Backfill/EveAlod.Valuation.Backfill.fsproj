@@ -55,11 +55,18 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Configuration.fs" />
+    <Compile Include="HistoryCrawl.fs" />
+    <Compile Include="HistoryCrawlActor.fs" />
+    <Compile Include="ServiceFactory.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EveAlod.Common">
       <HintPath>..\..\artifacts\EveAlod.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="EveAlod.Data">
+      <HintPath>..\..\artifacts\EveAlod.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EveAlod.Services">
       <HintPath>..\..\artifacts\EveAlod.Services.dll</HintPath>
