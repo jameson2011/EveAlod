@@ -57,16 +57,15 @@ module Statistics=
         let max = stats |> Seq.map (fun s -> s.MaxValue) |> Seq.max
         let total = stats |> Seq.sumBy (fun s -> s.TotalValue)
         let count = stats |> Seq.sumBy (fun s -> s.Count)
-        let avg = total  / float count
-        let med = (max - min ) / 2. + min
-
+       
         { ValueStatistics.Empty with 
             Count = count; 
             MinValue = min; 
             MaxValue = max; 
+            ValueRange = max - min;            
             TotalValue = total; 
-            AverageValue = avg;
-            MedianValue = med}
+            AverageValue = total  / float count;
+            MedianValue = (max - min ) / 2. + min}
             
     let rollup period fittedValue totalValue (stats: ShipTypeStatistics) = 
         let fittedValues = accumulate stats.FittedValues period fittedValue
@@ -76,3 +75,13 @@ module Statistics=
                         FittedValuesSummary = totals fittedValues
                         TotalValues = totalValues; 
                         TotalValuesSummary = totals totalValues }
+
+    let valuation (stats: ValueStatistics) value =  
+        
+        if stats.Count = 0L || value <= 0. then    
+            0.
+        else
+            let value = value  |> max stats.MinValue |> min stats.MaxValue    
+            (value - stats.MinValue ) / stats.ValueRange
+
+        

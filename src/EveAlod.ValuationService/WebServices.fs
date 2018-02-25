@@ -62,3 +62,19 @@ module WebServices=
             with
             | e -> return! Suave.ServerErrors.INTERNAL_ERROR """{ "error": "Internal error" }""" ctx
         }
+
+    let getShipTypeValuation(shipStats: ShipStatsActor) (shipTypeId: string) (fittedValue: float) (totalValue: float)  (ctx: HttpContext)=
+        async {
+
+            try
+                let! stats = shipStats.GetShipTypeStats shipTypeId
+                
+                let fitted = Statistics.valuation stats.FittedValuesSummary fittedValue
+                let total = Statistics.valuation stats.TotalValuesSummary totalValue
+
+                let json = sprintf """ { "fitted": %f, "total": %f }  """ fitted total
+
+                return! Successful.OK json ctx
+            with
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR """{ "error": "Internal error" }""" ctx
+        }
