@@ -9,7 +9,7 @@ module HistoryCrawl=
     let dates (start: DateTime) (finish: DateTime) =
         let range = finish - start
 
-        [ 0 .. range.Days ] |> Seq.map (float >> start.AddDays)
+        [ 0 .. range.Days ] |> Seq.rev |> Seq.map (float >> start.AddDays)
         
     let historicalKillIds (dp: DataProvider) dates =
         dates |> Seq.map dp.KillIds 

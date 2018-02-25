@@ -27,10 +27,10 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
             try
                 date.ToShortDateString() |> sprintf "Fetching kills for %s" |> logInfo
                 let! ids = dp.KillIds date
-                
+
                 ids |> Option.map (HistoryCrawl.randomSamples config.Sampling
                                     >> HistoryCrawl.crawlKills logInfo logException dp.Kill postKill
-                                    >> Async.RunSynchronously) |> ignore                
+                                    >> Async.RunSynchronously) |> ignore 
             with 
                 | e -> logException e
 
@@ -42,7 +42,7 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
     do dateInbox.Error.Add(Actors.postException typeof<HistoryCrawlActor>.Name log)
     
     member __.Start()=
-        dates |> Seq.rev |> Seq.iter dateInbox.Post
+        dates |> Seq.iter dateInbox.Post
         // TODO: signify this is finished
 
 
