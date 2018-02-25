@@ -26,7 +26,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>run --killsource "http://172.16.3.33/kills/replay/"</StartArguments>
+    <StartArguments>backfill -from "1/2/2018" -to "2018-2-4" -destination http://127.0.0.1:81/kill/ -sample 0.0005</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -99,6 +99,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EveAlod.Valuation.Backfill\EveAlod.Valuation.Backfill.fsproj">
+      <Name>EveAlod.Valuation.Backfill</Name>
+      <Project>{b06b66b3-9d3d-43c4-9609-32d9f62b3c1f}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\EveAlod.Valuation\EveAlod.Valuation.fsproj">
       <Name>EveAlod.Valuation</Name>
       <Project>{d9263cf0-cb59-4fe1-95e7-d8e658cc3f23}</Project>

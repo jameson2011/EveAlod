@@ -116,3 +116,33 @@
                 with e -> 
                     return (WebResponse.Error None (e.Message + e.StackTrace))
             }
+
+        let postData (client: HttpClient) (url: string) (jsonContent: string)=
+            async {
+                try   
+                    let bytes = System.Text.UTF8Encoding.UTF8.GetBytes(jsonContent)
+                    use content = new System.Net.Http.ByteArrayContent(bytes)
+
+                    use! resp = client.PostAsync(url, content) |> Async.AwaitTask
+                    
+                    let! result = 
+                        async {                       
+                            let retry = Some TimeSpan.Zero
+                            match resp.StatusCode with
+                            | HttpStatusCode.OK ->                                     
+                                    use content = resp.Content
+                                    let! s = extractContent content
+                                    return (WebResponse.Ok retry s)
+                            | HttpStatusCode.NoContent ->
+                                    return (WebResponse.Ok retry "")
+                            | x when (int x) = 429 -> 
+                                    return (WebResponse.TooManyRequests retry)
+                            | HttpStatusCode.Unauthorized -> 
+                                    return (WebResponse.Unauthorized retry)
+                            | x -> 
+                                    return (WebResponse.Error retry x)
+                             }
+                    return result
+                with e -> 
+                    return (WebResponse.Error None (e.Message + e.StackTrace))
+            }

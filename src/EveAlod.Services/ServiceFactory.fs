@@ -29,20 +29,20 @@
         
         let killFilter = KillFilterActor(logger.Post, 
                                                 config.MinimumScore, 
-                                                [ killPublisher.Post; ] |> Actors.forwardMany (Kill))
+                                                [ killPublisher.Post; ] |> Actors.forwardMany (Killmail))
 
         let killScorer = KillScorerActor(logger.Post, 
-                                                [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Kill)) 
+                                                [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Killmail)) 
         
         let killTagger = KillTaggerActor(logger.Post, 
                                                 KillTagger(dataActor, config.CorpId), 
-                                                [ killScorer.Post ] |> Actors.forwardMany (Kill))
+                                                [ killScorer.Post ] |> Actors.forwardMany (Killmail))
                
         let killTransform = KillTransformActor(logger.Post, 
-                                                [ killTagger.Post ] |> Actors.forwardMany (Kill))
+                                                [ killTagger.Post ] |> Actors.forwardMany (Killmail))
        
         let killSource = KillSourceActor(logger.Post,
-                                                [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillJson) ,
+                                                [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillmailJson) ,
                                                 EveAlod.Common.Web.getData,
                                                 config.KillSourceUri)
                                             

@@ -6,6 +6,14 @@ open FSharp.Data
 
 module Json=
     
+    let isValidJson json =
+        try
+            DefaultJsonProvider.Parse(json) |> ignore
+            true
+        with 
+        | e -> false
+
+    let toString (json: JsonValue) = json.ToString()
 
     let shipSummaryStatsToJson (uri: string -> Uri) (stats: ShipSummaryStatistics)=        
         
@@ -20,7 +28,7 @@ module Json=
                                                                         |> Seq.map (shipTypeUri >> JsonValue.String)
                                                                         |> Array.ofSeq));                                    
                                 |]
-        j |> ResponsePayload.Json
+        j |> toString
 
     
     let valueStatisticsToJson prefix (value: ValueStatistics)=
@@ -70,4 +78,4 @@ module Json=
                               
         let summary = ("summary", JsonValue.Record summaryData )
         JsonValue.Record [| typeId; zkbUri; zkbApiUri; summary;
-                            ("periods", (JsonValue.Array periods) ) |] |> ResponsePayload.Json
+                            ("periods", (JsonValue.Array periods) ) |] |> toString

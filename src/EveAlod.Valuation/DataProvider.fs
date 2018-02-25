@@ -4,18 +4,40 @@ open System
 open EveAlod.Common
 open EveAlod.Common.Web
 
-type DataProvider()=
+type DataProvider(host: string,  statsAge: int)=
 
     let getData = httpClient() |> getData
-    let shipStatsUri = sprintf "https://zkillboard.com/api/stats/shipTypeID/%s/"
-    let statsAge = 12
-
+    let uriDate (date: DateTime) = date.ToString("yyyyMMdd")        
+    let historyUri = sprintf "https://%s/api/history/%s/" host
+    let shipStatsUri = sprintf "https://%s/api/stats/shipTypeID/%s/" host
+    let killUri = sprintf "https://%s/api/killID/%s/" host
+    
+    new(host) = DataProvider(host, 12)
+    new() = DataProvider("zkillboard.com", 12)
+    
     member __.ShipStatistics(shipTypeId: string)=
         async {
-            let! response = shipTypeId |> shipStatsUri |> getData
+            let! resp = shipTypeId |> shipStatsUri |> getData
             
-            return  match response.Status with
-                    | HttpStatus.OK ->  response.Message |> EntityTransforms.toShipStats statsAge
+            return  match resp.Status with
+                    | HttpStatus.OK ->  resp.Message |> EntityTransforms.toShipStats statsAge
                     | _ ->              None                    
         }
+    
+    member __.KillIds(date: DateTime)= 
+        async {            
+            let! resp = date |> uriDate |> historyUri |> getData 
 
+            return match resp.Status with
+                    | HttpStatus.OK -> resp.Message |> EntityTransforms.toKillmailIds
+                    | _ -> None            
+        }
+
+    member __.Kill(id: string) = 
+        async {            
+            let! resp = id |> killUri |> getData
+
+            return match resp.Status with
+                    | HttpStatus.OK -> resp.Message |> EntityTransforms.toKill
+                    | _ -> None            
+        }

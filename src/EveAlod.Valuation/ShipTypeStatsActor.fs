@@ -8,6 +8,9 @@ open EveAlod.Data
 
 type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTypeId: string)=
 
+    let logException e = ActorMessage.Exception (typeof<ShipTypeStatsActor>.Name, e) |> log
+    let logInfo = ActorMessage.Info >> log
+
     let parse json =
         let package = json |> KillTransforms.asKillPackage
         let zkb = package |> prop "zkb"
@@ -26,22 +29,25 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
         let rec loop(stats: ShipTypeStatistics) = async {                
             let! msg = inbox.Receive()
             
-            let stats = match msg with
-                        | ImportKillJson json ->                 
-                            match parse json with
-                            | Some (fittedValue, totalValue, killDate) when isMinAge killDate -> 
-                                stats   |> Statistics.trim config.MaxRollingStatsAge
-                                        |> Statistics.rollup killDate fittedValue totalValue 
-                            | _ -> stats
-                        | GetShipTypeStats (_,ch) -> 
-                            stats |> ch.Reply
-                            stats
-                        | GetShipSummaryStats ch -> 
-                            let count = stats.FittedValues |> Seq.sumBy (fun kvp -> kvp.Value.Value.Count)
-                            { ShipSummaryStatistics.Empty with 
-                                TotalKills = count } |> ch.Reply
-                            stats
-                        
+            let stats = try
+                            match msg with
+                            | ImportKillJson json ->                 
+                                match parse json with
+                                | Some (fittedValue, totalValue, killDate) when isMinAge killDate -> 
+                                    stats   |> Statistics.trim config.MaxRollingStatsAge
+                                            |> Statistics.rollup killDate fittedValue totalValue 
+                                | _ -> stats
+                            | GetShipTypeStats (_,ch) -> 
+                                stats |> ch.Reply
+                                stats
+                            | GetShipSummaryStats ch -> 
+                                let count = stats.FittedValues |> Seq.sumBy (fun kvp -> kvp.Value.Value.Count)
+                                { ShipSummaryStatistics.Empty with 
+                                    TotalKills = count } |> ch.Reply
+                                stats
+                        with
+                        | e ->  logException e
+                                stats
             
             return! loop(stats)
         }

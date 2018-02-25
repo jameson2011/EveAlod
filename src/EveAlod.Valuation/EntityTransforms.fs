@@ -53,3 +53,34 @@ module EntityTransforms=
                                             Losses = losses |> rollingAverages age |> Array.ofSeq; 
                                             Kills = kills |> rollingAverages age |> Array.ofSeq}
         |  _ -> None
+
+    let toKillmailIds json =
+        let root = KillmailHistoryIdProvider.Parse(json)
+        
+        let ids = root.JsonValue.Properties()
+                        |> Seq.map (fun (id,_) -> id)
+                        |> List.ofSeq
+        Some ids
+
+    let toKill json =
+        let package = DefaultJsonProvider.Parse(json).JsonValue.AsArray()
+        match package with
+        | [| root |] -> let root = Some root        
+                        
+                        match root |> propStr "killmail_id" with
+                        | "" -> None
+                        | id -> 
+                            let shipTypeId = root |> prop "victim" |> propStr "ship_type_id"
+                            let date = root |> propDateTime "killmail_time"
+                            let fittedValue = root |> prop "zkb" |> propFloat "fittedValue"
+                            let totalValue = root |> prop "zkb" |> propFloat "totalValue"                            
+
+                            let r = { EveAlod.Data.Kill.empty with 
+                                                Id = id; 
+                                                VictimShip = Some { EveAlod.Data.Entity.Id = shipTypeId; Name = ""}
+                                                Occurred = date; 
+                                                FittedValue = fittedValue;
+                                                TotalValue = totalValue}
+                            Some r
+        | _ -> None
+        

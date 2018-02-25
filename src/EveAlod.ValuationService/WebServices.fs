@@ -31,7 +31,7 @@ module WebServices=
 
             let! stats = shipStats.GetShipSummaryStats()
             
-            let json = stats |> Json.shipSummaryStatsToJson uri |> Response.toString
+            let json = stats |> Json.shipSummaryStatsToJson uri
 
             return! Successful.OK json ctx
         }
@@ -41,8 +41,24 @@ module WebServices=
                                 
             let! stats = shipStats.GetShipTypeStats id
             
-            let j = stats |> Json.shipTypeStatsToJson |> Response.toString
+            let j = stats |> Json.shipTypeStatsToJson
                         
             return! Successful.OK j ctx
             
+        }
+    
+    let postKill(shipStats: ShipStatsActor) (ctx: HttpContext)=
+        async {
+            try                
+                let json = System.Text.UTF8Encoding.UTF8.GetString(ctx.request.rawForm)
+
+                if (Json.isValidJson json) then                    
+                    json |> ValuationActorMessage.ImportKillJson |> shipStats.Post
+                                
+                    return! Successful.NO_CONTENT ctx
+                else
+                    return! RequestErrors.BAD_REQUEST """{ "error": "Invalid JSON" }""" ctx
+            
+            with
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR """{ "error": "Internal error" }""" ctx
         }

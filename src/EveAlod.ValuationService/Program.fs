@@ -5,7 +5,34 @@ open EveAlod.Valuation
 open EveAlod.ValuationService
 open EveAlod.ValuationService.CommandLine
 
-let private configFromStartApp(app)=
+let private backfillConfig(app) =    
+    { EveAlod.Valuation.Backfill.BackfillConfiguration.Empty with 
+            From = getFromDateValue app; 
+            To = getToDateValue app; 
+            DestinationUri = match Uri.TryCreate(getDestinationUriValue app, UriKind.Absolute) with
+                                | (true, uri) -> uri
+                                | _ -> failwith "Invalid URI";
+            Sampling = getSamplingValue app
+            }
+
+
+
+let private runBackfill(app) =
+    let config = backfillConfig app
+    if config.From >= config.To then    
+        failwith "From must precede To."
+    
+    let sf = Backfill.ServiceFactory(config)
+
+    let crawler = sf.Crawler
+
+    crawler.Run() |> Async.RunSynchronously
+    
+    System.Console.Out.WriteLine("Done.")    
+    
+    true
+
+let private valuationConfig(app)=
     { EveAlod.Valuation.ValuationConfiguration.Empty with
         KillSourceUri = getKillSourceValue app;
         MongoServer = getMongoServerValue app;
@@ -19,10 +46,10 @@ let private configFromStartApp(app)=
 
 let private runService (app)= 
     
-    let config = configFromStartApp app
+    let config = valuationConfig app
     let cts = new System.Threading.CancellationTokenSource()
     
-    let serviceFactory = ServiceFactory(config)
+    let serviceFactory = ValuationServiceFactory(config)
     let logger = serviceFactory.Log
 
     "Starting kill source..." |> EveAlod.Data.ActorMessage.Info |> logger        
@@ -44,6 +71,7 @@ let private runService (app)=
 let private createAppTemplate()=
     CommandLine.createApp()
         |> CommandLine.addRun runService    
+        |> CommandLine.addBackfill runBackfill
         
 
 [<EntryPoint>]

@@ -31,4 +31,64 @@ module DataProviderTests=
 
         Assert.Equal(None, result)
 
+    
+    [<Fact>]
+    let ``KillIds returns Some``()=
+        let d = new DateTime(2018, 2, 23)
+        let dp = EveAlod.Valuation.DataProvider()
 
+        let result = dp.KillIds(d) |> Async.RunSynchronously
+
+        match result with
+        | Some ids when ids.Length = 0 -> failwith "Empty list returned"
+        | None -> failwith "None returned"
+        | _ -> ignore 0
+        
+
+    [<Fact>]
+    let ``KillIds returns Empty``()=
+        let d = new DateTime(1900, 1, 1)
+        let dp = EveAlod.Valuation.DataProvider()
+
+        let result = dp.KillIds(d) |> Async.RunSynchronously
+        
+        match result with
+        | Some ids when ids.Length > 0 -> failwith "Non-empty list returned"
+        | None -> failwith "None returned"
+        | _ -> ignore 0
+
+    [<Fact>]
+    let ``KillIds returns None``()=
+        let d = new DateTime(1900, 1, 1)
+        let dp = EveAlod.Valuation.DataProvider(Guid.NewGuid().ToString())
+
+        let result = dp.KillIds(d) |> Async.RunSynchronously
+        
+        Assert.Equal(None, result)
+
+    [<Fact>]
+    let ``Kill returns Some``()=
+        let killId = "67703083"
+        let dp = EveAlod.Valuation.DataProvider()
+
+        let result = dp.Kill(killId) |> Async.RunSynchronously
+
+        Assert.NotEqual(None, result)
+
+    [<Fact>]
+    let ``Kill returns None with unknown ID``()=
+        let killId = Guid.NewGuid().ToString()
+        let dp = EveAlod.Valuation.DataProvider()
+
+        let result = dp.Kill(killId) |> Async.RunSynchronously
+
+        Assert.Equal(None, result)
+
+    [<Fact>]
+    let ``Kill returns None with bad host``()=
+        let killId = Guid.NewGuid().ToString()
+        let dp = EveAlod.Valuation.DataProvider(Guid.NewGuid().ToString())
+
+        let result = dp.Kill(killId) |> Async.RunSynchronously
+
+        Assert.Equal(None, result)

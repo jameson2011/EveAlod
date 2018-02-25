@@ -3,7 +3,7 @@
 open EveAlod.Services
 open EveAlod.Valuation
 
-type ServiceFactory(config: ValuationConfiguration)=
+type ValuationServiceFactory(config: ValuationConfiguration)=
 
     let logger = LogPublishActor()
 

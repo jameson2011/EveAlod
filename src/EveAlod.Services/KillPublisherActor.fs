@@ -12,7 +12,7 @@
                 try                
                     let! msg = inbox.Receive()
                     match msg with
-                        | Kill km ->                        
+                        | Killmail km ->                        
                             km |> msgFactory.CreateMessage |> forward
                         | _ ->      
                             ignore 0
