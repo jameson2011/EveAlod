@@ -70,12 +70,14 @@ module EntityTransforms=
                         match root |> propStr "killmail_id" with
                         | "" -> None
                         | id -> 
+                            let shipTypeId = root |> prop "victim" |> propStr "ship_type_id"
                             let date = root |> propDateTime "killmail_time"
                             let fittedValue = root |> prop "zkb" |> propFloat "fittedValue"
                             let totalValue = root |> prop "zkb" |> propFloat "totalValue"                            
 
                             let r = { EveAlod.Data.Kill.empty with 
                                                 Id = id; 
+                                                VictimShip = Some { EveAlod.Data.Entity.Id = shipTypeId; Name = ""}
                                                 Occurred = date; 
                                                 FittedValue = fittedValue;
                                                 TotalValue = totalValue}

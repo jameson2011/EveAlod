@@ -14,10 +14,12 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
     let logInfo = ActorMessage.Info >> log
 
     
-    let postKill kill =
-        // TODO:        
-        //config.DestinationUri
-        ignore kill
+    let postKill kill =        
+        match HistoryCrawl.toJson kill with
+        | Some json ->  // TODO:
+                        ignore 0
+                        //config.DestinationUri
+        | None ->       ignore 0
 
     let crawlDate (date: DateTime) =
         async {

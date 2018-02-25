@@ -35,3 +35,12 @@ module HistoryCrawl=
                             return! (crawl t)
                         }                                    
         crawl ids
+
+    
+    let toJson (kill: Kill)  =
+        match kill.VictimShip with
+        | Some ship -> 
+                        sprintf """ { "package": { "killID": %s, "killmail": { "killmail_id": %s, "killmail_time": "%s", "victim": { "ship_type_id": %s } }, "zkb": { "fittedValue": %f, "totalValue": %f } } } """ 
+                            kill.Id kill.Id (kill.Occurred.ToString("o")) ship.Id kill.FittedValue kill.TotalValue
+                                |> Some
+        | None -> None
