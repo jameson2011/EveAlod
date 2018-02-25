@@ -11,7 +11,8 @@ let private backfillConfig(app) =
             To = getToDateValue app; 
             DestinationUri = match Uri.TryCreate(getDestinationUriValue app, UriKind.Absolute) with
                                 | (true, uri) -> uri
-                                | _ -> failwith "Invalid URI"
+                                | _ -> failwith "Invalid URI";
+            Sampling = getSamplingValue app
             }
 
 

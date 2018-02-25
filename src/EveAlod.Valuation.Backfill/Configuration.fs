@@ -10,5 +10,5 @@ type BackfillConfiguration = {
     } with 
     static member Empty = { From = DateTime.MinValue; To = DateTime.MinValue; 
                             DestinationUri = new Uri("http://empty.com");
-                            Sampling = 0.005} // TODO: sample
+                            Sampling = 1.0}
 

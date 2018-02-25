@@ -16,7 +16,8 @@ module CommandLine=
     let private maxAgeArg = "maxage"
     let private fromDateArg = "from"
     let private toDateArg = "to"
-    let private destinationUri = "destination"
+    let private destinationUriArg = "destination"
+    let private sampleArg = "sample"
     
     let addMongoServerArg =             addSingleOption dbServerArg "server" (sprintf "The MongoDB server name. Default: %s" ValuationConfigurationDefault.mongoServer)
     let getMongoServerValue app =       getStringOption dbServerArg app  |> Option.defaultValue ValuationConfigurationDefault.mongoServer
@@ -58,14 +59,23 @@ module CommandLine=
         | Some s -> match DateTime.TryParse(s) with
                     | (true, dt) -> Some dt
                     | _ -> sprintf "Invalid date for %s." argName |> failwith 
+    let getFloatValue argName app =
+        match getStringOption argName app with
+        | None -> None
+        | Some s -> match Double.TryParse(s) with
+                    | (true, s) -> Some s
+                    | _ -> sprintf "Invalid value for %s." argName |> failwith
 
     let getMandatoryDateValue arg app =     
         getDateValue arg app |> Option.defaultWith (fun () -> sprintf "Missing value for %s" arg |> failwith)
     let getFromDateValue app = getMandatoryDateValue fromDateArg app
     let getToDateValue app = getMandatoryDateValue toDateArg app
 
-    let addDestinationUriArg =              addSingleOption destinationUri destinationUri "The URI to send to."
-    let getDestinationUriValue app =        getStringOption destinationUri app |> Option.defaultWith ( fun () -> failwith "Missing destination URI.")
+    let addDestinationUriArg =              addSingleOption destinationUriArg destinationUriArg "The URI to send to."
+    let getDestinationUriValue app =        getStringOption destinationUriArg app |> Option.defaultWith ( fun () -> failwith "Missing destination URI.")
+
+    let addSamplingArg =                    addSingleOption sampleArg sampleArg "The sampling rate."
+    let getSamplingValue app =              getFloatValue sampleArg app |> Option.defaultValue 1.0
 
     let createApp()=
         let app = app()
@@ -95,6 +105,7 @@ module CommandLine=
                         >> addFromDateArg
                         >> addToDateArg
                         >> addDestinationUriArg
+                        >> addSamplingArg
                         >> setAction cmd
         app.Command("backfill", (composeAppPipe f)) |> ignore
         app
