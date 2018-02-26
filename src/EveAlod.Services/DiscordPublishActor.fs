@@ -15,6 +15,8 @@
             (match response.Status with
             | HttpStatus.TooManyRequests -> 
                 Some (ActorMessage.Warning ("Discord", "Too many requests")) 
+            | HttpStatus.NotFound -> 
+                Some (ActorMessage.Error ("Discord", "Not found")) 
             | HttpStatus.Error -> 
                 Some (ActorMessage.Error ("Discord", response.Message)) 
             | HttpStatus.Unauthorized ->

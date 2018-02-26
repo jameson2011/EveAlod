@@ -95,6 +95,7 @@
     <Compile Include="JsonTests.fs" />
     <Compile Include="SeqTests.fs" />
     <Compile Include="StringsTests.fs" />
+    <Compile Include="RetryTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

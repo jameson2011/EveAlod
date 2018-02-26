@@ -1,12 +1,14 @@
 ﻿namespace EveAlod.Common
 
     open System
+    open FSharp.Data
 
     type HttpStatus =
         | OK
         | TooManyRequests
         | Unauthorized
         | Error
+        | NotFound
     
     type WebResponse=
         {
@@ -29,12 +31,34 @@
                     Retry = retry;
                     Message = "";
                 }
+        static member NotFound =
+                {
+                    Status = HttpStatus.NotFound;
+                    Retry = None;
+                    Message = "";
+                }
         static member Error retry error = 
                 {   Status = HttpStatus.Error;
                     Retry = retry;
                     Message = (sprintf "Error %s getting data" (error.ToString()) );
                 }
-        
+    
+    type EntityWebResponse<'a> =
+        | OK of 'a 
+        | TooManyRequests of TimeSpan option
+        | NotFound
+        | Unauthorized
+        | SystemError of string
+                
+    module EntityWebResponse =
+        let ofWebResponse<'a> (map: string -> 'a) (value: WebResponse)= 
+            match value.Status with
+            | HttpStatus.OK -> map value.Message |> EntityWebResponse.OK
+            | HttpStatus.TooManyRequests ->  value.Retry |> EntityWebResponse.TooManyRequests
+            | HttpStatus.Error -> value.Message |> EntityWebResponse.SystemError
+            | HttpStatus.Unauthorized -> EntityWebResponse.Unauthorized
+            | HttpStatus.NotFound -> EntityWebResponse.NotFound
+
     module Web=
 
         open System.Net

@@ -30,6 +30,9 @@
                                     | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
                                         standoffWait
+                                    | HttpStatus.NotFound ->
+                                        ActorMessage.Warning ("zKB", "zKB reported not found") |> log
+                                        standoffWait
                                     | HttpStatus.Unauthorized -> 
                                         ActorMessage.Warning ("zKB", "zKB reported unauthorized") |> log
                                         standoffWait

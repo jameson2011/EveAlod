@@ -77,6 +77,7 @@
     <Compile Include="DateTime.fs" />
     <Compile Include="DateTimeOffset.fs" />
     <Compile Include="Strings.fs" />
+    <Compile Include="Retry.fs" />
     <Compile Include="Seq.fs" />
     <Compile Include="Web.fs" />
     <Compile Include="Json.fs" />
