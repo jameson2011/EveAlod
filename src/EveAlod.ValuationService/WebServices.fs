@@ -47,16 +47,19 @@ module WebServices=
             
         }
     
-    let postKill(shipStats: ShipStatsActor) (ctx: HttpContext)=
+    let postKill (logger: PostMessage) (shipStats: ShipStatsActor) (ctx: HttpContext)=
         async {
             try                
                 let json = System.Text.UTF8Encoding.UTF8.GetString(ctx.request.rawForm)
 
-                if (Json.isValidJson json) then                    
+                if (Json.isValidJson json) then            
+                    sprintf "JSON received: %s" json |> (fun m -> EveAlod.Data.ActorMessage.Trace("ValuationService",m)) |> logger
                     json |> ValuationActorMessage.ImportKillJson |> shipStats.Post
                                 
                     return! Successful.NO_CONTENT ctx
                 else
+                    sprintf "Invalid JSON received: %s" json |> (fun m -> EveAlod.Data.ActorMessage.Error("ValuationService",m)) |> logger
+
                     return! RequestErrors.BAD_REQUEST """{ "error": "Invalid JSON" }""" ctx
             
             with

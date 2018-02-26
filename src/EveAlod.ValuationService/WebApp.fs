@@ -15,7 +15,7 @@ module WebApp=
         { defaultConfig with bindings = [ HttpBinding.create HTTP System.Net.IPAddress.Any port ];  }
 
 
-    let webRoutes (ships: ShipStatsActor)= 
+    let webRoutes (logger: PostMessage) (ships: ShipStatsActor)= 
         choose
             [   GET  >=> choose [
                                     pathScan "/stats/%s/" (WebServices.getShipTypeStatsJson ships)
@@ -31,7 +31,7 @@ module WebApp=
                                 ];
 
                 POST >=> choose [
-                                    path "/kill/" >=> WebServices.postKill ships >=> WebServices.jsonMimeType
+                                    path "/kill/" >=> WebServices.postKill logger ships >=> WebServices.jsonMimeType
                                 ]
             ]
 
