@@ -28,7 +28,10 @@ module HistoryCrawl=
                                 do! Async.Sleep(100) 
                                 id |> sprintf "Fetching kill %s" |> logInfo
                                 let! k = get id
-                                k |> Option.map post |> ignore
+                                match k with
+                                | Some k -> post k
+                                | _ -> sprintf "Did not get data for kill %s" id |> logInfo
+                                //k |> Option.map post |> ignore
                             with 
                             | e -> logException e
 
