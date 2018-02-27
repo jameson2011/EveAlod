@@ -3,8 +3,10 @@
     open EveAlod.Data
     open System.Globalization
 
-    type LogPublishActor()= 
+    type LogPublishActor(configFile: string)= 
         
+        do log4net.Config.XmlConfigurator.Configure(System.IO.FileInfo(configFile)) |> ignore
+
         let getMsg km = 
             let tags km = 
                 let s = km.Tags 
@@ -49,6 +51,7 @@
 
         do pipe.Error.Add(onException)
 
+        new() = LogPublishActor("log4net.config")
         
         member __.Start() = pipe.Post Start
         

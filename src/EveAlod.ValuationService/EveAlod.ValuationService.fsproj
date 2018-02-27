@@ -26,7 +26,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>backfill -from "1/2/2018" -to "2018-2-3" -destination http://127.0.0.1:81/kill/ -sample 1</StartArguments>
+    <StartArguments>backfill -from "1/2/2018" -to "2018-2-4" -destination http://127.0.0.1:81/kill/ -sample 0.0005</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -70,10 +70,13 @@
     <Compile Include="ServiceFactory.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <Content Include="valuationlog4net.config">
+    <Content Include="valuation.log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="packages.config" />
+    <Content Include="backfill.log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EveAlod.Common">

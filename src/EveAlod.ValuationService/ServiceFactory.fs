@@ -5,7 +5,7 @@ open EveAlod.Valuation
 
 type ValuationServiceFactory(config: ValuationConfiguration)=
 
-    let logger = LogPublishActor()
+    let logger = LogPublishActor("valuation.log4net.config")
 
     let shipStatsActor = ShipStatsActor(config, logger.Post)
     let sourceForward msg = msg |> ValuationActorMessage.ImportKillJson |> shipStatsActor.Post

@@ -76,6 +76,7 @@ let private createAppTemplate()=
 
 [<EntryPoint>]
 let main argv = 
+    
     let app = createAppTemplate()
     
     try

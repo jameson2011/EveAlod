@@ -2,7 +2,7 @@
 
 type ServiceFactory(config: BackfillConfiguration)=
     
-    let logger = EveAlod.Services.LogPublishActor()
+    let logger = EveAlod.Services.LogPublishActor("backfill.log4net.config")
 
     let crawler = HistoryCrawlActor(logger.Post, config)
 
