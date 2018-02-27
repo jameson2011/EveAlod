@@ -41,9 +41,10 @@ module DataProviderTests=
         let result = dp.KillIds(d) |> Async.RunSynchronously
 
         match result with
-        | Some ids when ids.Length = 0 -> failwith "Empty list returned"
-        | None -> failwith "None returned"
-        | _ -> ignore 0
+        | EntityWebResponse.OK (Some ids) when ids.Length = 0 -> failwith "Empty list returned"
+        | EntityWebResponse.OK (Some ids) when ids.Length > 0 -> ignore 0
+        | _ -> failwith "OK not returned"
+        
         
 
     [<Fact>]
@@ -54,9 +55,10 @@ module DataProviderTests=
         let result = dp.KillIds(d) |> Async.RunSynchronously
         
         match result with
-        | Some ids when ids.Length > 0 -> failwith "Non-empty list returned"
-        | None -> failwith "None returned"
-        | _ -> ignore 0
+        | EntityWebResponse.OK (Some ids) when ids.Length > 0 -> failwith "Non-empty list returned"
+        | EntityWebResponse.OK (Some ids) when ids.Length = 0 -> ignore 0
+        | _ -> failwith "OK not returned"
+        
 
     [<Fact>]
     let ``KillIds returns None``()=
@@ -65,7 +67,9 @@ module DataProviderTests=
 
         let result = dp.KillIds(d) |> Async.RunSynchronously
         
-        Assert.Equal(None, result)
+        match result with
+        | EntityWebResponse.SystemError _ -> ignore 0
+        | _ -> failwith "SystemError not returned"
 
     [<Fact>]
     let ``Kill returns Some``()=
@@ -74,7 +78,7 @@ module DataProviderTests=
 
         let result = dp.Kill(killId) |> Async.RunSynchronously
         match result with
-        | EntityWebResponse.OK _ -> ignore 0
+        | EntityWebResponse.OK (Some _) -> ignore 0
         | _ -> failwith "OK not returned"
 
     [<Fact>]
@@ -84,7 +88,7 @@ module DataProviderTests=
 
         let result = dp.Kill(killId) |> Async.RunSynchronously
 
-        Assert.Equal(EntityWebResponse.NotFound, result)
+        Assert.Equal(EntityWebResponse.OK None, result)
 
     [<Fact>]
     let ``Kill returns None with bad host``()=

@@ -30,14 +30,11 @@ type DataProvider(host: string,  statsAge: int)=
         async {            
             let! resp = date |> uriDate |> historyUri |> getData 
 
-            return match resp.Status with
-                    | HttpStatus.OK -> resp.Message |> EntityTransforms.toKillmailIds
-                    // TODO: 429!
-                    | _ -> None            
+            return resp |> EntityWebResponse.ofWebResponse (EntityTransforms.toKillmailIds)            
         }
 
     member __.Kill(id: string) = 
         async {            
             let! resp = id |> killUri |> getData
-            return resp |> EntityWebResponse.ofWebResponse (EntityTransforms.toKill)             
+            return resp |> EntityWebResponse.ofWebResponse (EntityTransforms.toKill)
         }

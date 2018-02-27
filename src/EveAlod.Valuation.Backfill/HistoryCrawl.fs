@@ -22,7 +22,7 @@ module HistoryCrawl=
 
     let crawlKills (log: PostMessage) logException (get: string -> Async<EntityWebResponse<'a option>>) post ids  = 
         
-        let getEntity id = Retry.retryWaitIterAsync 5 (fun i -> 100 * (i+1)) 
+        let getEntity id = Retry.retryWaitIterAsync 5 (fun i -> 150 * (i+1)) 
                                                     (fun r -> match r with | OK _ -> true | _ -> false) 
                                                     (fun () -> get id)
 
@@ -31,7 +31,6 @@ module HistoryCrawl=
             | [] ->     async { ignore 0 }
             | id::t ->  async {
                             try 
-                                // TODO: retry after 429
                                 do! Async.Sleep(150) 
                                 id |> sprintf "Fetching kill %s" |> ActorMessage.Info |> log
                                 let! k = getEntity id

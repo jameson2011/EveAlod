@@ -40,11 +40,19 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
         async {
             try
                 date.ToShortDateString() |> sprintf "Fetching kills for %s" |> logInfo
-                let! ids = dp.KillIds date
-
-                ids |> Option.map (HistoryCrawl.randomSamples config.Sampling
-                                    >> HistoryCrawl.crawlKills log logException dp.Kill postKill
-                                    >> Async.RunSynchronously) |> ignore 
+                //let! ids = dp.KillIds date
+                let getKillIds date = Retry.retryWaitIterAsync 5 (fun i -> 150 * (i+1)) 
+                                                    (fun r -> match r with | OK _ -> true | _ -> false) 
+                                                    (fun () -> dp.KillIds date)
+                let! ids = getKillIds date
+                match ids with
+                | EntityWebResponse.OK (Some ids) -> 
+                                                    ids 
+                                                    |> (HistoryCrawl.randomSamples config.Sampling
+                                                        >> HistoryCrawl.crawlKills log logException dp.Kill postKill
+                                                        >> Async.RunSynchronously)
+                                                        |> ignore 
+                | _ -> ignore 0
             with 
                 | e -> logException e
             }
