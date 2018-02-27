@@ -20,10 +20,7 @@ type DataProvider(host: string,  statsAge: int)=
         async {
             let! resp = shipTypeId |> shipStatsUri |> getData
             
-            return  match resp.Status with
-                    | HttpStatus.OK ->  resp.Message |> EntityTransforms.toShipStats statsAge                                        
-                    // TODO: 429?
-                    | _ ->              None                    
+            return resp |> EntityWebResponse.ofWebResponse (EntityTransforms.toShipStats statsAge)            
         }
     
     member __.KillIds(date: DateTime)= 

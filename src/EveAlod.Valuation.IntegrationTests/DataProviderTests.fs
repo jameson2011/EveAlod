@@ -16,8 +16,8 @@ module DataProviderTests=
         
         let result = dp.ShipStatistics rifterId |> Async.RunSynchronously
         let stats = match result with
-                    | Some r -> r
-                    | _ -> failwith "not Some"
+                        | EntityWebResponse.OK (Some s) -> s
+                        | _ -> failwith "OK not returned"
         
         Assert.Equal(rifterId, stats.ShipId)
         Assert.NotEqual(0, stats.Losses |> Seq.length)
@@ -30,7 +30,11 @@ module DataProviderTests=
         
         let result = dp.ShipStatistics id |> Async.RunSynchronously
 
-        Assert.Equal(None, result)
+        match result with
+        | EntityWebResponse.OK None -> ignore 0
+        | r -> failwith "OK None not returned"
+        
+
 
     
     [<Fact>]
