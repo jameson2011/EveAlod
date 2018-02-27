@@ -1,6 +1,7 @@
 ﻿namespace EveAlod.Valuation.Backfill
 
 open System
+open EveAlod.Common
 open EveAlod.Data
 
 module HistoryCrawl=
@@ -19,19 +20,24 @@ module HistoryCrawl=
         let take(_) = chance >= rng.NextDouble()
         values |> Seq.filter take |> List.ofSeq
 
-    let crawlKills logInfo logException get post ids  = 
+    let crawlKills (log: PostMessage) logException (get: string -> Async<EntityWebResponse<'a option>>) post ids  = 
+        
+        let getEntity id = Retry.retryWaitIterAsync 5 (fun i -> 100 * (i+1)) 
+                                                    (fun r -> match r with | OK _ -> true | _ -> false) 
+                                                    (fun () -> get id)
+
         let rec crawl (ids: string list)  =        
             match ids with
             | [] ->     async { ignore 0 }
             | id::t ->  async {
                             try 
-                                do! Async.Sleep(100) 
-                                id |> sprintf "Fetching kill %s" |> logInfo
-                                let! k = get id
+                                // TODO: retry after 429
+                                do! Async.Sleep(150) 
+                                id |> sprintf "Fetching kill %s" |> ActorMessage.Info |> log
+                                let! k = getEntity id
                                 match k with
-                                | Some k -> post k
-                                | _ -> sprintf "Did not get data for kill %s" id |> logInfo
-                                //k |> Option.map post |> ignore
+                                | OK (Some k)-> post k
+                                | _ -> ActorMessage.Error ("",(sprintf "Did not get data for kill %s" id)) |> log
                             with 
                             | e -> logException e
 

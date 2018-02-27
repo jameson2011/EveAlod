@@ -43,7 +43,7 @@ type HistoryCrawlActor(log: PostMessage, config: BackfillConfiguration)=
                 let! ids = dp.KillIds date
 
                 ids |> Option.map (HistoryCrawl.randomSamples config.Sampling
-                                    >> HistoryCrawl.crawlKills logInfo logException dp.Kill postKill
+                                    >> HistoryCrawl.crawlKills log logException dp.Kill postKill
                                     >> Async.RunSynchronously) |> ignore 
             with 
                 | e -> logException e

@@ -5,6 +5,7 @@ open Xunit
 open EveAlod.Valuation
 
 module DataProviderTests=
+    open EveAlod.Common
 
     let rifterId = "587"
 
@@ -72,8 +73,9 @@ module DataProviderTests=
         let dp = EveAlod.Valuation.DataProvider()
 
         let result = dp.Kill(killId) |> Async.RunSynchronously
-
-        Assert.NotEqual(None, result)
+        match result with
+        | EntityWebResponse.OK _ -> ignore 0
+        | _ -> failwith "OK not returned"
 
     [<Fact>]
     let ``Kill returns None with unknown ID``()=
@@ -82,7 +84,7 @@ module DataProviderTests=
 
         let result = dp.Kill(killId) |> Async.RunSynchronously
 
-        Assert.Equal(None, result)
+        Assert.Equal(EntityWebResponse.NotFound, result)
 
     [<Fact>]
     let ``Kill returns None with bad host``()=
@@ -91,4 +93,6 @@ module DataProviderTests=
 
         let result = dp.Kill(killId) |> Async.RunSynchronously
 
-        Assert.Equal(None, result)
+        match result with
+        | EntityWebResponse.SystemError _ -> ignore 0
+        | _ -> failwith "System error not returned"

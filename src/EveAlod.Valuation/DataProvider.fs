@@ -4,6 +4,7 @@ open System
 open EveAlod.Common
 open EveAlod.Common.Web
 
+
 type DataProvider(host: string,  statsAge: int)=
 
     let getData = httpClient() |> getData
@@ -20,7 +21,8 @@ type DataProvider(host: string,  statsAge: int)=
             let! resp = shipTypeId |> shipStatsUri |> getData
             
             return  match resp.Status with
-                    | HttpStatus.OK ->  resp.Message |> EntityTransforms.toShipStats statsAge
+                    | HttpStatus.OK ->  resp.Message |> EntityTransforms.toShipStats statsAge                                        
+                    // TODO: 429?
                     | _ ->              None                    
         }
     
@@ -30,14 +32,12 @@ type DataProvider(host: string,  statsAge: int)=
 
             return match resp.Status with
                     | HttpStatus.OK -> resp.Message |> EntityTransforms.toKillmailIds
+                    // TODO: 429!
                     | _ -> None            
         }
 
     member __.Kill(id: string) = 
         async {            
             let! resp = id |> killUri |> getData
-
-            return match resp.Status with
-                    | HttpStatus.OK -> resp.Message |> EntityTransforms.toKill
-                    | _ -> None            
+            return resp |> EntityWebResponse.ofWebResponse (EntityTransforms.toKill)             
         }
