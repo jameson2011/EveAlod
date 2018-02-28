@@ -60,7 +60,7 @@ type MongoWriteActor(log: PostMessage, config: ValuationConfiguration)=
 
     let upsertShipTypeStats (shipTypeId: string) (fitted: ValueStatistics) (total: ValueStatistics) (date: DateTime)=
         try
-            let opts = new UpdateOptions()
+            let opts = UpdateOptions()
             opts.IsUpsert <- true
         
             let query = queryJson shipTypeId date |> Bson.ofJson |> FilterDefinition.op_Implicit
@@ -76,7 +76,7 @@ type MongoWriteActor(log: PostMessage, config: ValuationConfiguration)=
         let rec loop() = async {
             let! shipTypeId, date, fittedStats, totalStats = inbox.Receive()
 
-            new DateTime(date.Year, date.Month, date.Day,0,0,0,DateTimeKind.Utc)
+            DateTime(date.Year, date.Month, date.Day,0,0,0,DateTimeKind.Utc)
                     |> upsertShipTypeStats shipTypeId fittedStats totalStats
 
             return! loop()
