@@ -6,7 +6,7 @@ open EveAlod.Common.Strings
 
 type private ShipTypeMap = Map<string, ShipTypeStatsActor>
 
-type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
+type ShipStatsActor(config: ValuationConfiguration, log: PostMessage, write: MongoWriteActor)=
     let logException e = ActorMessage.Exception (typeof<ShipStatsActor>.Name, e) |> log
     let logInfo = ActorMessage.Info >> log
 
@@ -15,7 +15,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage)=
 
     let getAddActor (map: ShipTypeMap) id =
         let actor = if map.ContainsKey(id) then map.[id]
-                    else ShipTypeStatsActor(config, log, id)
+                    else ShipTypeStatsActor(config, log, id, write)
         map.Add(id, actor), actor
 
     let onImportKillJson (map: ShipTypeMap) json =

@@ -6,10 +6,11 @@ open EveAlod.Data
 
 
 
-type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTypeId: string)=
+type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTypeId: string, write: MongoWriteActor)=
 
     let logException e = ActorMessage.Exception (typeof<ShipTypeStatsActor>.Name, e) |> log
     let logInfo = ActorMessage.Info >> log
+    let writeStats = write.Write shipTypeId
 
     let parse json =
         let package = json |> KillTransforms.asKillPackage
@@ -34,8 +35,13 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                             | ImportKillJson json ->                 
                                 match parse json with
                                 | Some (fittedValue, totalValue, killDate) when isMinAge killDate -> 
-                                    stats   |> Statistics.trim config.MaxRollingStatsAge
-                                            |> Statistics.rollup killDate fittedValue totalValue 
+                                    let stats = stats   |> Statistics.trim config.MaxRollingStatsAge
+                                                        |> Statistics.rollup killDate fittedValue totalValue 
+                                    
+                                    // TODO: incorrect... we need just this day
+                                    writeStats (killDate) (stats.FittedValuesSummary, stats.TotalValuesSummary)
+
+                                    stats
                                 | _ -> stats
                             | GetShipTypeStats (_,ch) -> 
                                 stats |> ch.Reply

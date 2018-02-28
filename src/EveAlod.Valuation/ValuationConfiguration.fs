@@ -5,7 +5,6 @@ module ValuationConfigurationDefault =
     let webPort = 81us
     let mongoServer = "127.0.0.1"
     let mongoDb = "evealodvaluation"
-    let mongoCollection = "stats"
     let rollingStatsAge = 365
 
 type ValuationConfiguration= 
@@ -14,7 +13,6 @@ type ValuationConfiguration=
         WebPort: uint16
         MongoServer: string
         MongoDb: string
-        MongoCollection: string
         MongoUser: string
         MongoPassword: string
         MaxRollingStatsAge: int
@@ -23,7 +21,6 @@ type ValuationConfiguration=
                             WebPort = ValuationConfigurationDefault.webPort;
                             MongoServer = ValuationConfigurationDefault.mongoServer;
                             MongoDb = ValuationConfigurationDefault.mongoDb;
-                            MongoCollection = ValuationConfigurationDefault.mongoCollection;
                             MongoUser = "";
                             MongoPassword = "";
                             MaxRollingStatsAge = ValuationConfigurationDefault.rollingStatsAge

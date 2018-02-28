@@ -23,8 +23,6 @@ module CommandLine=
     let getMongoServerValue app =       getStringOption dbServerArg app  |> Option.defaultValue ValuationConfigurationDefault.mongoServer
     let addMongoDbArg =                 addSingleOption dbNameArg dbNameArg (sprintf "The MongoDB DB name. Defaut: %s" ValuationConfigurationDefault.mongoDb)
     let getMongoDbValue app =           getStringOption dbNameArg app |> Option.defaultValue ValuationConfigurationDefault.mongoDb
-    let addMongoCollectionArg =         addSingleOption dbCollectionArg "collection" (sprintf "The MongoDB DB collection name. Default: %s" ValuationConfigurationDefault.mongoCollection )
-    let getMongoCollectionValue app =   getStringOption dbCollectionArg app |> Option.defaultValue ValuationConfigurationDefault.mongoCollection
     let addMongoUserArg =               addSingleOption dbUserArg "user" "User name for MongoDB. Default: no auth is assumed."
     let getMongoUserValue app =         getStringOption dbUserArg app  |> Option.defaultValue ""
     let addMongoPasswordArg =           addSingleOption dbPasswordArg "password" "MongoDB user password"
@@ -91,7 +89,6 @@ module CommandLine=
                         >> addWebPortArg
                         >> addMongoServerArg
                         >> addMongoDbArg
-                        >> addMongoCollectionArg
                         >> addMongoUserArg
                         >> addMongoPasswordArg
                         >> addMaxAgeArg

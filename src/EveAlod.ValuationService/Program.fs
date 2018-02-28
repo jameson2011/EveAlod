@@ -37,7 +37,6 @@ let private valuationConfig(app)=
         KillSourceUri = getKillSourceValue app;
         MongoServer = getMongoServerValue app;
         MongoDb = getMongoDbValue app;
-        MongoCollection = getMongoCollectionValue app;
         MongoUser = getMongoUserValue app;
         MongoPassword = getMongoPasswordValue app;
         WebPort = getWebPortValue app;

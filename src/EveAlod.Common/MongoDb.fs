@@ -37,10 +37,13 @@ module MongoDb=
         | NullOrWhitespace _ -> connectionString
         | x -> sprintf "%s/%s" connectionString dbName
                 
-    let pingDb (db: IMongoDatabase) = 
-        new MongoDB.Driver.BsonDocumentCommand<Object>(BsonDocument.Parse("{ping:1}"))
+    let runCmd (db: IMongoDatabase) (cmd: string)=         
+        new MongoDB.Driver.BsonDocumentCommand<Object>(BsonDocument.Parse(cmd))
                     |> db.RunCommand 
                     |> ignore
+
+    let pingDb (db: IMongoDatabase) = 
+        runCmd db "{ping:1}"        
         db
 
     let initDb dbName (connection: string) =            
@@ -58,10 +61,10 @@ module MongoDb=
         collection
         
     let getCollection colName (db: IMongoDatabase) =
-        db.GetCollection(colName)                
+        db.GetCollection(colName)
                             
     let initCollection (connection: MongoConnection)=
-        connectionString connection.Server connection.UserName connection.Password
+        connectionString connection.UserName connection.Password connection.Server 
         |> setDbConnection connection.DbName
         |> initDb connection.DbName
         |> getCollection connection.CollectionName

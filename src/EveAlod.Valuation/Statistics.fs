@@ -70,11 +70,14 @@ module Statistics=
     let rollup period fittedValue totalValue (stats: ShipTypeStatistics) = 
         let fittedValues = accumulate stats.FittedValues period fittedValue
         let totalValues = accumulate stats.TotalValues period totalValue
+        // TODO: clean up!
+        let fittedValuesSummary = totals fittedValues
+        let totalValuesSummary = totals totalValues
 
         { stats with    FittedValues = fittedValues;
-                        FittedValuesSummary = totals fittedValues
+                        FittedValuesSummary = fittedValuesSummary
                         TotalValues = totalValues; 
-                        TotalValuesSummary = totals totalValues }
+                        TotalValuesSummary = totalValuesSummary }
 
     let valuation (stats: ValueStatistics) value =  
         
