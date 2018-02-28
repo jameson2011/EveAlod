@@ -76,9 +76,8 @@ type MongoWriteActor(log: PostMessage, config: ValuationConfiguration)=
         let rec loop() = async {
             let! shipTypeId, date, fittedStats, totalStats = inbox.Receive()
 
-            // TODO: if shipTypeId = "670" then
             new DateTime(date.Year, date.Month, date.Day,0,0,0,DateTimeKind.Utc)
-            |> upsertShipTypeStats shipTypeId fittedStats totalStats
+                    |> upsertShipTypeStats shipTypeId fittedStats totalStats
 
             return! loop()
             }

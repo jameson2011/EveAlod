@@ -35,7 +35,7 @@ module Statistics=
                             |> accumulateMinMax value 
                             |> accumulateAverage
         
-        stats.Add(period, { periodStats with Value = valueStats })
+        stats.Add(period, { periodStats with Value = valueStats }), valueStats
 
 
     let trimMap maxAge (stats: Map<_,_>)  = 
@@ -68,16 +68,13 @@ module Statistics=
             MedianValue = (max - min ) / 2. + min}
             
     let rollup period fittedValue totalValue (stats: ShipTypeStatistics) = 
-        let fittedValues = accumulate stats.FittedValues period fittedValue
-        let totalValues = accumulate stats.TotalValues period totalValue
-        // TODO: clean up!
-        let fittedValuesSummary = totals fittedValues
-        let totalValuesSummary = totals totalValues
-
+        let fittedValues, fittedValue = accumulate stats.FittedValues period fittedValue
+        let totalValues, totalValue = accumulate stats.TotalValues period totalValue
+        
         { stats with    FittedValues = fittedValues;
-                        FittedValuesSummary = fittedValuesSummary
+                        FittedValuesSummary = totals fittedValues
                         TotalValues = totalValues; 
-                        TotalValuesSummary = totalValuesSummary }
+                        TotalValuesSummary = totals totalValues }, fittedValue, totalValue
 
     let valuation (stats: ValueStatistics) value =  
         

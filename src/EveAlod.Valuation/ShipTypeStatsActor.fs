@@ -35,11 +35,11 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                             | ImportKillJson json ->                 
                                 match parse json with
                                 | Some (fittedValue, totalValue, killDate) when isMinAge killDate -> 
-                                    let stats = stats   |> Statistics.trim config.MaxRollingStatsAge
-                                                        |> Statistics.rollup killDate fittedValue totalValue 
+                                    let stats,dayFitted, dayTotal = 
+                                        stats   |> Statistics.trim config.MaxRollingStatsAge
+                                                |> Statistics.rollup killDate fittedValue totalValue 
                                     
-                                    // TODO: incorrect... we need just this day
-                                    writeStats (killDate) (stats.FittedValuesSummary, stats.TotalValuesSummary)
+                                    writeStats (killDate) (dayFitted, dayTotal)
 
                                     stats
                                 | _ -> stats
