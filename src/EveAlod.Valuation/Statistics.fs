@@ -84,4 +84,9 @@ module Statistics=
             let value = value  |> max stats.MinValue |> min stats.MaxValue    
             (value - stats.MinValue ) / stats.ValueRange
 
-        
+    let gradients (stats: ValueStatistics) =
+        let grad = match stats.Count with       
+                    | 0L -> (fun x -> x, 0. )
+                    | _ -> (fun x -> x, (x * stats.ValueRange) + stats.MinValue )
+        [ 0.1 .. 0.1 .. 1.0] 
+        |> Seq.map grad

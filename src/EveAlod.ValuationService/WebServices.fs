@@ -7,9 +7,12 @@ open EveAlod.Common.Strings
 module WebServices=
     open EveAlod.Valuation
     open System
-    
-    let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
 
+    [<Literal>]    
+    let private internalErrorJson = """{ "error": "Internal error" }"""
+
+    let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
+    
     let setExpiry (age: int ) = age |> toString |> Writers.setHeader "Expires" 
     let setPragmaNoCache = Writers.setHeader "Pragma" "no-cache"
     let setNoCacheControl = Writers.setHeader "Cache-Control" "no-cache, no-store, must-revalidate"
@@ -63,7 +66,7 @@ module WebServices=
                     return! RequestErrors.BAD_REQUEST """{ "error": "Invalid JSON" }""" ctx
             
             with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR """{ "error": "Internal error" }""" ctx
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
         }
 
     let getShipTypeValuation(shipStats: ShipStatsActor) (shipTypeId: string) (fittedValue: float) (totalValue: float)  (ctx: HttpContext)=
@@ -79,5 +82,26 @@ module WebServices=
 
                 return! Successful.OK json ctx
             with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR """{ "error": "Internal error" }""" ctx
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
+        }
+
+    let getShipTypeGradients(shipStats: ShipStatsActor) (shipTypeId: string) (ctx: HttpContext)=
+        async {
+            try
+                let! stats = shipStats.GetShipTypeStats shipTypeId
+                
+                let toJson = Statistics.gradients
+                                >> Seq.map (fun (g,v) -> sprintf """ { "percentile": %f, "value": %f }""" g v)
+                                >> EveAlod.Common.Strings.join ", "
+                                >> sprintf "[ %s ]"
+                                
+                let total = stats.TotalValuesSummary |> toJson
+                let fitted = stats.FittedValuesSummary |> toJson
+                
+                let json = sprintf """ { "total": %s, "fitted": %s } """ total fitted
+
+                return! Successful.OK json ctx
+            with
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
+            
         }
