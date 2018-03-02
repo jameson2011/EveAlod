@@ -8,6 +8,13 @@ open EveAlod.Common.Strings
 open EveAlod.Common.MongoDb
 open EveAlod.Data
 
+type private RehydrateStatsState = 
+    {
+        Start: DateTime
+        TotalRecords: int64        
+    } with 
+    static member Empty = { Start = DateTime.MinValue; TotalRecords = 0L; }
+
 type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, config: ValuationConfiguration)=
 
     let logException = (Actors.postException typeof<RehydrateStatsActor>.Name log)
@@ -110,7 +117,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
         }
 
     let pipe = MailboxProcessor<ObjectId option * AsyncReplyChannel<bool>>.Start(fun inbox ->
-        let rec loop () = 
+        let rec loop (state: RehydrateStatsState) = 
             async {                
                 let! lastId,ch = inbox.Receive()
 
@@ -119,9 +126,11 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
                 match nextId with
                 | Choice1Of3 id -> 
                         (Some id, ch) |> inbox.Post
-                        return! loop ()
+                        return! loop {state with TotalRecords = state.TotalRecords + 1L }
                 | Choice2Of3 _ -> 
+                        let duration = DateTime.UtcNow - state.Start
                         "Rehydration complete." |> logInfo 
+                        sprintf "Rehydrate Duration: %s Total Records: %i " (duration.ToString()) state.TotalRecords |> logInfo
                         ch.Reply true
                         return (ignore 0)
                 | Choice3Of3 e -> 
@@ -129,7 +138,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
                         ch.Reply false
                         return (ignore 0)
             }            
-        loop()
+        loop( { RehydrateStatsState.Empty with Start = DateTime.UtcNow } )
         )
 
     do pipe.Error.Add(logException)
