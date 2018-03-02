@@ -56,7 +56,6 @@ let private runService (app)=
         EveAlod.Data.ActorMessage.Error("","Rehydration failed. Aborting...") |> logger        
         false
     else        
-        "Starting kill source..." |> EveAlod.Data.ActorMessage.Info |> logger        
         serviceFactory.Source.Start()
 
         "Starting web app..." |> EveAlod.Data.ActorMessage.Info |> logger        
