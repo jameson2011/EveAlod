@@ -6,8 +6,7 @@ namespace EveAlod.Services
     module Commentary=        
         
         let private conjunctiveTagTexts =
-            [|
-                [| KillTag.NpcKill; KillTag.CorpLoss |], [| "Someone in corp has died to a rat. Corpie is primary." |];
+            [|                
                 [| KillTag.NpcKill; KillTag.Spendy |], [| "No permit = no ship"; "AFK carebear dead carebear"; "Someone worked hard for this"; |];
                 [| KillTag.NpcKill; KillTag.Expensive |], [| "Bot down!"; "Don't go AFK Mr carebear" |];
                 [| KillTag.Pod; KillTag.CorpKill; KillTag.Expensive |], [| "Remember: we extract all implants at 50% cost"; |];
