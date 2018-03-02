@@ -24,6 +24,10 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage, write: Mon
         | id ->                 let map,actor = getAddActor map id
                                 json |> ImportKillJson |> actor.Post
                                 map
+    let onImportShipTypePeriod (map: ShipTypeMap) (stats: ShipTypePeriodStatistics) =
+        let map,actor = getAddActor map stats.ShipTypeId
+        stats |> ImportShipTypePeriod |> actor.Post
+        map
 
     let onGetShipSummaryStats (map:ShipTypeMap ) (ch: AsyncReplyChannel<ShipSummaryStatistics>) =        
         let getActorStats (actor: ShipTypeStatsActor) = 
@@ -57,6 +61,7 @@ type ShipStatsActor(config: ValuationConfiguration, log: PostMessage, write: Mon
                                     | ImportKillJson json ->        onImportKillJson map json
                                     | GetShipTypeStats (id,ch) ->   onGetShipTypeStats map id ch                                
                                     | GetShipSummaryStats (ch) ->   onGetShipSummaryStats map ch
+                                    | ImportShipTypePeriod stats -> onImportShipTypePeriod map stats
                                 with 
                                 | e ->  logException e
                                         map

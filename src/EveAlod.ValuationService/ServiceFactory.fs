@@ -8,10 +8,11 @@ type ValuationServiceFactory(config: ValuationConfiguration)=
     let logger = LogPublishActor("valuation.log4net.config")
 
     let writeActor = MongoWriteActor(logger.Post, config)
-
+    
     let shipStatsActor = ShipStatsActor(config, logger.Post, writeActor)
-    let sourceForward msg = msg |> ValuationActorMessage.ImportKillJson |> shipStatsActor.Post
+    let rehydrateActor = RehydrateStatsActor(logger.Post, shipStatsActor.Post, config)
 
+    let sourceForward msg = msg |> ValuationActorMessage.ImportKillJson |> shipStatsActor.Post
     
     let importActor = KillSourceActor(logger.Post, sourceForward, EveAlod.Common.Web.getData, config.KillSourceUri)
     
@@ -21,4 +22,4 @@ type ValuationServiceFactory(config: ValuationConfiguration)=
 
     member __.ShipStats = shipStatsActor
 
-
+    member __.Rehydrate = rehydrateActor

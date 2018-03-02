@@ -11,12 +11,7 @@ type MongoWriteActor(log: PostMessage, config: ValuationConfiguration)=
     let logException = (Actors.postException typeof<MongoWriteActor>.Name log)
     let logTrace msg = msg |> fun s -> ActorMessage.Trace (typeof<MongoWriteActor>.Name, s) |> log
 
-    let connection = { MongoConnection.Empty with 
-                            Server = config.MongoServer;
-                            DbName = config.MongoDb;
-                            UserName = config.MongoUser;
-                            Password = config.MongoPassword;                            
-                            CollectionName = "shiptypestats" }
+    let connection = Mongo.connection config 
 
     let shipTypeStatsCollection =   
         lazy (

@@ -43,6 +43,9 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
 
                                     stats
                                 | _ -> stats
+                            | ImportShipTypePeriod shipStats ->
+                                stats |> Statistics.appendRollup shipStats.Period shipStats.Fitted shipStats.Total
+                                
                             | GetShipTypeStats (_,ch) -> 
                                 stats |> ch.Reply
                                 stats

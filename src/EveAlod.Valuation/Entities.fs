@@ -61,6 +61,17 @@ type ShipTypeStatistics=
                             FittedValues = Map.empty; FittedValuesSummary = ValueStatistics.Empty;
                             TotalValues = Map.empty; TotalValuesSummary = ValueStatistics.Empty }
 
+type ShipTypePeriodStatistics =
+    {
+        ShipTypeId: string
+        Period: DateTime
+        Fitted: ValueStatistics
+        Total: ValueStatistics
+    } with
+    static member Empty = { ShipTypeId = ""; Period = DateTime.MinValue; 
+                            Fitted = ValueStatistics.Empty;
+                            Total = ValueStatistics.Empty }
+
 type ShipSummaryStatistics =
     {
         ShipTypeCount: int

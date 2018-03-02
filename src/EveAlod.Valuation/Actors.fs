@@ -2,11 +2,13 @@
 
 type ValuationActorMessage=
     | ImportKillJson of string
+    | ImportShipTypePeriod of ShipTypePeriodStatistics
     | GetShipTypeStats of string * AsyncReplyChannel<ShipTypeStatistics>
     | GetShipSummaryStats of AsyncReplyChannel<ShipSummaryStatistics>
 
 type MessageInbox = MailboxProcessor<ValuationActorMessage>
 type PostMessage = EveAlod.Data.ActorMessage -> unit
+type PostValuationMessage = ValuationActorMessage -> unit
 
 module Actors = 
     open EveAlod.Data

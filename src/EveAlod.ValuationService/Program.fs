@@ -51,21 +51,26 @@ let private runService (app)=
     let serviceFactory = ValuationServiceFactory(config)
     let logger = serviceFactory.Log
 
-    "Starting kill source..." |> EveAlod.Data.ActorMessage.Info |> logger        
-    serviceFactory.Source.Start()
+    let rehydrateOk = serviceFactory.Rehydrate.Start() |> Async.RunSynchronously
+    if not rehydrateOk then
+        EveAlod.Data.ActorMessage.Error("","Rehydration failed. Aborting...") |> logger        
+        false
+    else        
+        "Starting kill source..." |> EveAlod.Data.ActorMessage.Info |> logger        
+        serviceFactory.Source.Start()
 
-    "Starting web app..." |> EveAlod.Data.ActorMessage.Info |> logger        
-    let listening,server = startWebServerAsync (WebApp.webConfig config) (WebApp.webRoutes logger serviceFactory.ShipStats)
+        "Starting web app..." |> EveAlod.Data.ActorMessage.Info |> logger        
+        let listening,server = startWebServerAsync (WebApp.webConfig config) (WebApp.webRoutes logger serviceFactory.ShipStats)
 
-    Async.Start(server, cts.Token)
+        Async.Start(server, cts.Token)
        
     
-    System.Console.Out.WriteLine("ENTER to quit")
-    System.Console.ReadLine() |> ignore
+        System.Console.Out.WriteLine("ENTER to quit")
+        System.Console.ReadLine() |> ignore
 
-    serviceFactory.Source.Stop()
+        serviceFactory.Source.Stop()
 
-    true
+        true
 
 let private createAppTemplate()=
     CommandLine.createApp()

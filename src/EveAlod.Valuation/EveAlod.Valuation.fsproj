@@ -76,7 +76,9 @@
     <Compile Include="Statistics.fs" />
     <Compile Include="DataProvider.fs" />
     <Compile Include="Json.fs" />
+    <Compile Include="Mongo.fs" />
     <Compile Include="MongoWriteActor.fs" />
+    <Compile Include="RehydrateStatsActorfs.fs" />
     <Compile Include="ShipTypeStatsActor.fs" />
     <Compile Include="ShipStatsActor.fs" />
     <Content Include="packages.config" />

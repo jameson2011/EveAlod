@@ -23,6 +23,8 @@ module Statistics=
         { stats with AverageValue = stats.TotalValue / float stats.Count }
 
 
+    let append (stats: Map<DateTime, PeriodValueStatistics>) period value =
+        stats.Add(period, { PeriodValueStatistics.Period = period; Value = value } )
 
     let accumulate (stats: Map<DateTime, PeriodValueStatistics>) period value =
         let periodStats, valueStats = match stats.TryFind(period) with
@@ -75,6 +77,15 @@ module Statistics=
                         FittedValuesSummary = totals fittedValues
                         TotalValues = totalValues; 
                         TotalValuesSummary = totals totalValues }, fittedValue, totalValue
+
+    let appendRollup period (fittedValue: ValueStatistics) (totalValue: ValueStatistics) (stats: ShipTypeStatistics) = 
+        let fittedValues = append stats.FittedValues period fittedValue
+        let totalValues = append stats.TotalValues period totalValue
+
+        { stats with    FittedValues = fittedValues;
+                        FittedValuesSummary = totals fittedValues
+                        TotalValues = totalValues; 
+                        TotalValuesSummary = totals totalValues }
 
     let valuation (stats: ValueStatistics) value =  
         

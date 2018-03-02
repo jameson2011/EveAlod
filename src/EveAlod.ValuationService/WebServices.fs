@@ -9,7 +9,7 @@ module WebServices=
     open System
 
     [<Literal>]    
-    let private internalErrorJson = """{ "error": "Internal error" }"""
+    let private InternalErrorJson = """{ "error": "Internal error" }"""
 
     let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
     
@@ -66,7 +66,7 @@ module WebServices=
                     return! RequestErrors.BAD_REQUEST """{ "error": "Invalid JSON" }""" ctx
             
             with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR InternalErrorJson ctx
         }
 
     let getShipTypeValuation(shipStats: ShipStatsActor) (shipTypeId: string) (fittedValue: float) (totalValue: float)  (ctx: HttpContext)=
@@ -82,7 +82,7 @@ module WebServices=
 
                 return! Successful.OK json ctx
             with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR InternalErrorJson ctx
         }
 
     let getShipTypeGradients(shipStats: ShipStatsActor) (shipTypeId: string) (ctx: HttpContext)=
@@ -102,6 +102,6 @@ module WebServices=
 
                 return! Successful.OK json ctx
             with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR internalErrorJson ctx
+            | e -> return! Suave.ServerErrors.INTERNAL_ERROR InternalErrorJson ctx
             
         }

@@ -32,6 +32,12 @@
         let (|NullOrWhitespace|_|) str=
             if isNullWhitespace str then Some str else None
 
+        let (|Suffix|_|) (suffix: string) (str: string) =
+            if str.LastIndexOf(suffix) >= 0 then Some str else None
+
+        let (|Split|_|) (prefix: string) (suffix: string) (str: string) =
+            if str.StartsWith(prefix) && str.LastIndexOf(suffix) >= 0 then Some str else None
+
         let join (delimiter: string) (values: seq<string>) = 
             System.String.Join(delimiter, values)
 
