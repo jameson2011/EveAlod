@@ -58,7 +58,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
                     Total = parseValues "total" elements seed.Total } 
             |> parseHeader elements
         
-    let docsMap (cursor: IAsyncCursor<BsonDocument>) =
+    let docsSeq (cursor: IAsyncCursor<BsonDocument>) =
         seq {
             while cursor.MoveNext() do
                 let c = cursor.Current
@@ -71,7 +71,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
                     use! docs = shipTypeStatsCollection.Value.FindAsync(fun d -> true) |> Async.AwaitTask
 
                     let result = docs 
-                                    |> docsMap |> Seq.collect (fun ds -> ds)
+                                    |> docsSeq |> Seq.collect id
                                     |> Seq.map toStatsEntry
                                     |> List.ofSeq
                     return Choice1Of2 result
@@ -82,7 +82,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
             }
         
         
-    let onStart()=
+    let rehydrate()=
         async {
             try
                 let start = DateTime.UtcNow
@@ -110,7 +110,7 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
             async {                
                 let! ch = inbox.Receive()
 
-                let! result = onStart()
+                let! result = rehydrate()
                 match result with
                 | Choice1Of2 (duration,count) ->                     
                     "Rehydration complete." |> logInfo 
@@ -129,4 +129,4 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
     
     member __.Start() =
         "Starting Rehydrate..." |> logInfo
-        pipe.PostAndAsyncReply (fun ch -> ch)
+        pipe.PostAndAsyncReply id
