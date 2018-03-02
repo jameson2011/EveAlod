@@ -68,7 +68,14 @@ type RehydrateStatsActor(log: PostMessage, sendShipStats: PostValuationMessage, 
     let getCachedStats()=
             async {                
                 try
-                    use! docs = shipTypeStatsCollection.Value.FindAsync(fun d -> true) |> Async.AwaitTask
+                    let dateFilter = -(config.MaxRollingStatsAge)
+                                        |> float
+                                        |> DateTime.UtcNow.Date.AddDays
+                                        |> (fun d -> d.ToString("o"))
+                                        |> sprintf @"{period: { $gte: ISODate(""%s"") } }"
+                                        |> JsonFilterDefinition<BsonDocument>
+                    
+                    use! docs = shipTypeStatsCollection.Value.FindAsync(dateFilter) |> Async.AwaitTask
 
                     let result = docs 
                                     |> docsSeq |> Seq.collect id
