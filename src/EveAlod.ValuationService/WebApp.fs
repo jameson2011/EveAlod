@@ -18,7 +18,7 @@ module WebApp=
     let webRoutes (logger: PostMessage) (ships: ShipStatsActor)= 
         choose
             [   GET  >=> choose [
-                                    pathScan "/stats/%s/gradients/" (fun id -> WebServices.getShipTypeGradients ships id)
+                                    pathScan "/gradients/%s/" (fun id -> WebServices.getShipTypeGradients ships id)
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
 
                                     pathScan "/stats/%s/" (WebServices.getShipTypeStatsJson ships)
@@ -27,7 +27,10 @@ module WebApp=
                                     path "/stats/" >=> WebServices.getShipSummaryStatsJson ships
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType                                    
 
-                                    pathScan "/valuation/%s/%f/%f/" (fun (id, fitted, total) -> WebServices.getShipTypeValuation ships id fitted total)
+                                    pathScan "/valuation/%s/%f/" (fun (id, total) -> WebServices.getShipTypeValuation ships id None total)
+                                                            >=> WebServices.setNoCache >=> WebServices.jsonMimeType
+
+                                    pathScan "/valuation/%s/%f/%f/" (fun (id, total, fitted) -> WebServices.getShipTypeValuation ships id (Some fitted) total)
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
 
                                     path "/favicon.ico" >=> Suave.Successful.no_content >=> WebServices.setCacheLimit 99999999
