@@ -49,10 +49,9 @@ type ShipTypeStatsActor(config: ValuationConfiguration, log: PostMessage, shipTy
                             | GetShipTypeStats (_,ch) -> 
                                 stats |> ch.Reply
                                 stats
-                            | GetShipSummaryStats ch -> 
-                                let count = stats.FittedValues |> Seq.sumBy (fun kvp -> kvp.Value.Value.Count)
+                            | GetShipSummaryStats ch ->                                 
                                 { ShipSummaryStatistics.Empty with 
-                                    TotalKills = count } |> ch.Reply
+                                    TotalKills = stats.FittedValuesSummary.Count } |> ch.Reply
                                 stats
                         with
                         | e ->  logException e
