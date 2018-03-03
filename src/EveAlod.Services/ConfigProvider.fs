@@ -25,6 +25,7 @@
                 ChannelId = c.ChannelId;
                 ChannelToken = c.ChannelToken;
                 KillSourceUri = c.KillSourceUri;
+                KillValuationUri = c.KillValuationUri;
             }
 
         let getCorpId ticker = 
@@ -60,9 +61,17 @@
                         | u -> u
             { config with KillSourceUri = uri }       
             
+        let setKillValuationUri(config: Configuration) =
+            let uri = match config.KillValuationUri with
+                        | NullOrWhitespace _ -> "http://127.0.0.1:81/"
+                        | u -> u
+            { config with KillValuationUri = uri } 
+       
         member __.Configuration() = 
-            loadConfig configFilePath 
+            configFilePath
+                |> loadConfig  
                 |> applyDiscord
                 |> applyCorp
-                |> setKillSourceUri                
+                |> setKillSourceUri  
+                |> setKillValuationUri
                 

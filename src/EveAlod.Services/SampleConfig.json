@@ -2,8 +2,9 @@
   "minimumScore": 0.0,
   "corpId": "corpId",
   "corpTicker": "ABCDE",
-  "discordWebhookUri":  "http://discordapp.com",
+  "discordWebhookUri": "http://discordapp.com",
   "channelId": "discordChannel",
   "channelToken": "discordToken",
-  "killSourceUri":  "http://127.0.0.1"
+  "killSourceUri": "http://127.0.0.1",
+  "killValuationUri": "http://127.0.0.1:81"
 }

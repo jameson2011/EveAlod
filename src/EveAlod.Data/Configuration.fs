@@ -16,5 +16,7 @@
                     ChannelToken: string;
 
                     KillSourceUri: string;
+                    KillValuationUri: string;
+                    
                     }
 
