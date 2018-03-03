@@ -64,7 +64,8 @@
         let setKillValuationUri(config: Configuration) =
             let uri = match config.KillValuationUri with
                         | NullOrWhitespace _ -> "http://127.0.0.1:81/"
-                        | u -> u
+                        | u ->  if not (u.EndsWith("/")) then (u + "/")
+                                else u
             { config with KillValuationUri = uri } 
        
         member __.Configuration() = 
