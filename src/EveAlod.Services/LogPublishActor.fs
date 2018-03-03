@@ -1,7 +1,8 @@
 ﻿namespace EveAlod.Services
 
-    open EveAlod.Data
     open System.Globalization
+    open EveAlod.Common
+    open EveAlod.Data    
 
     type LogPublishActor(configFile: string)= 
         
@@ -9,9 +10,9 @@
 
         let getMsg km = 
             let tags km = 
-                let s = km.Tags 
-                            |> Seq.map (fun t -> t.ToString())
-                System.String.Join(", ", s)                
+                km.Tags 
+                    |> Seq.map (fun t -> t.ToString())
+                    |> Strings.join ", "
 
             sprintf "%s Score: %.2f %s Tags: %s" (km.Occurred.ToString(CultureInfo.InvariantCulture)) km.AlodScore km.ZkbUri (tags km)
         
@@ -35,13 +36,13 @@
 
                 try
                     match msg with
-                    | Killmail km ->                 getMsg km |> logInfo
+                    | Killmail km ->            getMsg km |> logInfo
                     | Warning (source,msg) ->   ("[" + source + "]: " + msg) |> logWarn
                     | Error (source, msg) ->    ("[" + source + "]: " + msg) |> logError
                     | Exception (source, ex) -> logException source ex               
                     | Info msg ->               msg |> logInfo
-                    | Trace (source, msg) -> ("[" + source + "]: " + msg) |> logTrace
-                    | _ -> ignore 0
+                    | Trace (source, msg) ->    ("[" + source + "]: " + msg) |> logTrace
+                    | _ ->                      ignore 0
                 with e -> onException e
                 return! getNext()            
                 }
