@@ -80,6 +80,7 @@
     <Compile Include="ConfigProvider.fs" />
     <Compile Include="StaticEntityProvider.fs" />
     <Compile Include="StaticDataActor.fs" />
+    <Compile Include="KillValuationActor.fs" />
     <Compile Include="DiscordPublishActor.fs" />
     <Compile Include="KillFilterActor.fs" />
     <Compile Include="KillScorerActor.fs" />
