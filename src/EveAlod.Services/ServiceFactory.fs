@@ -5,12 +5,12 @@
 
     type ServiceFactory()=
     
-        let dataProvider = StaticEntityProvider() :> IStaticEntityProvider
+        let staticDataProvider = StaticEntityProvider() :> IStaticEntityProvider
         let logger = LogPublishActor()
         
         do ActorMessage.Info "Starting EveAlod..." |> logger.Post
         
-        let configProvider = ConfigProvider(logger.Post, dataProvider)
+        let configProvider = ConfigProvider(logger.Post, staticDataProvider)
 
         let config = configProvider.Configuration() 
                                     |> Config.validate
@@ -19,12 +19,12 @@
 
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
-        let dataActor = StaticDataActor(logger.Post, dataProvider)
+        let staticDataActor = StaticDataActor(logger.Post, staticDataProvider)
 
         let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Discord.sendDiscord)
         
         let killPublisher = KillPublisherActor(logger.Post, 
-                                                    KillMessageBuilder(dataActor, config.CorpId), 
+                                                    KillMessageBuilder(staticDataActor, config.CorpId), 
                                                     [ discordPublisher.Post; ] |> Actors.forwardMany (SendToDiscord))
         
         let killFilter = KillFilterActor(logger.Post, 
@@ -35,7 +35,7 @@
                                                 [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Killmail)) 
         
         let killTagger = KillTaggerActor(logger.Post, 
-                                                KillTagger(dataActor, config.CorpId), 
+                                                KillTagger(staticDataActor, config.CorpId), 
                                                 [ killScorer.Post ] |> Actors.forwardMany (Killmail))
                
         let killTransform = KillTransformActor(logger.Post, 
