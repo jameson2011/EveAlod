@@ -109,6 +109,7 @@
                     TotalValue: float;
                     
                     AlodScore: float;
+                    TotalValueValuation: float option
                     }
         with static member empty =
                 { 
@@ -125,5 +126,6 @@
                     Cargo = [];
                     FittedValue = 0.;
                     TotalValue = 0.;
+                    TotalValueValuation = None;
                 }            
 

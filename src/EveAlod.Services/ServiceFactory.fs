@@ -20,7 +20,7 @@
         let mainChannel = { DiscordChannel.Id = config.ChannelId; Token = config.ChannelToken}
 
         let staticDataActor = StaticDataActor(logger.Post, staticDataProvider)
-
+        
         let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Discord.sendDiscord)
         
         let killPublisher = KillPublisherActor(logger.Post, 
@@ -37,9 +37,12 @@
         let killTagger = KillTaggerActor(logger.Post, 
                                                 KillTagger(staticDataActor, config.CorpId), 
                                                 [ killScorer.Post ] |> Actors.forwardMany (Killmail))
-               
+        
+        let killValuationActor = KillValuationActor(config, logger.Post,
+                                                    [ killTagger.Post ] |> Actors.forwardMany (Killmail))
+
         let killTransform = KillTransformActor(logger.Post, 
-                                                [ killTagger.Post ] |> Actors.forwardMany (Killmail))
+                                                [ killValuationActor.Post ] |> Actors.forwardMany (Killmail))
        
         let killSource = KillSourceActor(logger.Post,
                                                 [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillmailJson) ,

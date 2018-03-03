@@ -8,7 +8,7 @@ open FSharp.Data
     
 type private ValuationResponseProvider = JsonProvider<"""{ "total": 0.995524 }  """>
 
-type KillValuationActor(config: Configuration, log: PostMessage)=
+type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKill)=
     let logException = Actors.postException typeof<KillValuationActor>.Name log
     let logTrace = Actors.postTrace typeof<KillValuationActor>.Name log
     let logInfo = Actors.postInfo log
@@ -26,7 +26,7 @@ type KillValuationActor(config: Configuration, log: PostMessage)=
                                 | HttpStatus.OK ->  ValuationResponseProvider.Parse(d.Message).Total
                                                     |> float
                                                     |> Choice1Of2
-                                | x -> Choice2Of2 ("Error: " + x.ToString())
+                                | _ -> Choice2Of2 ("Error: " + d.Message)
             with
             | e ->  logException e
                     return Choice2Of2 ("Error: " + e.Message)
@@ -41,24 +41,24 @@ type KillValuationActor(config: Configuration, log: PostMessage)=
     let logKillScore (kill: Kill) score =
         sprintf "Kill: %s ShipType: %s TotalValue: %f Score: %f" 
             kill.Id kill.VictimShip.Value.Id kill.TotalValue score
-        |> logInfo
+        |> logTrace
         
-    let forwardValuation (ch: AsyncReplyChannel<float>) kill valuation = 
+    let forwardValuation kill valuation = 
         match valuation with
             | Choice1Of2 valuation ->   logKillScore kill valuation
-                                        valuation |> ch.Reply                    
+                                        forward { kill with TotalValueValuation = Some valuation }
             | Choice2Of2 text ->        text |> logTrace
+                                        forward kill
     
 
-    let pipe = MailboxProcessor<Kill * AsyncReplyChannel<float>>.Start(fun inbox ->
+    let pipe = MessageInbox.Start(fun inbox ->
         let rec loop() = async {
             
-            let! kill,ch = inbox.Receive()
-            
-            let! valuation = getValuation kill
-
-            forwardValuation ch kill valuation
-            
+            let! msg = inbox.Receive()
+            match msg with
+            | Killmail kill ->  let! valuation = getValuation kill
+                                forwardValuation kill valuation
+            | _ -> ignore 0
             return! loop()
             }
         loop()
@@ -66,6 +66,4 @@ type KillValuationActor(config: Configuration, log: PostMessage)=
 
     do pipe.Error.Add(logException)
 
-    member __.Value(kill: Kill)=
-        // TOOD:
-        0.1
+    member __.Post(msg: ActorMessage) = pipe.Post msg

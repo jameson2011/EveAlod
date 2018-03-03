@@ -13,8 +13,15 @@
                 km.Tags 
                     |> Seq.map (fun t -> t.ToString())
                     |> Strings.join ", "
+            let valuation km = 
+                match km.TotalValueValuation with
+                | Some x -> sprintf "%.2f" x
+                | _ -> "None"
 
-            sprintf "%s Score: %.2f %s Tags: %s" (km.Occurred.ToString(CultureInfo.InvariantCulture)) km.AlodScore km.ZkbUri (tags km)
+            sprintf "%s Score: %.2f Valuation: %s %s Tags: %s" 
+                (km.Occurred.ToString(CultureInfo.InvariantCulture)) 
+                km.AlodScore (valuation km)
+                km.ZkbUri (tags km)
         
         let logger = log4net.LogManager.GetLogger(typeof<LogPublishActor>)
 
