@@ -54,13 +54,16 @@
 
         let report (log: PostMessage) (config: Configuration) =
             [ 
-                sprintf "Kills source:   %s" config.KillSourceUri;
-                sprintf "Kill valuation: %s" config.KillValuationUri;
-                sprintf "Minimum score:  %f" config.MinimumScore;
-                sprintf "Corp ticker:    %s" config.CorpTicker;
-                sprintf "Corp ID:        %s" config.CorpId;
-                sprintf "Discord:        %s" config.ChannelId;
-                sprintf "Discord token:  %s" config.ChannelToken;
+                sprintf "Kills source:      %s" config.KillSourceUri;
+                sprintf "Kill valuation:    %s" config.KillValuationUri;
+                sprintf "Minimum score:     %f" config.MinimumScore;
+                sprintf "Corp ticker:       %s" config.CorpTicker;
+                sprintf "Corp ID:           %s" config.CorpId;
+                sprintf "Min Corp Dmg:      %f" config.MinCorpDamage;
+                sprintf "Discord:           %s" config.ChannelId;
+                sprintf "Discord token:     %s" config.ChannelToken;
+                sprintf "Valuation Limit:   %f" config.ValuationLimit;
+                sprintf "Valuation Spread:  %f" config.ValuationSpread
             ]            
             |> Seq.map ActorMessage.Info
             |> Seq.iter log
