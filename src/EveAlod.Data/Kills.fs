@@ -25,6 +25,8 @@
         | Expensive
         | Cheap
         | ZeroValue
+        | WideMarginShipType
+        | NarrowMarginShipType
 
     
     type SpaceSecurity = 
@@ -110,6 +112,7 @@
                     
                     AlodScore: float;
                     TotalValueValuation: float option
+                    TotalValueSpread: float option
                     }
         with static member empty =
                 { 
@@ -127,5 +130,6 @@
                     FittedValue = 0.;
                     TotalValue = 0.;
                     TotalValueValuation = None;
+                    TotalValueSpread = None;
                 }            
 

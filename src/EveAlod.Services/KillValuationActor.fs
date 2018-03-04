@@ -6,7 +6,7 @@ open EveAlod.Data
 open EveAlod.Common.Web
 open FSharp.Data
     
-type private ValuationResponseProvider = JsonProvider<"""{ "total": 0.995524 }  """>
+type private ValuationResponseProvider = JsonProvider<"""{ "total": 0.995524, "spread": 177.963267 }  """>
 
 type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKill)=
     let logException = Actors.postException typeof<KillValuationActor>.Name log
@@ -23,8 +23,8 @@ type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKi
             try
                 let! d = getData uri
                 return match d.Status with
-                                | HttpStatus.OK ->  ValuationResponseProvider.Parse(d.Message).Total
-                                                    |> float
+                                | HttpStatus.OK ->  let valuation = ValuationResponseProvider.Parse(d.Message)
+                                                    (float valuation.Total, float valuation.Spread)
                                                     |> Choice1Of2
                                 | _ -> Choice2Of2 ("Error: " + d.Message)
             with
@@ -38,15 +38,17 @@ type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKi
         | _ -> async { return Choice2Of2 "No URI" }
 
     
-    let logKillScore (kill: Kill) score =
-        sprintf "Kill: %s ShipType: %s TotalValue: %f Score: %f" 
-            kill.Id kill.VictimShip.Value.Id kill.TotalValue score
+    let logKillScore (kill: Kill) score spread =
+        sprintf "Kill: %s ShipType: %s TotalValue: %f Score: %f Spread: %f" 
+            kill.Id kill.VictimShip.Value.Id kill.TotalValue score spread
         |> logTrace
         
     let forwardValuation kill valuation = 
         match valuation with
-            | Choice1Of2 valuation ->   logKillScore kill valuation
-                                        forward { kill with TotalValueValuation = Some valuation }
+            | Choice1Of2 (valuation, spread) ->   
+                                        logKillScore kill valuation spread
+                                        forward { kill with TotalValueValuation = Some valuation;
+                                                            TotalValueSpread = Some spread }
             | Choice2Of2 text ->        text |> logTrace
                                         forward kill
     

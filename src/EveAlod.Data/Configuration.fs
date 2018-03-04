@@ -10,6 +10,7 @@
                     
                     CorpTicker: string;
                     CorpId: string;
+                    MinCorpDamage: float;
 
                     DiscordWebhookUri: string;
                     ChannelId: string;
@@ -18,5 +19,8 @@
                     KillSourceUri: string;
                     KillValuationUri: string;
                     
+                    ValuationLimit: float;
+                    ValuationSpread: float;
+
                     }
 

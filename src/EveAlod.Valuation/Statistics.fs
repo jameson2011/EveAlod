@@ -93,7 +93,14 @@ module Statistics=
             0.
         else
             let value = value  |> max stats.MinValue |> min stats.MaxValue    
-            (value - stats.MinValue ) / stats.ValueRange
+            match stats.ValueRange with
+            | 0. -> 0.
+            | x -> (value - stats.MinValue ) / x
+
+    let medianMeanSpread (stats: ValueStatistics) =  
+        match stats.AverageValue, stats.MedianValue with
+        | 0., 0. -> 0.
+        | avg, median -> median / avg
 
     let gradients (stats: ValueStatistics) =
         let grad = match stats.Count with       

@@ -17,15 +17,18 @@
        
         let loadConfig(filePath: string) =
             let c = JsonConfigProvider.Load filePath
-            
+
             { Configuration.MinimumScore = (float c.MinimumScore);
                 CorpTicker = c.CorpTicker;
                 CorpId = c.CorpId;
+                MinCorpDamage = (float c.MinCorpDamage);
                 DiscordWebhookUri = c.DiscordWebhookUri;
                 ChannelId = c.ChannelId;
                 ChannelToken = c.ChannelToken;
                 KillSourceUri = c.KillSourceUri;
                 KillValuationUri = c.KillValuationUri;
+                ValuationLimit = (float c.ValuationLimit);
+                ValuationSpread = (float c.ValuationSpread);
             }
 
         let getCorpId ticker = 

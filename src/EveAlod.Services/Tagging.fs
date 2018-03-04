@@ -8,6 +8,7 @@
 
         let private expensiveLimit =    10000000000.
         let private spendyLimit =       1000000000.
+        let private spendy2Limit =      500000000.
         let private cheapLimit =        10000000.
 
         let tagPresent (tag: KillTag) kill=        
@@ -73,6 +74,15 @@
             | x when x <= value -> true
             | _ -> false
 
+        let isTotalValueValuationOver (limit: float) (km: Kill)=
+            match km.TotalValueValuation with
+            | Some v -> v > limit
+            | _ -> false
+
+        let isShipTypeSpreadOver (limit: float) (km: Kill) =
+            match km.TotalValueSpread with
+            | Some v -> v >= limit
+            | _ -> false
 
         let hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
             km.Cargo
@@ -107,7 +117,16 @@
             
         let isSpendy =
             (tagOnTrue KillTag.Spendy) ((isTotalValueOver spendyLimit) <&&> (isTotalValueUnder expensiveLimit))
-                        
+        
+        let isSpendyWithinLimits valuationLimit=
+            (tagOnTrue KillTag.Spendy) ((isTotalValueOver spendy2Limit) <&&> (isTotalValueValuationOver valuationLimit) <&&> (isTotalValueUnder expensiveLimit))
+        
+        let isShipTypeWideMargin spreadLimit=
+            (tagOnTrue KillTag.WideMarginShipType) (isShipTypeSpreadOver spreadLimit)
+
+        let isShipTypeNarrowMargin spreadLimit=
+            (tagOnTrue KillTag.NarrowMarginShipType) (not << isShipTypeSpreadOver spreadLimit)
+
         let isZeroValue = 
             (tagOnTrue KillTag.ZeroValue) (isTotalValueUnder cheapLimit)
 

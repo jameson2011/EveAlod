@@ -3,7 +3,8 @@
     open EveAlod.Common
     open EveAlod.Data
 
-    type KillTagger(entityProvider: StaticDataActor, corpId: string)=
+    
+    type KillTagger(config: Configuration, entityProvider: StaticDataActor)=
         
         let isType (key: EntityGroupKey) (entity:Entity) =
             let group = entityProvider.EntityIds(key) |> Async.RunSynchronously
@@ -16,17 +17,19 @@
         let isSkillInjector = isType EntityGroupKey.SkillInjector
         let isPod = isType EntityGroupKey.Capsule
         
-        member this.Tag(kill: Kill)=            
+        member __.Tag(kill: Kill)=            
             let tags = [                            
-                            Tagging.isCorpKill 0.5 corpId;
-                            Tagging.isCorpLoss corpId;
+                            Tagging.isCorpKill config.MinCorpDamage config.CorpId;
+                            Tagging.isCorpLoss config.CorpId;
                             Tagging.hasItemInHold KillTag.PlexInHold isPlex;
                             Tagging.hasItemInHold KillTag.SkillInjectorInHold isSkillInjector;
                             Tagging.hasItemFitted KillTag.EcmFitted isEcm;               
                             Tagging.isPod isPod;
                             Tagging.isPlayer;
                             Tagging.isExpensive;
-                            Tagging.isSpendy;
+                            Tagging.isSpendyWithinLimits config.ValuationLimit;
+                            Tagging.isShipTypeWideMargin config.ValuationSpread;
+                            Tagging.isShipTypeNarrowMargin config.ValuationSpread;
                             Tagging.isCheap; 
                             Tagging.isZeroValue;
                         ]

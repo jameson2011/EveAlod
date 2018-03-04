@@ -20,6 +20,9 @@
             | AwoxKill -> 10.
             | SoloKill -> 10.
             | FailFit -> 20.            
+            | WideMarginShipType -> 10.
+            | NarrowMarginShipType -> 1.
+            
 
         let private tagsScore = Seq.map tagScore >> Seq.sum
             

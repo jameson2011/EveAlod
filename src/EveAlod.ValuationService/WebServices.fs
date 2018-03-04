@@ -79,11 +79,12 @@ module WebServices=
                             | Some fittedValue -> 
                                 let fitted = Statistics.valuation stats.FittedValuesSummary fittedValue
                                 let total = Statistics.valuation stats.TotalValuesSummary totalValue
-                                sprintf """ { "fitted": %f, "total": %f }  """ fitted total
-                            | _ -> 
-                                totalValue
-                                    |> Statistics.valuation stats.TotalValuesSummary 
-                                    |> sprintf """ { "total": %f }  """
+                                let spread = Statistics.medianMeanSpread stats.TotalValuesSummary
+                                sprintf """ { "fitted": %f, "total": %f, "spread": %f }  """ fitted total spread
+                            | _ ->                                 
+                                let total = Statistics.valuation stats.TotalValuesSummary totalValue
+                                let spread = Statistics.medianMeanSpread stats.TotalValuesSummary
+                                sprintf """ { "total": %f, "spread": %f }  """ total spread
 
                 return! Successful.OK json ctx
             with

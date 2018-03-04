@@ -2,9 +2,12 @@
   "minimumScore": 0.0,
   "corpId": "corpId",
   "corpTicker": "ABCDE",
+  "minCorpDamage":  0.0001,
   "discordWebhookUri": "http://discordapp.com",
   "channelId": "discordChannel",
   "channelToken": "discordToken",
   "killSourceUri": "http://127.0.0.1",
-  "killValuationUri": "http://127.0.0.1:81"
+  "killValuationUri": "http://127.0.0.1:81",
+  "valuationLimit": 0.0001,
+  "valuationSpread": 0.0001
 }
