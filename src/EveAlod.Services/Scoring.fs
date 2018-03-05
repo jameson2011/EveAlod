@@ -8,7 +8,7 @@ namespace EveAlod.Services
             match tag with
             | CorpKill -> 100.
             | CorpLoss -> 50.
-            | PlexInHold | SkillInjectorInHold -> 100.
+            | PlexInHold | SkillInjectorInHold -> 30.
             | Expensive -> 100.
             | Spendy -> 40.
             | ZeroValue -> 1.
