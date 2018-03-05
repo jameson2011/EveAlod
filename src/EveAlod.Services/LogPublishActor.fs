@@ -8,7 +8,7 @@
         
         do log4net.Config.XmlConfigurator.Configure(System.IO.FileInfo(configFile)) |> ignore
 
-        let getMsg km = 
+        let getMsg (km: Kill) = 
             let tags km = 
                 km.Tags 
                     |> Seq.map (fun t -> t.ToString())
@@ -17,10 +17,20 @@
                 match km.TotalValueValuation with
                 | Some x -> sprintf "%.2f" x
                 | _ -> "None"
+            let valuationSpread km = 
+                match km.TotalValueSpread with
+                | Some x -> sprintf "%.2f" x
+                | _ -> "None"
 
-            sprintf "%s Score: %.2f Valuation: %s %s Tags: %s" 
+            let shipType km = 
+                match km.VictimShip with
+                | Some e -> e.Id
+                | _ -> "None"
+
+            sprintf "%s ShipType: %s Score: %.2f TotalValue: %.2f Valuation: %s ValuationSpread: %s %s Tags: %s" 
                 (km.Occurred.ToString(CultureInfo.InvariantCulture)) 
-                km.AlodScore (valuation km)
+                (shipType km)
+                km.AlodScore km.TotalValue (valuation km) (valuationSpread km)
                 km.ZkbUri (tags km)
         
         let logger = log4net.LogManager.GetLogger(typeof<LogPublishActor>)

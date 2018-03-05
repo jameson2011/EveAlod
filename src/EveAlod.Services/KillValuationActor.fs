@@ -36,17 +36,10 @@ type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKi
         match getUri kill with
         | Some uri -> getValue uri                    
         | _ -> async { return Choice2Of2 "No URI" }
-
-    
-    let logKillScore (kill: Kill) score spread =
-        sprintf "Kill: %s ShipType: %s TotalValue: %f Score: %f Spread: %f" 
-            kill.Id kill.VictimShip.Value.Id kill.TotalValue score spread
-        |> logTrace
         
     let forwardValuation kill valuation = 
         match valuation with
             | Choice1Of2 (valuation, spread) ->   
-                                        logKillScore kill valuation spread
                                         forward { kill with TotalValueValuation = Some valuation;
                                                             TotalValueSpread = Some spread }
             | Choice2Of2 text ->        text |> logTrace
