@@ -16,11 +16,11 @@ namespace EveAlod.Services
             | PlayerKill -> 2.
             | NpcKill -> 1.
             | Pod  -> 20.
-            | EcmFitted -> 30.
+            | EcmFitted -> 20.
             | AwoxKill -> 20.
             | SoloKill -> 10.
             | FailFit -> 20.            
-            | WideMarginShipType -> 10.
+            | WideMarginShipType -> 20.
             | NarrowMarginShipType -> 1.
             
 
