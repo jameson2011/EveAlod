@@ -15,7 +15,7 @@ namespace EveAlod.Services
             | Cheap -> 1.
             | PlayerKill -> 2.
             | NpcKill -> 1.
-            | Pod  -> 30.
+            | Pod  -> 20.
             | EcmFitted -> 30.
             | AwoxKill -> 30.
             | SoloKill -> 10.
