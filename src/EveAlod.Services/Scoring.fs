@@ -20,7 +20,7 @@ namespace EveAlod.Services
             | AwoxKill -> 20.
             | SoloKill -> 10.
             | FailFit -> 20.            
-            | WideMarginShipType -> 20.
+            | WideMarginShipType -> 10.
             | NarrowMarginShipType -> 1.
             
 
