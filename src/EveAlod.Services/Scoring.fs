@@ -1,4 +1,4 @@
-﻿namespace EveAlod.Services
+namespace EveAlod.Services
     
     open EveAlod.Data
 
@@ -15,9 +15,9 @@
             | Cheap -> 1.
             | PlayerKill -> 2.
             | NpcKill -> 1.
-            | Pod  -> 10.
-            | EcmFitted -> 10.
-            | AwoxKill -> 10.
+            | Pod  -> 30.
+            | EcmFitted -> 30.
+            | AwoxKill -> 30.
             | SoloKill -> 10.
             | FailFit -> 20.            
             | WideMarginShipType -> 10.
