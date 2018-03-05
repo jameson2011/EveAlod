@@ -17,7 +17,7 @@ namespace EveAlod.Services
             | NpcKill -> 1.
             | Pod  -> 20.
             | EcmFitted -> 30.
-            | AwoxKill -> 30.
+            | AwoxKill -> 20.
             | SoloKill -> 10.
             | FailFit -> 20.            
             | WideMarginShipType -> 10.
