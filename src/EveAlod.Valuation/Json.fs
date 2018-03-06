@@ -48,17 +48,16 @@ module Json=
             |> valueStatisticsToJson prefix
             |> List.ofSeq
         
-        let toPeriod (period: DateTime) (fitted: PeriodValueStatistics) (total: PeriodValueStatistics option) =
-            let values = valueStatisticsToJson "fitted" fitted.Value
+        let toPeriod (period: DateTime) (total: PeriodValueStatistics) (fitted: PeriodValueStatistics option) =
+            let totalValues = valueStatisticsToJson "total" total.Value
                                     |> List.append
                                     [
                                         ("date", JsonValue.String(period.ToString("o")));
-                                        ("count", JsonValue.Float(float fitted.Value.Count));
+                                        ("count", JsonValue.Float(float total.Value.Count));
                                     ] 
+            let fittedValues = fitted |> Option.map (fun v -> valueStatisticsToJson "fitted" v.Value) |> Option.defaultValue []
+            (fittedValues |> List.append totalValues |> Array.ofSeq) |> JsonValue.Record
 
-            let totalValues = total |> Option.map (fun v -> valueStatisticsToJson "total" v.Value) |> Option.defaultValue []
-
-            (totalValues |> List.append values |> Array.ofSeq) |> JsonValue.Record
         let gradientsToJson = Statistics.gradients
                                 >> Seq.map (fun (g,v) -> (g.ToString("N2"), JsonValue.Float v))
                                 >> Array.ofSeq
@@ -67,9 +66,9 @@ module Json=
         let typeId = ("shipTypeId", JsonValue.String(stats.ShipId))
         let zkbUri = ("zkbHref", JsonValue.String stats.ZkbUri)
         let zkbApiUri = ("zkbApiHref", JsonValue.String stats.ZkbApiUri)
-        let periods = stats.FittedValues    |> Seq.map (fun kvp -> kvp.Key, kvp.Value, (stats.TotalValues.TryFind kvp.Key) )
+        let periods = stats.TotalValues     |> Seq.map (fun kvp -> kvp.Key, kvp.Value, (stats.FittedValues.TryFind kvp.Key) )
                                             |> Seq.sortByDescending (fun (k,_,_) -> k)
-                                            |> Seq.map (fun (k,f,t) -> toPeriod k f t)
+                                            |> Seq.map (fun (k,t,f) -> toPeriod k t f)
                                             |> Array.ofSeq        
     
         let summaryData = [ ("count", JsonValue.Float(float stats.FittedValuesSummary.Count)) ]
