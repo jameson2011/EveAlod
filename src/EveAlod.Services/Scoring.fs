@@ -7,8 +7,8 @@ namespace EveAlod.Services
         let private tagScore (tag: KillTag) =
             match tag with
             | CorpKill -> 100.
-            | CorpLoss -> 50.
-            | PlexInHold | SkillInjectorInHold -> 30.
+            | CorpLoss -> 100.
+            | PlexInHold | SkillInjectorInHold -> 20.
             | Expensive -> 100.
             | Spendy -> 40.
             | ZeroValue -> 1.
