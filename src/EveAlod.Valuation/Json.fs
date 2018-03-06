@@ -59,7 +59,11 @@ module Json=
             let totalValues = total |> Option.map (fun v -> valueStatisticsToJson "total" v.Value) |> Option.defaultValue []
 
             (totalValues |> List.append values |> Array.ofSeq) |> JsonValue.Record
-            
+        let gradientsToJson = Statistics.gradients
+                                >> Seq.map (fun (g,v) -> (g.ToString("N2"), JsonValue.Float v))
+                                >> Array.ofSeq
+                                >> JsonValue.Record
+                                
         let typeId = ("shipTypeId", JsonValue.String(stats.ShipId))
         let zkbUri = ("zkbHref", JsonValue.String stats.ZkbUri)
         let zkbApiUri = ("zkbApiHref", JsonValue.String stats.ZkbApiUri)
@@ -77,5 +81,8 @@ module Json=
                                 summaryData) |> Array.ofList
                               
         let summary = ("summary", JsonValue.Record summaryData )
+        
         JsonValue.Record [| typeId; zkbUri; zkbApiUri; summary;
+                            ( "totalGradients", gradientsToJson stats.TotalValuesSummary );
+                            ("fittedGradients", gradientsToJson stats.FittedValuesSummary );
                             ("periods", (JsonValue.Array periods) ) |] |> toString

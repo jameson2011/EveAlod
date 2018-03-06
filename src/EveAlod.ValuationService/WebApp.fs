@@ -17,10 +17,7 @@ module WebApp=
 
     let webRoutes (logger: PostMessage) (ships: ShipStatsActor)= 
         choose
-            [   GET  >=> choose [
-                                    pathScan "/gradients/%s/" (fun id -> WebServices.getShipTypeGradients ships id)
-                                                            >=> WebServices.setNoCache >=> WebServices.jsonMimeType
-
+            [   GET  >=> choose [                                    
                                     pathScan "/stats/%s/" (WebServices.getShipTypeStatsJson ships)
                                                             >=> WebServices.setNoCache >=> WebServices.jsonMimeType
 

@@ -42,8 +42,8 @@ module WebServices=
     let getShipTypeStatsJson (shipStats: ShipStatsActor) (id: string) (ctx: HttpContext)=
         async {
                                 
-            let! stats = shipStats.GetShipTypeStats id
-            
+            let! stats = shipStats.GetShipTypeStats id            
+
             let j = stats |> Json.shipTypeStatsToJson
                         
             return! Successful.OK j ctx
@@ -91,23 +91,4 @@ module WebServices=
             | e -> return! Suave.ServerErrors.INTERNAL_ERROR InternalErrorJson ctx
         }
 
-    let getShipTypeGradients(shipStats: ShipStatsActor) (shipTypeId: string) (ctx: HttpContext)=
-        async {
-            try
-                let! stats = shipStats.GetShipTypeStats shipTypeId
-                
-                let toJson = Statistics.gradients
-                                >> Seq.map (fun (g,v) -> sprintf """ { "percentile": %f, "value": %f }""" g v)
-                                >> EveAlod.Common.Strings.join ", "
-                                >> sprintf "[ %s ]"
-                                
-                let total = stats.TotalValuesSummary |> toJson
-                let fitted = stats.FittedValuesSummary |> toJson
-                
-                let json = sprintf """ { "total": %s, "fitted": %s } """ total fitted
-
-                return! Successful.OK json ctx
-            with
-            | e -> return! Suave.ServerErrors.INTERNAL_ERROR InternalErrorJson ctx
-            
-        }
+    
