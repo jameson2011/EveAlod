@@ -1,6 +1,7 @@
 ﻿namespace EveAlod.Services
 
     open EveAlod.Common
+    open EveAlod.Common.Combinators
     open EveAlod.Data
 
     
@@ -13,16 +14,20 @@
             | None -> false
         
         let isEcm = isType EntityGroupKey.Ecm
-        let isPlex = isType EntityGroupKey.Plex
-        let isSkillInjector = isType EntityGroupKey.SkillInjector
+        let isPlex (item: CargoItem) = 
+            item.Item |> isType EntityGroupKey.Plex
+        let isSkillInjector (item: CargoItem) = 
+            item.Item |> isType EntityGroupKey.SkillInjector
+        let hasQuantity quantity (item: CargoItem) = 
+            item.Quantity >= quantity
         let isPod = isType EntityGroupKey.Capsule
         
         member __.Tag(kill: Kill)=            
             let tags = [                            
                             Tagging.isCorpKill config.MinCorpDamage config.CorpId;
                             Tagging.isCorpLoss config.CorpId;
-                            Tagging.hasItemInHold KillTag.PlexInHold isPlex;
-                            Tagging.hasItemInHold KillTag.SkillInjectorInHold isSkillInjector;
+                            Tagging.hasItemInHold KillTag.PlexInHold (isPlex <&&> hasQuantity 10);
+                            Tagging.hasItemInHold KillTag.SkillInjectorInHold (isSkillInjector <&&> hasQuantity 5);
                             Tagging.hasItemFitted KillTag.EcmFitted isEcm;               
                             Tagging.isPod isPod;
                             Tagging.isPlayer;

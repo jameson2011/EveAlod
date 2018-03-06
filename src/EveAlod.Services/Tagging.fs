@@ -84,9 +84,8 @@
             | Some v -> v >= limit
             | _ -> false
 
-        let hasItemsInCargo (pred: Entity -> bool) (km: Kill) =
+        let hasItemsInCargo (pred: CargoItem -> bool) (km: Kill) =
             km.Cargo
-            |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
         
         let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
@@ -100,7 +99,7 @@
             | true -> Some tag
             | _ -> None
           
-        let hasItemInHold tag (pred: Entity -> bool) =
+        let hasItemInHold tag (pred: CargoItem -> bool) =
             (tagOnTrue tag) (hasItemsInCargo pred)
             
         let hasItemFitted tag (pred: Entity -> bool) =
