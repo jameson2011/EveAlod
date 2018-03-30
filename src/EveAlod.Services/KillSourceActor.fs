@@ -25,7 +25,7 @@
                                     | EveAlod.Common.HttpStatus.OK -> 
                                         match KillTransforms.isKill resp.Message with
                                         | true -> resp.Message |> forward
-                                        | _ -> ActorMessage.Info "No data received from zKB" |> log
+                                        | _ ->  "No data received from zKB" |> Actors.postInfo log
                                         TimeSpan.Zero
                                     | HttpStatus.TooManyRequests -> 
                                         ActorMessage.Warning ("zKB", "zKB reported too many requests") |> log
