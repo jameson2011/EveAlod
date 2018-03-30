@@ -3,7 +3,7 @@ source https://nuget.org/api/v2
 nuget FsCheck
 nuget FsCheck.Xunit
 nuget FSharp.Control.AsyncSeq
-nuget FSharp.Core 4.2.3
+nuget FSharp.Core 4.3.3
 nuget FAKE 4.63.2 restriction: >= net461
 nuget FSharp.Data 2.4.3
 nuget FSharpLint
