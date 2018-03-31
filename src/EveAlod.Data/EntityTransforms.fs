@@ -60,7 +60,38 @@
             | ItemLocation.Implant
             | ItemLocation.Subsystem -> true
             | _ -> false
+    
+        let toLocation (solarSystemId: int) (x: float) (y: float) (z: float) =
+            match IronSde.SolarSystems.fromId solarSystemId with
+            | Some sys ->   let r = IronSde.SolarSystems.region solarSystemId 
+                                        |> (fun r -> { Region.Id = r.id; Name = r.name })
+                            let c = IronSde.SolarSystems.constellation solarSystemId
+                                        |> (fun c -> { Constellation.Id = c.id; Name = c.name })
+                            let sl = match sys.level with
+                                        | IronSde.SecurityLevel.Lowsec -> Lowsec
+                                        | IronSde.SecurityLevel.Nullsec -> Nullsec
+                                        | IronSde.SecurityLevel.Wormhole -> Wormhole
+                                        | _ -> Highsec
+                            let s = { SolarSystem.Id = sys.id; Name = sys.name; 
+                                                SecurityLevel = sys.security;
+                                                Security = sl}
+                            let position = { IronSde.Position.Empty with
+                                                x = x * 1.0<IronSde.m>;
+                                                y = y * 1.0<IronSde.m>;
+                                                z = z * 1.0<IronSde.m>;}
+                            
+                            let cel = match IronSde.MapSearch.findClosestCelestials solarSystemId position with
+                                        | Some (c,_) ->                                                 
+                                                Some { Celestial.Id = IronSde.Celestials.id c; 
+                                                            Name = IronSde.Celestials.name c; }
+                                        | _ -> None
+                            
 
+                            Some { Location.Region = r; Constellation = c; SolarSystem = s; 
+                                            Celestial = cel}
+            | _ -> None
+            
+        
         // Temporary until SDE integrated    
         let isWormholeName (name: string) = 
             let stringComp = StringComparer.InvariantCultureIgnoreCase
@@ -102,8 +133,9 @@
 
         let parseSolarSystem json =
             let o = JsonSolarSystemProvider.Parse(json)            
-            Some { SolarSystem.Id = o.SystemId.ToString();
+            Some { SolarSystem.Id = o.SystemId;
                         Name = o.Name;
+                        SecurityLevel = 0.0;
                         Security = getSecurityStatus o.Name o.SecurityStatus}
 
         let parseCorpSearchResult json = 

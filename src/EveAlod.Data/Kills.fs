@@ -37,9 +37,10 @@
 
     type SolarSystem=
         {
-            Id: string;
+            Id: int;
             Name: string;
-            Security: SpaceSecurity
+            SecurityLevel: float;
+            Security: SpaceSecurity;
         }
 
     type ItemLocation =
@@ -64,6 +65,19 @@
         | FighterBay
         | FighterTube
         | SubsystemBay
+    
+    
+    type Region = { Id: int; Name: string; }
+    type Constellation = { Id: int; Name: string; }
+    type Celestial = { Id: int; Name: string; }
+
+    type Location = {
+            Celestial: Celestial option;
+            SolarSystem: SolarSystem;
+            Constellation: Constellation;
+            Region: Region;
+        }
+
     
 
     type Entity = {
@@ -98,7 +112,7 @@
     type Kill = {   Id: string; 
                     Occurred: DateTime;
                     ZkbUri: string;
-                    Location: Entity option;
+                    Location: Location option;
 
                     Victim: Character option;
                     VictimShip: Entity option;

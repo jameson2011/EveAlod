@@ -78,7 +78,17 @@
             let kmJson = package |> asKill
             let zkb = package |> prop "zkb"
             let id = kmJson |> propStr "killmail_id"
-            let location = zkb |> propStr "locationID" |> toEntity
+            let victimJson = kmJson |> prop "victim"
+            
+            let positionJson = victimJson |> prop "position"
+            let posX = positionJson |> propFloat "x"
+            let posY = positionJson |> propFloat "y"
+            let posZ = positionJson |> propFloat "z"
+            let solarSystemId = kmJson |> propInt "solar_system_id"
+            
+            let locationId = zkb |> propInt "locationID"
+            
+            let location = EntityTransforms.toLocation solarSystemId posX posY posZ
 
             { km with Id = id;
                         Occurred = kmJson |> propDateTime "killmail_time";

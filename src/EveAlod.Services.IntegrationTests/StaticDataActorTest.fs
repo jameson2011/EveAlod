@@ -88,8 +88,8 @@ module StaticDataActorTest=
 
         let getEntity = get actor.SolarSystem 
 
-        let entity = getEntity id
-        let entity2 = getEntity id
+        let entity = getEntity (id.ToString())
+        let entity2 = getEntity (id.ToString())
 
         Assert.Equal(id, entity.Id)
         Assert.Equal(id, entity2.Id)

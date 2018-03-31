@@ -88,7 +88,7 @@ module StaticDataProviderTests=
 
     [<Fact>]
     let ``SolarSystem Jita is Jita``() =
-        let system = match staticProvider.SolarSystem(jitaId) |> Async.RunSynchronously with
+        let system = match staticProvider.SolarSystem((jitaId.ToString())) |> Async.RunSynchronously with
                         | Some s -> s
                         | _ -> failwith "not Some"
         
@@ -98,8 +98,8 @@ module StaticDataProviderTests=
 
     [<Fact>]
     let ``SolarSystem OMS is OMS``() =
-        let id = "30005000"
-        let system = match staticProvider.SolarSystem(id) |> Async.RunSynchronously with
+        let id = 30005000
+        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
                         | Some s -> s
                         | _ -> failwith "not Some"
         
@@ -109,8 +109,8 @@ module StaticDataProviderTests=
 
     [<Fact>]
     let ``SolarSystem Thera is Thera``() =
-        let id = "31000005"
-        let system = match staticProvider.SolarSystem(id) |> Async.RunSynchronously with
+        let id = 31000005
+        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
                         | Some s -> s
                         | _ -> failwith "not Some"
         
@@ -120,8 +120,8 @@ module StaticDataProviderTests=
 
     [<Fact>]
     let ``SolarSystem Poitot``() =
-        let id = "30003271"
-        let system = match staticProvider.SolarSystem(id) |> Async.RunSynchronously with
+        let id = 30003271
+        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
                         | Some s -> s
                         | _ -> failwith "not Some"
         
