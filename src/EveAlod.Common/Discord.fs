@@ -81,11 +81,30 @@ module Discord=
             async {                
                 try
                     let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
-        
+                    
                     let values = new System.Collections.Generic.Dictionary<string, string>()
                     values.Add("content", content)
                     let content = new System.Net.Http.FormUrlEncodedContent(values)
                     
+                    use! response = client.PostAsync(url, content) |> Async.AwaitTask
+                    
+                    return! parseDiscordResponse response
+                    
+                with e -> 
+                    return { WebResponse.Status = HttpStatus.Error;
+                                Retry = Some (TimeSpan.FromSeconds(30.));
+                                Message = "Unknown error: " + e.Message + e.StackTrace
+                            }
+            }
+            
+    
+    let sendJsonContentDiscord (client: HttpClient) (channelId: string) (token: string) (content: string)=
+            async {                
+                try
+                    let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
+                    
+                    let content = new System.Net.Http.StringContent(content, System.Text.Encoding.UTF8, "application/json")
+
                     use! response = client.PostAsync(url, content) |> Async.AwaitTask
                     
                     return! parseDiscordResponse response

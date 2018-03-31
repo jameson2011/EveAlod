@@ -88,6 +88,7 @@
     <Compile Include="KillSourceActor.fs" />
     <Compile Include="KillTagger.fs" />
     <Compile Include="KillMessageBuilder.fs" />
+    <Compile Include="DiscordKillMessageBuilder.fs" />
     <Compile Include="KillTaggerActor.fs" />
     <Compile Include="LogPublishActor.fs" />
     <Compile Include="KillPublisherActor.fs" />

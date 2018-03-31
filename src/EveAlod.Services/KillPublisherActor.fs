@@ -2,7 +2,7 @@
 
     open EveAlod.Data
 
-    type KillPublisherActor(log: PostMessage, msgFactory: KillMessageBuilder, forward: PostString)=
+    type KillPublisherActor(log: PostMessage, msgFactory: DiscordKillMessageBuilder, forward: PostString)=
 
         let onException = Actors.postException typeof<KillPublisherActor>.Name log
         
@@ -13,7 +13,9 @@
                     let! msg = inbox.Receive()
                     match msg with
                         | Killmail km ->                        
-                            km |> msgFactory.CreateMessage |> forward
+                            let msg = km |> msgFactory.CreateMessage 
+                            if msg.Length > 0 then
+                                msg |> forward
                         | _ ->      
                             ignore 0
 

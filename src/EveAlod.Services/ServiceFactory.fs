@@ -21,10 +21,10 @@
 
         let staticDataActor = StaticDataActor(logger.Post, staticDataProvider)
         
-        let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Discord.sendDiscord)
+        let discordPublisher = DiscordPublishActor(logger.Post, mainChannel, EveAlod.Common.Discord.sendJsonContentDiscord)
         
         let killPublisher = KillPublisherActor(logger.Post, 
-                                                    KillMessageBuilder(staticDataActor, config.CorpId), 
+                                                    DiscordKillMessageBuilder(staticDataActor, config.CorpId), 
                                                     [ discordPublisher.Post; ] |> Actors.forwardMany (SendToDiscord))
         
         let killFilter = KillFilterActor(logger.Post, 
