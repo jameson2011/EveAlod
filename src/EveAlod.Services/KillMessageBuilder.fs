@@ -6,6 +6,15 @@
 
     type KillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
                 
+        let getLocationText (location: Location option) =
+            match location with
+            | Some l ->     let cel = l.Celestial |> Option.map (fun c -> c.Name) |> Option.defaultValue ""
+                            let r = l.Region.Name
+                            let c = l.Constellation.Name
+                            let s = l.SolarSystem.Name
+                            sprintf "%s - %s - %s - %s" cel s c r 
+            | _ -> ""
+
         let getTagText =  Commentary.getText |> Commentary.getTagsText 
          
         let composeCharNames (characters: Character list) = 
@@ -56,6 +65,7 @@
             km.Tags |> Seq.exists (fun t -> t = tag)
             
         let getMsg km = 
+            let location = getLocationText km.Location
             let tags = getTagText km.Tags 
             let uri = km.ZkbUri
             let value = km.TotalValue
@@ -65,9 +75,9 @@
                             | _ -> ""
                             
             if charNames.Length > 0 then
-                String.Format("{0} by {1} {2} {3:N} ISK", tags, charNames, uri, value).Trim()
+                String.Format("{0} by {1} {2} {3:N} ISK {4}", tags, charNames, uri, value, location).Trim()
             else
-                String.Format("{0} {1} {2:N} ISK", tags, uri, value).Trim()
+                String.Format("{0} {1} {2:N} ISK {3}", tags, uri, value, location).Trim()
             
         
         member this.CreateMessage(kill) =             
