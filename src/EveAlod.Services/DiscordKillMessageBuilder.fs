@@ -18,6 +18,7 @@
         let toFieldsJson xs = ("fields", JsonValue.Array xs)
 
         let getTagText =  Commentary.getText |> Commentary.getTagsText 
+        let formatIsk (value: float) = value.ToString("N0")
 
         let getCharacters (chars: seq<Character>) =            
             chars 
@@ -118,8 +119,8 @@
             let value = kill.TotalValue
 
             let text = match victim with
-                        | "" -> sprintf "**%s ISK** gone\n%s" (value.ToString("N2")) location
-                        | v ->  sprintf "%s lost **%s ISK**\n%s" v (value.ToString("N2")) location
+                        | "" -> sprintf "**%s ISK** gone\n%s" (formatIsk value) location
+                        | v ->  sprintf "%s lost **%s ISK**\n%s" v (formatIsk value) location
 
             ("description", text |> toJsonValueString)
 
