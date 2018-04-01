@@ -8,7 +8,7 @@ nuget FAKE 4.63.2 restriction: >= net461
 nuget FSharp.Data 2.4.3
 nuget FSharpLint
 nuget FSharpLint.Fake
-nuget IronSde 0.0.0.8
+nuget IronSde 0.0.0.9
 nuget log4net
 nuget Microsoft.Extensions.CommandLineUtils 1.1.1 restriction: >= net461
 nuget mongocsharpdriver 2.5.0
