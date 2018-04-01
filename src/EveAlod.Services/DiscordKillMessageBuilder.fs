@@ -25,11 +25,25 @@
                 |> Seq.map (fun c -> c.Char.Id |> staticEntities.Character)
                 |> Async.Parallel
                 |> Async.RunSynchronously                  
-                |> Array.filter (fun c -> c.IsSome)
-                |> Seq.map (fun c -> c.Value)
+                |> Array.filter Option.isSome
+                |> Seq.map Option.get
                 |> List.ofSeq
 
-            
+        let getEntities (entities: seq<Entity>) =
+            entities
+                |> Seq.map (fun c -> c.Id |> staticEntities.Entity)
+                |> Async.Parallel
+                |> Async.RunSynchronously                  
+                |> Array.filter Option.isSome
+                |> Seq.map Option.get
+                |> List.ofSeq
+
+        let getVictimShipType (kill: Kill) =
+            kill.VictimShip 
+            |> Option.map (fun f -> [ f ]) |> Option.defaultValue []
+            |> getEntities
+            |> List.tryHead
+
         let titleLink (kill: Kill) = getTagText kill.Tags 
         let title kill = ("title", JsonValue.String(titleLink kill))
 
@@ -52,6 +66,9 @@
             sprintf "[%s](https://zkillboard.com/location/%i/)" value.Name value.Id
         let characterLink (value: Character) =
             sprintf "[%s](https://zkillboard.com/character/%s/)" value.Char.Name value.Char.Id
+        let shipTypeLink (value: Entity) =
+            sprintf "[%s](https://zkillboard.com/ship/%s/)" value.Name value.Id
+
         let getLocationText (location: Location option) =
             match location with
             | Some l ->     let cel = l.Celestial |> Option.map celestialLink |> Option.defaultValue ""
@@ -106,21 +123,25 @@
             | _ -> ""
             
         let shipTypeThumbnailLink (shipType: Entity option) =
-            match shipType with
-            | Some e -> sprintf "https://image.eveonline.com/Render/%s_128.png" e.Id
-            | _ -> ""
+            (match shipType with
+            | Some e -> e.Id
+            | _ -> "0") |> sprintf "https://image.eveonline.com/Render/%s_128.png" 
 
         let shipTypeThumbnail (shipType: Entity option)= 
             ("thumbnail", JsonValue.Record([| "url", JsonValue.String(shipTypeThumbnailLink shipType) |] ))            
 
-        let descriptionField (kill: Kill)=
-            let location = getLocationText kill.Location                                    
-            let victim = victimLink kill.Victim
+        let descriptionField (kill: Kill) (victimShipType: Entity option)=
+            let location = getLocationText kill.Location
+            
             let value = kill.TotalValue
-
-            let text = match victim with
-                        | "" -> sprintf "**%s ISK** gone\n%s" (formatIsk value) location
-                        | v ->  sprintf "%s lost **%s ISK**\n%s" v (formatIsk value) location
+            let victimShipTypeLink = victimShipType |> Option.map shipTypeLink                                        
+            let victim = victimLink kill.Victim
+            
+            let text = match victim, victimShipTypeLink with
+                        | "", None ->       sprintf "**%s ISK** gone\n%s" (formatIsk value) location
+                        | "", Some vst ->   sprintf "**%s ISK** %s gone\n%s" (formatIsk value) vst location
+                        | v, Some vst ->    sprintf "%s lost a **%s ISK** %s\n%s" v (formatIsk value) vst location
+                        | v, None ->        sprintf "%s lost **%s ISK**\n%s" v (formatIsk value) location
 
             ("description", text |> toJsonValueString)
 
@@ -150,7 +171,7 @@
             
         
         let getCorpLossMsg (kill: Kill) =             
-                                   
+            let victimShipType = getVictimShipType kill            
             let attackers = getKillNonCorpCharacters corpId kill |> opponentsField 
             let fields =  [| attackers |] 
                             |> Array.filter (Array.isEmpty >> not)
@@ -161,13 +182,13 @@
                                 url kill; 
                                 color red; 
                                 footer(); 
-                                shipTypeThumbnail kill.VictimShip; 
-                                descriptionField kill;
+                                shipTypeThumbnail victimShipType; 
+                                descriptionField kill victimShipType;
                                 fields|]
             elements |> toEmbedsJson |> toJsonString
             
         let getCorpWinMsg (kill: Kill) =             
-                        
+            let victimShipType = getVictimShipType kill
             let corpMates = getKillCorpCharacters corpId kill |> corpMatesField 
             let killwhores = getKillNonCorpCharacters corpId kill |> killWhoresField 
 
@@ -180,14 +201,14 @@
                                 url kill; 
                                 color green; 
                                 footer(); 
-                                shipTypeThumbnail kill.VictimShip; 
-                                descriptionField kill;
+                                shipTypeThumbnail victimShipType;
+                                descriptionField kill victimShipType;
                                 fields|]
 
             elements |> toEmbedsJson |> toJsonString
 
         let getGenericMsg kill = 
-                        
+            let victimShipType = getVictimShipType kill
             let opponents = getKillNonCorpCharacters corpId kill |> opponentsField 
 
             let fields =  [| opponents |] 
@@ -199,8 +220,8 @@
                                 url kill; 
                                 color blue; 
                                 footer(); 
-                                shipTypeThumbnail kill.VictimShip; 
-                                descriptionField kill;
+                                shipTypeThumbnail victimShipType; 
+                                descriptionField kill victimShipType;
                                 fields|]
 
             elements |> toEmbedsJson |> toJsonString
