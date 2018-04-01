@@ -145,6 +145,18 @@ module StaticDataProviderTests=
         Assert.Equal(rifterId, entity.Id)
         Assert.Equal("Rifter", entity.Name)
 
+    [<Theory>]
+    [<InlineData("23919", "Aeon")>]
+    [<InlineData("28352", "Rorqual")>]
+    let ``Entity returns expected values``(id: string, name: string) =
+        let entity = match staticProvider.Entity(id) |> Async.RunSynchronously with
+                     | Some e -> e
+                     | _ -> failwith "not Some"
+        
+        Assert.Equal(id, entity.Id)
+        Assert.Equal(name, entity.Name)
+
+
     [<Fact>]
     let ``Entity returns None on unknown id``() =
         let id = System.Guid.NewGuid().ToString()

@@ -109,6 +109,22 @@ module StaticDataActorTest=
         Assert.True(Option.isNone entity2)
         Assert.True(Option.isNone entity3)
 
+    
+    [<Theory>]
+    [<InlineData("587", "Rifter")>]
+    [<InlineData("23919", "Aeon")>]
+    [<InlineData("28352", "Rorqual")>]    
+    let ``Entity returns entity``(id: string, name: string) =
+        let actor = StaticDataActor(log, staticProvider)
         
+        let getEntity = get actor.Entity 
+
+        let entity = getEntity (id.ToString())
+        let entity2 = getEntity (id.ToString())
+
+        Assert.Equal(id, entity.Id)
+        Assert.Equal(name, entity.Name)
+        Assert.Equal(id, entity2.Id)
+        Assert.Equal(name, entity2.Name)
 
         

@@ -9,13 +9,14 @@
             Characters: Map<string, Character option>;
             SolarSystems: Map<string, SolarSystem option>;
             EntityGroups: Map<EntityGroupKey, Set<string> option>;
+            Entities: Map<string, Entity option>;
         }
 
     type private DataActorMessage=
         | GetCharacter of string * AsyncReplyChannel<Character option>
         | GetSolarSystem of string * AsyncReplyChannel<SolarSystem option>
         | GetEntityGroup of EntityGroupKey * AsyncReplyChannel<Set<string> option>
-        
+        | GetEntity of string * AsyncReplyChannel<Entity option>
 
     type StaticDataActor(log: PostMessage, provider: IStaticEntityProvider)=
         
@@ -49,6 +50,13 @@
                 return { cache with EntityGroups = m}, c
             }
 
+        let entityId (cache: StaticDataCache) (id: string) =
+            async {
+                let! (m,c) = cacheGetOrSet cache.Entities provider.Entity id
+                return { cache with Entities = m}, c
+            }
+
+
         let onRequest (cache: StaticDataCache) get id (chnl: AsyncReplyChannel<'a>) : Async<StaticDataCache> =
             async {             
                 try
@@ -75,6 +83,9 @@
 
                                         | GetEntityGroup (key, ch) ->
                                             return! onRequest cache entityGroupIds key ch
+
+                                        | GetEntity (id, ch) ->
+                                            return! onRequest cache entityId id ch
                                     }
 
                 return! loop(newCache)
@@ -83,6 +94,7 @@
             let cache = { StaticDataCache.Characters = Map.empty<string, Character option>;
                             SolarSystems = Map.empty<string, SolarSystem option>;
                             EntityGroups = Map.empty<EntityGroupKey, Set<string> option>;
+                            Entities = Map.empty<string, Entity option>;
                             }
             loop(cache)
             )
@@ -97,4 +109,7 @@
            
         member __.EntityIds(key: EntityGroupKey) = 
             agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetEntityGroup (key, ch))
+
+        member __.Entity(id: string) = 
+            agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetEntity (id, ch))
             
