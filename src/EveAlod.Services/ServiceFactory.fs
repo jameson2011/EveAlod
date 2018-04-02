@@ -41,9 +41,13 @@
         let killValuationActor = KillValuationActor(config, logger.Post,
                                                     [ killTagger.Post ] |> Actors.forwardMany (Killmail))
 
+        let killDeduper = KillDeduperActor(logger.Post, 
+                                                [ killValuationActor.Post ] |> Actors.forwardMany (Killmail) )
+
+
         let killTransform = KillTransformActor(logger.Post, 
-                                                [ killValuationActor.Post ] |> Actors.forwardMany (Killmail))
-       
+                                                [ killDeduper.Post ] |> Actors.forwardMany (Killmail))
+               
         let killSource = KillSourceActor(logger.Post,
                                                 [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillmailJson) ,
                                                 EveAlod.Common.Web.getData,

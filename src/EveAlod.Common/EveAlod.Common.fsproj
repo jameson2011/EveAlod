@@ -81,6 +81,7 @@
     <Compile Include="Seq.fs" />
     <Compile Include="Web.fs" />
     <Compile Include="Json.fs" />
+    <Compile Include="MutableCappedBuffer.fs" />
     <Compile Include="CommandLine.fs" />
     <Compile Include="MongoDb.fs" />
     <Compile Include="Discord.fs" />

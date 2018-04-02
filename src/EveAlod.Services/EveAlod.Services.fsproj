@@ -91,6 +91,7 @@
     <Compile Include="DiscordKillMessageBuilder.fs" />
     <Compile Include="KillTaggerActor.fs" />
     <Compile Include="LogPublishActor.fs" />
+    <Compile Include="KillDeduperActor.fs" />
     <Compile Include="KillPublisherActor.fs" />
     <Compile Include="ServiceFactory.fs" />
     <None Include="SampleConfig.json" />
