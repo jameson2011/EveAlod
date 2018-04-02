@@ -6,7 +6,6 @@
         open System
 
         type JsonCorpSearchProvider = JsonProvider<"""{ "corporation": [ 234 ] }""">
-        type JsonSolarSystemProvider = JsonProvider<"./SampleSolarSystem.json">
         type JsonGroupIdProvider = JsonProvider<"./SampleIds.json">
         type JsonCategoryProvider = JsonProvider<"./SampleCategory.json">
         type JsonGroupProvider = JsonProvider<"./SampleEntityGroup.json">
@@ -130,13 +129,6 @@
         let parseCategoryGroupIds json =
             let root = (JsonCategoryProvider.Parse(json))
             root.Groups |> Seq.map (fun v -> v.ToString()) |> List.ofSeq
-
-        let parseSolarSystem json =
-            let o = JsonSolarSystemProvider.Parse(json)            
-            Some { SolarSystem.Id = o.SystemId;
-                        Name = o.Name;
-                        SecurityLevel = 0.0;
-                        Security = getSecurityStatus o.Name o.SecurityStatus}
 
         let parseCorpSearchResult json = 
             let o = JsonCorpSearchProvider.Parse(json)

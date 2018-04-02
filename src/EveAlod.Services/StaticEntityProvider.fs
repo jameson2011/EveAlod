@@ -69,15 +69,6 @@
                         | _ -> None
             }
 
-        let getSolarSystem(id: string)=
-            async{
-                let! response = id |> systemsUri |> getData
-                return match response.Status with
-                        | EveAlod.Common.HttpStatus.OK -> 
-                            response.Message |> EntityTransforms.parseSolarSystem
-                        | _ -> None
-                }
-
         let getCorpByTicker(ticker: string)=
             async{
                 let! response = ticker |> corpSearchUri |> getData
@@ -126,8 +117,6 @@
             member __.Entity (id: string) = getEntity id
 
             member __.Character(id: string) = getCharacter id
-
-            member __.SolarSystem(id: string) = getSolarSystem id
 
             member __.CorporationByTicker(ticker: string) = getCorpByTicker ticker
             

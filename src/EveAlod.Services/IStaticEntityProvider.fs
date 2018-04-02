@@ -6,6 +6,5 @@
         abstract member EntityIds: EntityGroupKey -> Async<Set<string> option>
         abstract member Entity: string -> Async<Entity option>
         abstract member Character: string -> Async<Character option>
-        abstract member SolarSystem: string -> Async<SolarSystem option>
         abstract member CorporationByTicker: string -> Async<Entity option>
 

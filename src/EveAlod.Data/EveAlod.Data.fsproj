@@ -81,7 +81,6 @@
     <None Include="SampleEntity.json" />
     <None Include="SampleEntityGroup.json" />
     <None Include="SampleIds.json" />
-    <None Include="SampleSolarSystem.json" />
     <None Include="SampleCategory.json" />
   </ItemGroup>
   <ItemGroup>

@@ -7,14 +7,12 @@
     type private StaticDataCache=
         {
             Characters: Map<string, Character option>;
-            SolarSystems: Map<string, SolarSystem option>;
             EntityGroups: Map<EntityGroupKey, Set<string> option>;
             Entities: Map<string, Entity option>;
         }
 
     type private DataActorMessage=
         | GetCharacter of string * AsyncReplyChannel<Character option>
-        | GetSolarSystem of string * AsyncReplyChannel<SolarSystem option>
         | GetEntityGroup of EntityGroupKey * AsyncReplyChannel<Set<string> option>
         | GetEntity of string * AsyncReplyChannel<Entity option>
 
@@ -31,13 +29,7 @@
                         let m = cache.Add(id, x)
                         return m, x
                 }
-
-        let solarSystem (cache: StaticDataCache) id=
-            async {
-                let! (m, s) = cacheGetOrSet cache.SolarSystems provider.SolarSystem id
-                return { cache with SolarSystems = m }, s                
-            }
-
+        
         let character (cache: StaticDataCache) id =
             async {
                 let! (m,c) = cacheGetOrSet cache.Characters provider.Character id
@@ -75,9 +67,6 @@
 
                 let! newCache = async {
                                         match msg with
-                                        | GetSolarSystem (id, ch) -> 
-                                            return! onRequest cache solarSystem id ch                                            
-                                            
                                         | GetCharacter (id, ch) ->
                                             return! onRequest cache character id ch
 
@@ -92,7 +81,6 @@
             }
 
             let cache = { StaticDataCache.Characters = Map.empty<string, Character option>;
-                            SolarSystems = Map.empty<string, SolarSystem option>;
                             EntityGroups = Map.empty<EntityGroupKey, Set<string> option>;
                             Entities = Map.empty<string, Entity option>;
                             }
@@ -101,9 +89,6 @@
 
         do agent.Error.Add(onException)
 
-        member __.SolarSystem(id: string)=
-            agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetSolarSystem (id,ch))
-            
         member __.Character(id: string) = 
             agent.PostAndAsyncReply (fun ch -> DataActorMessage.GetCharacter (id,ch))
            

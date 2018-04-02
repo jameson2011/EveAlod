@@ -86,55 +86,6 @@ module StaticDataProviderTests=
         
         Assert.True(ids |> Set.contains rifterId)
 
-    [<Fact>]
-    let ``SolarSystem Jita is Jita``() =
-        let system = match staticProvider.SolarSystem((jitaId.ToString())) |> Async.RunSynchronously with
-                        | Some s -> s
-                        | _ -> failwith "not Some"
-        
-        Assert.Equal(jitaId, system.Id)
-        Assert.Equal("Jita", system.Name)
-        Assert.Equal(SpaceSecurity.Highsec, system.Security)
-
-    [<Fact>]
-    let ``SolarSystem OMS is OMS``() =
-        let id = 30005000
-        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
-                        | Some s -> s
-                        | _ -> failwith "not Some"
-        
-        Assert.Equal(id, system.Id)
-        Assert.Equal("Old Man Star", system.Name)
-        Assert.Equal(SpaceSecurity.Lowsec, system.Security)
-
-    [<Fact>]
-    let ``SolarSystem Thera is Thera``() =
-        let id = 31000005
-        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
-                        | Some s -> s
-                        | _ -> failwith "not Some"
-        
-        Assert.Equal(id, system.Id)
-        Assert.Equal("Thera", system.Name)
-        Assert.Equal(SpaceSecurity.Wormhole, system.Security)
-
-    [<Fact>]
-    let ``SolarSystem Poitot``() =
-        let id = 30003271
-        let system = match staticProvider.SolarSystem((id.ToString())) |> Async.RunSynchronously with
-                        | Some s -> s
-                        | _ -> failwith "not Some"
-        
-        Assert.Equal(id, system.Id)
-        Assert.Equal("Poitot", system.Name)
-        Assert.Equal(SpaceSecurity.Nullsec, system.Security)
-
-    [<Fact>]
-    let ``SolarSystem None on unknown id``() =
-        let id = System.Guid.NewGuid().ToString()
-        let system = staticProvider.SolarSystem(id) |> Async.RunSynchronously
-        
-        Assert.True(system |> Option.isNone)
         
     [<Fact>]
     let ``Entity returns Rifter``() =        

@@ -81,34 +81,6 @@ module StaticDataActorTest=
         Assert.True(Option.isNone entity2)
         Assert.True(Option.isNone entity3)
 
-    [<Fact>]
-    let ``SolarSystem returns entity``() =
-        let actor = StaticDataActor(log, staticProvider)
-        let id = jitaId
-
-        let getEntity = get actor.SolarSystem 
-
-        let entity = getEntity (id.ToString())
-        let entity2 = getEntity (id.ToString())
-
-        Assert.Equal(id, entity.Id)
-        Assert.Equal(id, entity2.Id)
-
-    [<Fact>]
-    let ``SolarSystem returns None``() =
-        let actor = StaticDataActor(log, staticProvider)
-        let id = System.Guid.NewGuid().ToString()
-
-        let getEntity = getNone actor.SolarSystem 
-
-        let entity = getEntity id
-        let entity2 = getEntity id
-        let entity3 = getEntity id
-
-        Assert.True(Option.isNone entity)
-        Assert.True(Option.isNone entity2)
-        Assert.True(Option.isNone entity3)
-
     
     [<Theory>]
     [<InlineData("587", "Rifter")>]
