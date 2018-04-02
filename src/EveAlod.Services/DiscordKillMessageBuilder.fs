@@ -89,6 +89,16 @@
                             | _ -> sprintf "%s - %s - %s - %s (%s)" cel s c r  sec
             | _ -> ""
 
+        let valueField (kill: Kill) = 
+            let value = formatIsk kill.TotalValue
+            match kill.TotalValueValuation with
+            | Some v -> [| ("name", toJsonValueString "value");
+                            ("value", (v * 100.) 
+                                        |> sprintf "**%s ISK**, **%.2f%%** of highest value for this ship type" value 
+                                        |> toJsonValueString) |] 
+            | _ -> Array.empty
+            
+
         let viewableTags (tags: KillTag list) =
             let viewable (tag: KillTag) =
                 match tag with
@@ -201,8 +211,9 @@
             let victimShipType = getVictimShipType kill            
             let attackers = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
+            let valueField = valueField kill
 
-            let fields =  [| attackers; tagsField |] 
+            let fields =  [| attackers; valueField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -220,9 +231,10 @@
             let victimShipType = getVictimShipType kill
             let corpMates = getKillCorpCharacters corpId kill |> corpMatesField 
             let killwhores = getKillNonCorpCharacters corpId kill |> killWhoresField 
+            let valueField = valueField kill
             let tagsField = kill.Tags |> viewableTags |> tagsField
 
-            let fields =  [| corpMates; killwhores; tagsField |] 
+            let fields =  [| corpMates; killwhores; valueField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -241,8 +253,9 @@
             let victimShipType = getVictimShipType kill
             let opponents = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
+            let valueField = valueField kill
 
-            let fields =  [| opponents; tagsField |] 
+            let fields =  [| opponents; valueField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
