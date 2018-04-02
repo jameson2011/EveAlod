@@ -89,6 +89,26 @@
                             | _ -> sprintf "%s - %s - %s - %s (%s)" cel s c r  sec
             | _ -> ""
 
+        let viewableTags (tags: KillTag list) =
+            let viewable (tag: KillTag) =
+                match tag with
+                | PlayerKill | CorpKill | CorpLoss
+                | Spendy | Expensive | Cheap | ZeroValue
+                | WideMarginShipType | NarrowMarginShipType -> false
+                | _ -> true
+            tags |> List.filter viewable
+
+        let tagsField (tags: KillTag list) =
+            match tags with
+            | [] -> Array.empty 
+            | _ ->  
+                    let tags = tags |> Seq.map (sprintf "%A") |> Strings.join ", "
+                    [| 
+                        ("name", toJsonValueString "tags");
+                        ("value", toJsonValueString tags);
+                    |]
+
+
         let composeCharNames (characters: Character list) = 
             characters 
                 |> Seq.filter (fun c ->  not (String.IsNullOrWhiteSpace(c.Char.Name)))
@@ -180,7 +200,9 @@
         let getCorpLossMsg (kill: Kill) =             
             let victimShipType = getVictimShipType kill            
             let attackers = getKillNonCorpCharacters corpId kill |> opponentsField 
-            let fields =  [| attackers |] 
+            let tagsField = kill.Tags |> viewableTags |> tagsField
+
+            let fields =  [| attackers; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -198,8 +220,9 @@
             let victimShipType = getVictimShipType kill
             let corpMates = getKillCorpCharacters corpId kill |> corpMatesField 
             let killwhores = getKillNonCorpCharacters corpId kill |> killWhoresField 
+            let tagsField = kill.Tags |> viewableTags |> tagsField
 
-            let fields =  [| corpMates; killwhores |] 
+            let fields =  [| corpMates; killwhores; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -217,8 +240,9 @@
         let getGenericMsg kill = 
             let victimShipType = getVictimShipType kill
             let opponents = getKillNonCorpCharacters corpId kill |> opponentsField 
+            let tagsField = kill.Tags |> viewableTags |> tagsField
 
-            let fields =  [| opponents |] 
+            let fields =  [| opponents; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
