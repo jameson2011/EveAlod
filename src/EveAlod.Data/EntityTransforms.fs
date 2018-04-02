@@ -80,7 +80,7 @@
                                                 y = y * 1.0<IronSde.m>;
                                                 z = z * 1.0<IronSde.m>;}
                             
-                            let cel = match IronSde.MapSearch.findClosestCelestials solarSystemId position with
+                            let cel = match IronSde.MapSearch.findClosestCelestial solarSystemId position with
                                         | Some (c,_) ->                                                 
                                                 Some { Celestial.Id = IronSde.Celestials.id c; 
                                                             Name = IronSde.Celestials.name c; }
