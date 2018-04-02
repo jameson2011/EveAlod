@@ -3,6 +3,7 @@
     open System
     open FSharp.Data
     open EveAlod.Data
+    open EveAlod.Common
     open EveAlod.Common.Strings
 
     type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
@@ -55,19 +56,25 @@
             ("footer", JsonValue.Record([| "text", JsonValue.String("provided by evealod, jameson2011, zkillboard.com & ccp") |] ))
 
         let regionLink (value: Region) =
-            sprintf "[%s](https://zkillboard.com/region/%i/)" value.Name value.Id
+            value.Id |> Zkb.regionKillsUri |> sprintf "[%s](%s)" value.Name
+
         let constellationLink (value: Constellation) =
             sprintf "%s" value.Name
+
         let solarSystemLink (value: SolarSystem) =
-            sprintf "[%s](https://zkillboard.com/system/%i/)" value.Name value.Id
+            value.Id |> Zkb.solarSystemKillsUrl |> sprintf "[%s](%s)" value.Name 
+
         let solarSystemSecurity (value: SolarSystem) =
             sprintf "%A: %s" value.Security (value.SecurityLevel.ToString("N1"))
+
         let celestialLink (value: Celestial) =
-            sprintf "[%s](https://zkillboard.com/location/%i/)" value.Name value.Id
+            value.Id |> Zkb.locationKillsUri |> sprintf "[%s](%s)" value.Name 
+
         let characterLink (value: Character) =
-            sprintf "[%s](https://zkillboard.com/character/%s/)" value.Char.Name value.Char.Id
+            value.Char.Id |> Zkb.characterKillboardUri |> sprintf "[%s](%s)" value.Char.Name
+
         let shipTypeLink (value: Entity) =
-            sprintf "[%s](https://zkillboard.com/ship/%s/)" value.Name value.Id
+            value.Id |> Zkb.shipTypeKillsUri |> sprintf "[%s](%s)" value.Name 
 
         let getLocationText (location: Location option) =
             match location with

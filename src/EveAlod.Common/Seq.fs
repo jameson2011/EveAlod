@@ -3,8 +3,8 @@
 
         let mapSomes (values: seq<'a option>)= 
             values
-            |> Seq.filter (fun v -> v.IsSome)
-            |> Seq.map (fun v -> v.Value)
+            |> Seq.filter Option.isSome
+            |> Seq.map Option.get
                     
         let splitTuples values =
             let rec splitInner values left right =
