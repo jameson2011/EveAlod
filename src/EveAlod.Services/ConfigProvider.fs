@@ -2,6 +2,7 @@
     
     open System.IO
     open FSharp.Data
+    open EveAlod.Common
     open EveAlod.Common.IO
     open EveAlod.Common.Strings
     open EveAlod.Data
@@ -60,7 +61,7 @@
             
         let setKillSourceUri(config: Configuration)=
             let uri = match config.KillSourceUri with     
-                        | NullOrWhitespace _ -> "https://redisq.zkillboard.com/listen.php?ttw=10"
+                        | NullOrWhitespace _ -> Zkb.redisqUri
                         | u -> u
             { config with KillSourceUri = uri }       
             

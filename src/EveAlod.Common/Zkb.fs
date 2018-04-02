@@ -5,6 +5,12 @@ module Zkb=
     [<Literal>]
     let private zkbDomain = "https://zkillboard.com"
 
+    let redisqUri = 
+        "https://redisq.zkillboard.com/listen.php?ttw=10"
+
+    let killUri id =
+        sprintf "%s/kill/%s/" zkbDomain id
+
     let regionKillsUri id = 
         sprintf "%s/region/%i/" zkbDomain id
 

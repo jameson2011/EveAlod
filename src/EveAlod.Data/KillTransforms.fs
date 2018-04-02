@@ -86,13 +86,11 @@
             let posZ = positionJson |> propFloat "z"
             let solarSystemId = kmJson |> propInt "solar_system_id"
             
-            let locationId = zkb |> propInt "locationID"
-            
             let location = EntityTransforms.toLocation solarSystemId posX posY posZ
 
             { km with Id = id;
                         Occurred = kmJson |> propDateTime "killmail_time";
-                        ZkbUri = (sprintf "https://zkillboard.com/kill/%s/" id);
+                        ZkbUri = id |> Zkb.killUri;
                         Location = location;
                         TotalValue = zkb |> propFloat "totalValue";
                         Tags = (toStandardTags zkb);
