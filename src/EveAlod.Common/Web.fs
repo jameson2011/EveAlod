@@ -68,6 +68,8 @@
                 
         let private userAgent = "EveALOD (https://github.com/jameson2011/EveAlod)"
         let private gzip = "gzip"        
+
+        let jsonMimeType = "application/json"
             
         let httpClient()=
             let client = new System.Net.Http.HttpClient()

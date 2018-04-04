@@ -10,7 +10,15 @@ module Discord=
 
     type Discord429Payload = JsonProvider<"""{ "message": "a", "retry_after": 0, "global":  false }""">
     type DiscordWebhookPayload = JsonProvider<"./SampleDiscordWebhookResponse.json">
+
+    let private exResponse (e: Exception) =
+        { WebResponse.Status = HttpStatus.Error;
+                    Retry = Some (TimeSpan.FromSeconds(30.));
+                    Message = "Unknown error: " + e.Message + e.StackTrace
+                }
         
+    let discordWebhookUri channelId token = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
+
     let getDiscordRateLimitReset(response: Http.HttpResponseMessage) =
             response
                 |> getHeaderValue "X-RateLimit-Reset"
@@ -80,7 +88,7 @@ module Discord=
     let sendDiscord (client: HttpClient) (channelId: string) (token: string) (content: string)=
             async {                
                 try
-                    let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
+                    let url = discordWebhookUri channelId token
                     
                     let values = new System.Collections.Generic.Dictionary<string, string>()
                     values.Add("content", content)
@@ -90,29 +98,20 @@ module Discord=
                     
                     return! parseDiscordResponse response
                     
-                with e -> 
-                    return { WebResponse.Status = HttpStatus.Error;
-                                Retry = Some (TimeSpan.FromSeconds(30.));
-                                Message = "Unknown error: " + e.Message + e.StackTrace
-                            }
+                with e -> return (exResponse e)
             }
-            
-    
+                
     let sendJsonContentDiscord (client: HttpClient) (channelId: string) (token: string) (content: string)=
             async {                
                 try
-                    let url = sprintf "https://discordapp.com/api/webhooks/%s/%s" channelId token
+                    let url = discordWebhookUri channelId token
                     
-                    let content = new System.Net.Http.StringContent(content, System.Text.Encoding.UTF8, "application/json")
+                    let content = new System.Net.Http.StringContent(content, System.Text.Encoding.UTF8, Web.jsonMimeType)
 
                     use! response = client.PostAsync(url, content) |> Async.AwaitTask
                     
                     return! parseDiscordResponse response
                     
-                with e -> 
-                    return { WebResponse.Status = HttpStatus.Error;
-                                Retry = Some (TimeSpan.FromSeconds(30.));
-                                Message = "Unknown error: " + e.Message + e.StackTrace
-                            }
+                with e -> return (exResponse e)
             }
             

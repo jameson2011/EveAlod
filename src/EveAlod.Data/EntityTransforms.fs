@@ -88,24 +88,8 @@
 
                             Some { Location.Region = r; Constellation = c; SolarSystem = s; 
                                             Celestial = cel}
-            | _ -> None
-            
+            | _ -> None    
         
-        // Temporary until SDE integrated    
-        let isWormholeName (name: string) = 
-            let stringComp = StringComparer.InvariantCultureIgnoreCase
-            (name.StartsWith("J", StringComparison.InvariantCultureIgnoreCase) &&          
-                (name.IndexOf("-") < 0 ) &&
-                Int32.TryParse(name.Substring(1)) |> (fun (isWh,_) -> isWh) ) ||
-            stringComp.Equals(name, "Thera")
-
-        let getSecurityStatus name status = 
-            match (name, status) with        
-                        | _,s when s >= 0.5m -> SpaceSecurity.Highsec
-                        | _,s when s > 0.0m -> SpaceSecurity.Lowsec
-                        | n,s when (isWormholeName n) -> SpaceSecurity.Wormhole
-                        | _ -> SpaceSecurity.Nullsec        
-
         let parseCharacter id json = 
             let root = (JsonCharacterProvider.Parse(json))
             Some {Character.Char = {Entity.Id = id; Name = root.Name; };
