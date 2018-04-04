@@ -11,8 +11,8 @@ module Locations=
     
     let private findCelestial solarSystemId position =
         IronSde.MapSearch.findClosestCelestial solarSystemId position 
-            |> Option.bind (fun (c,_) -> Some { Celestial.Id = IronSde.Celestials.id c; 
-                                                            Name = IronSde.Celestials.name c; })
+            |> Option.map (fun (c,d) -> { Celestial.Id = IronSde.Celestials.id c; 
+                                                            Name = IronSde.Celestials.name c;}, d)
                 
     let region solarSystemId =
         solarSystemId   |> IronSde.SolarSystems.region 
@@ -25,15 +25,20 @@ module Locations=
     let toLocation (solarSystemId: int) (x: float) (y: float) (z: float) =
         solarSystemId 
             |> IronSde.SolarSystems.fromId 
-            |> Option.bind (fun sys -> 
-                                        let s = { SolarSystem.Id = sys.id; Name = sys.name; 
-                                                            SecurityLevel = sys.security;
-                                                            Security = security sys}                        
+            |> Option.map (fun sys -> 
+                                        let system = { SolarSystem.Id = sys.id; Name = sys.name; 
+                                                                    SecurityLevel = sys.security;
+                                                                    Security = security sys}                        
                             
-                                        let cel = IronSde.Position.OfDoubles x y z |> findCelestial solarSystemId 
+                                        let celestial,distance = IronSde.Position.OfDoubles x y z 
+                                                                    |> findCelestial solarSystemId 
+                                                                    |> function
+                                                                        | Some (c,d) -> Some c, Some d
+                                                                        | _ -> None, None
 
-                                        Some { Location.Region = region solarSystemId ; 
+                                        { Location.Region = region solarSystemId ; 
                                                         Constellation = constellation solarSystemId; 
-                                                        SolarSystem = s; 
-                                                        Celestial = cel} )
+                                                        SolarSystem = system; 
+                                                        Celestial = celestial; 
+                                                        Distance = distance } )
         

@@ -76,6 +76,7 @@
 
     type Location = {
             Celestial: Celestial option;
+            Distance: float<IronSde.m> option;
             SolarSystem: SolarSystem;
             Constellation: Constellation;
             Region: Region;

@@ -46,3 +46,8 @@
 
         let toString (value: 'a) = value.ToString()
         
+        let expandFloat value =                     
+            let xs = [ (1000000000.0, " billion"); (1000000.0, " million"); (1000.0, " thousand"); (1.0, "") ]
+            xs |> Seq.filter (fun (d,_) -> value / d >= 1.0)
+            |> Seq.map (fun (d,s) -> sprintf "%s%s" ((value / d).ToString("N2")) s)
+            |> Seq.tryHead

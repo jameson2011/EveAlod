@@ -2,8 +2,10 @@
 
     open System
     open FSharp.Data
+    open IronSde
     open EveAlod.Data
     open EveAlod.Common
+    open EveAlod.Common.Combinators
     open EveAlod.Common.Strings
 
     type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
@@ -76,17 +78,30 @@
         let shipTypeLink (value: Entity) =
             value.Id |> Zkb.shipTypeKillsUri |> sprintf "[%s](%s)" value.Name 
 
+        let distanceText (value: float<m>) = 
+            let km,au = value |> (Units.metresToKm <++> Units.metresToAU)
+            if System.Math.Round(decimal au, 2) >= 0.01m then 
+                sprintf "%.2f AU" au
+            else
+                km  |> float 
+                    |> Strings.expandFloat
+                    |> Option.map (sprintf "%s km")
+                    |> Option.defaultWith (fun () -> sprintf "%.2f m" value)
+            
+
         let getLocationText (location: Location option) =
             match location with
             | Some l ->     let cel = l.Celestial |> Option.map celestialLink |> Option.defaultValue ""
-                            let r = l.Region |> regionLink
-                            let c = l.Constellation |> constellationLink
-                            let s = l.SolarSystem |> solarSystemLink
+                            let distance = l.Distance |> Option.map distanceText |> Option.defaultValue ""
+                            let region = l.Region |> regionLink
+                            let cons = l.Constellation |> constellationLink
+                            let sys = l.SolarSystem |> solarSystemLink
                             let sec = l.SolarSystem |> solarSystemSecurity
 
-                            match cel with
-                            | "" -> sprintf "%s - %s - %s (%s)" s c r sec
-                            | _ -> sprintf "%s - %s - %s - %s (%s)" cel s c r  sec
+                            match cel, distance with
+                            | "","" -> sprintf "%s - %s - %s (%s)" sys cons region sec
+                            | c,"" -> sprintf "%s - %s - %s - %s (%s)" c sys cons region  sec
+                            | c,d -> sprintf "%s (%s)- %s - %s - %s (%s)" c d sys cons region  sec
             | _ -> ""
 
         let valueField (kill: Kill) = 
