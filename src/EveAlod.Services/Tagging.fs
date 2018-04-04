@@ -11,6 +11,11 @@
         let private spendy2Limit =      500000000.
         let private cheapLimit =        10000000.
 
+        let private locationSecurity (kill: Kill)=
+            match kill.Location with
+            | Some l -> Some l.SolarSystem.Security
+            | _ -> None
+
         let tagPresent (tag: KillTag) kill=        
             kill.Tags |> Seq.exists (fun t -> t = tag) 
             
@@ -136,13 +141,15 @@
         let isCorpLoss corpId =
             (tagOnTrue KillTag.CorpLoss) (isVictimInCorp corpId)
         
-            
-
         let isCorpKill minimum corpId =
             let p1 = (areAttackersInSameCorp corpId) 
             let p2 = (isMostlyCorpKill minimum corpId)            
             (tagOnTrue KillTag.CorpKill) (p1 <||> p2)
-                      
-
-
-            
+                 
+        let locationTag (kill: Kill)=
+            match locationSecurity kill with
+            | Some Lowsec -> Some KillTag.Lowsec
+            | Some Nullsec -> Some KillTag.Nullsec
+            | Some Highsec -> Some KillTag.Highsec
+            | Some Wormhole -> Some KillTag.Wormhole
+            | _ -> None

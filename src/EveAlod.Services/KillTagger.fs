@@ -37,6 +37,7 @@
                             Tagging.isShipTypeNarrowMargin config.ValuationSpread;
                             Tagging.isCheap; 
                             Tagging.isZeroValue;
+                            Tagging.locationTag;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

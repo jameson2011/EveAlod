@@ -27,7 +27,10 @@
         | ZeroValue
         | WideMarginShipType
         | NarrowMarginShipType
-
+        | Lowsec
+        | Highsec
+        | Nullsec
+        | Wormhole
     
     type SpaceSecurity = 
         | Lowsec
