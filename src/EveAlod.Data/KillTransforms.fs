@@ -86,7 +86,7 @@
             let posZ = positionJson |> propFloat "z"
             let solarSystemId = kmJson |> propInt "solar_system_id"
             
-            let location = EntityTransforms.toLocation solarSystemId posX posY posZ
+            let location = Locations.toLocation solarSystemId posX posY posZ
 
             { km with Id = id;
                         Occurred = kmJson |> propDateTime "killmail_time";
