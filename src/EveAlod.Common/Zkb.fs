@@ -14,15 +14,29 @@ module Zkb=
     let regionKillsUri id = 
         sprintf "%s/region/%i/" ZkbDomain id
 
+    let regionStatsUri id = 
+        sprintf "%s/region/%i/stats/" ZkbDomain id
+
     let solarSystemKillsUrl id =
         sprintf "%s/system/%i/" ZkbDomain id
+
+    let solarSystemStatsUrl id =
+        sprintf "%s/system/%i/stats/" ZkbDomain id
 
     let locationKillsUri id =
         sprintf "%s/location/%i/" ZkbDomain id
 
+    let locationStatsUri id =
+        sprintf "%s/location/%i/stats/" ZkbDomain id
+
     let shipTypeKillsUri id = 
         sprintf "%s/ship/%s/" ZkbDomain id
+
+    let shipTypeStatsUri id = 
+        sprintf "%s/ship/%s/stats/" ZkbDomain id    
 
     let characterKillboardUri id =
         sprintf "%s/character/%s/" ZkbDomain id
 
+    let characterKillboardStatsUri id =
+        sprintf "%s/character/%s/stats/" ZkbDomain id

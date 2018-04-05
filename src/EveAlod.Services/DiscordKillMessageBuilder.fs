@@ -32,6 +32,9 @@
                 |> Seq.map Option.get
                 |> List.ofSeq
 
+        let getCharacter (char: Character option) = 
+            char |> Option.bind (fun c ->  [c] |> getCharacters |> Seq.tryHead ) 
+
         let getEntities (entities: seq<Entity>) =
             entities
                 |> Seq.map (fun c -> c.Id |> staticEntities.Entity)
@@ -60,11 +63,17 @@
         let regionLink (value: Region) =
             value.Id |> Zkb.regionKillsUri |> sprintf "[%s](%s)" value.Name
 
+        let regionStatsLink (value: Region) =
+            value.Id |> Zkb.regionStatsUri |> sprintf "[%s](%s)" value.Name
+
         let constellationLink (value: Constellation) =
             sprintf "%s" value.Name
 
         let solarSystemLink (value: SolarSystem) =
             value.Id |> Zkb.solarSystemKillsUrl |> sprintf "[%s](%s)" value.Name 
+
+        let solarSystemStatsLink (value: SolarSystem) =
+            value.Id |> Zkb.solarSystemStatsUrl |> sprintf "[%s](%s)" value.Name 
 
         let solarSystemSecurity (value: SolarSystem) =
             sprintf "%A: %s" value.Security (value.SecurityLevel.ToString("N1"))
@@ -72,8 +81,17 @@
         let celestialLink (value: Celestial) =
             value.Id |> Zkb.locationKillsUri |> sprintf "[%s](%s)" value.Name 
 
+        let celestialStatsLink (value: Celestial) =
+            value.Id |> Zkb.locationStatsUri |> sprintf "[%s](%s)" value.Name 
+
         let characterLink (value: Character) =
             value.Char.Id |> Zkb.characterKillboardUri |> sprintf "[%s](%s)" value.Char.Name
+
+        let characterStatsLink (value: Character) =
+            value.Char.Id |> Zkb.characterKillboardStatsUri |> sprintf "[%s](%s)" value.Char.Name
+
+        let shipTypeStatsLink (value: Entity) =
+            value.Id |> Zkb.shipTypeStatsUri |> sprintf "[%s](%s)" value.Name
 
         let shipTypeLink (value: Entity) =
             value.Id |> Zkb.shipTypeKillsUri |> sprintf "[%s](%s)" value.Name 
@@ -88,7 +106,6 @@
                     |> Option.map (sprintf "%s km")
                     |> Option.defaultWith (fun () -> sprintf "%.2f m" value)
             
-
         let getLocationText (location: Location option) =
             match location with
             | Some l ->     let cel = l.Celestial |> Option.map celestialLink |> Option.defaultValue ""
@@ -101,8 +118,10 @@
                             match cel, distance with
                             | "","" -> sprintf "%s - %s - %s (%s)" sys cons region sec
                             | c,"" -> sprintf "%s - %s - %s - %s (%s)" c sys cons region  sec
-                            | c,d -> sprintf "%s (%s)- %s - %s - %s (%s)" c d sys cons region  sec
+                            | c,d -> sprintf "%s (%s) - %s - %s - %s (%s)" c d sys cons region  sec
             | _ -> ""
+
+            
 
         let valueField (kill: Kill) = 
             let value = formatIsk kill.TotalValue
@@ -158,6 +177,21 @@
                             ("value", chars |> getCharNames 3 |> toJsonValueString )  
                         |]
 
+        let statsField (kill: Kill)=
+            
+            let text = [    kill.Victim  |> Option.map characterStatsLink;
+                            kill.VictimShip |> Option.map shipTypeStatsLink;
+                            kill.Location |> Option.bind (fun l -> l.Celestial) |> Option.map celestialStatsLink;
+                            kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;
+                            kill.Location |> Option.map (fun l -> l.Region) |> Option.map regionStatsLink;                            
+                        ] 
+                        |> Seq.mapSomes   
+                        |> Strings.join " / "
+            match text with
+            | "" -> [||]
+            | t -> [|   ("name", toJsonValueString "stats");
+                        ("value", toJsonValueString t) |]
+
         let corpMatesField chars = attackersField (function 
                                                     | [ _ ] -> "glorious victor"
                                                     | _ -> "brothers in arms") chars
@@ -170,9 +204,8 @@
                                                     | _ -> "blobbers") chars            
 
         let victimLink (character: Character option) =            
-            match character |> Option.map (fun c -> getCharacters [ c ] ) |> Option.defaultValue [] with
-            | [ character ] -> characterLink character
-            | _ -> ""
+            character |> Option.map characterLink |> Option.defaultValue ""
+
             
         let shipTypeThumbnailLink (shipType: Entity option) =
             (match shipType with
@@ -182,11 +215,11 @@
         let shipTypeThumbnail (shipType: Entity option)= 
             ("thumbnail", JsonValue.Record([| "url", JsonValue.String(shipTypeThumbnailLink shipType) |] ))            
 
-        let descriptionField (kill: Kill) (victimShipType: Entity option)=
+        let descriptionField (kill: Kill) =
             let location = getLocationText kill.Location
             
             let value = kill.TotalValue
-            let victimShipTypeLink = victimShipType |> Option.map shipTypeLink                                        
+            let victimShipTypeLink = kill.VictimShip |> Option.map shipTypeLink                                        
             let victim = victimLink kill.Victim
             
             let text = match victim, victimShipTypeLink with
@@ -224,11 +257,16 @@
         
         let getCorpLossMsg (kill: Kill) =             
             let victimShipType = getVictimShipType kill            
+            let victim = getCharacter kill.Victim 
+
+            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+            
             let attackers = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
             let valueField = valueField kill
+            let statsField = statsField kill
 
-            let fields =  [| attackers; valueField; tagsField |] 
+            let fields =  [| attackers; valueField; statsField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -238,18 +276,23 @@
                                 color red; 
                                 footer(); 
                                 shipTypeThumbnail victimShipType; 
-                                descriptionField kill victimShipType;
+                                descriptionField kill;
                                 fields|]
             elements |> toEmbedsJson |> toJsonString
             
         let getCorpWinMsg (kill: Kill) =             
             let victimShipType = getVictimShipType kill
+            let victim = getCharacter kill.Victim 
+
+            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+            
             let corpMates = getKillCorpCharacters corpId kill |> corpMatesField 
             let killwhores = getKillNonCorpCharacters corpId kill |> killWhoresField 
             let valueField = valueField kill
+            let statsField = statsField kill
             let tagsField = kill.Tags |> viewableTags |> tagsField
 
-            let fields =  [| corpMates; killwhores; valueField; tagsField |] 
+            let fields =  [| corpMates; killwhores; valueField; statsField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -259,18 +302,24 @@
                                 color green; 
                                 footer(); 
                                 shipTypeThumbnail victimShipType;
-                                descriptionField kill victimShipType;
+                                descriptionField kill;
                                 fields|]
 
             elements |> toEmbedsJson |> toJsonString
 
         let getGenericMsg kill = 
-            let victimShipType = getVictimShipType kill
+            
+            let victimShipType = getVictimShipType kill            
+            let victim = getCharacter kill.Victim 
+
+            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+
             let opponents = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
             let valueField = valueField kill
+            let statsField = statsField kill
 
-            let fields =  [| opponents; valueField; tagsField |] 
+            let fields =  [| opponents; valueField; statsField; tagsField |] 
                             |> Array.filter (Array.isEmpty >> not)
                             |> Array.map toJsonRecord
                             |> toFieldsJson
@@ -280,7 +329,7 @@
                                 color blue; 
                                 footer(); 
                                 shipTypeThumbnail victimShipType; 
-                                descriptionField kill victimShipType;
+                                descriptionField kill;
                                 fields|]
 
             elements |> toEmbedsJson |> toJsonString
