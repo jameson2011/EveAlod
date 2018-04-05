@@ -13,6 +13,7 @@
             posts |> List.iter (fun p -> p msg)            
 
         let postException name (log: PostMessage) ex = (ActorMessage.Exception (name, ex)) |> log
+        let postError name (log: PostMessage) msg = (ActorMessage.Error (name, msg)) |> log
         let postTrace name (log: PostMessage) ex = (ActorMessage.Trace (name, ex)) |> log
         let postInfo (log: PostMessage) = ActorMessage.Info >> log
         

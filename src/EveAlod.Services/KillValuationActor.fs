@@ -10,6 +10,7 @@ type private ValuationResponseProvider = JsonProvider<"""{ "total": 0.995524, "s
 
 type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKill)=
     let logException = Actors.postException typeof<KillValuationActor>.Name log
+    let logError = Actors.postError typeof<KillValuationActor>.Name log
     let logTrace = Actors.postTrace typeof<KillValuationActor>.Name log
     let logInfo = Actors.postInfo log
     let http = httpClient()    
@@ -42,7 +43,7 @@ type KillValuationActor(config: Configuration, log: PostMessage, forward: PostKi
             | Choice1Of2 (valuation, spread) ->   
                                         forward { kill with TotalValueValuation = Some valuation;
                                                             TotalValueSpread = Some spread }
-            | Choice2Of2 text ->        text |> logTrace
+            | Choice2Of2 text ->        text |> logError
                                         forward kill
     
 
