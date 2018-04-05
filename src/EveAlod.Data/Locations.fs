@@ -24,13 +24,13 @@ module Locations=
     
     let toLocation (solarSystemId: int) (x: float) (y: float) (z: float) =
         solarSystemId 
-            |> IronSde.SolarSystems.fromId 
+            |> IronSde.SolarSystems.ofId 
             |> Option.map (fun sys -> 
                                         let system = { SolarSystem.Id = sys.id; Name = sys.name; 
                                                                     SecurityLevel = sys.security;
                                                                     Security = security sys}                        
                             
-                                        let celestial,distance = IronSde.Position.OfDoubles x y z 
+                                        let celestial,distance = IronSde.Position.ofCoordinates (x, y, z) 
                                                                     |> findCelestial solarSystemId 
                                                                     |> function
                                                                         | Some (c,d) -> Some c, Some d

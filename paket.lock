@@ -65,7 +65,7 @@ NUGET
       Zlib.Portable (>= 1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
     FSharpLint (0.2.8)
     FSharpLint.Fake (0.8.1)
-    IronSde (0.0.0.10)
+    IronSde (0.0.0.11)
       FSharp.Core (>= 4.3.3)
       System.ValueTuple (>= 4.4)
     log4net (2.0.8)
