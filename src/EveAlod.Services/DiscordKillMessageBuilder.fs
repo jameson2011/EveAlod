@@ -181,9 +181,7 @@
             
             let text = [    kill.Victim  |> Option.map characterStatsLink;
                             kill.VictimShip |> Option.map shipTypeStatsLink;
-                            kill.Location |> Option.bind (fun l -> l.Celestial) |> Option.map celestialStatsLink;
-                            kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;
-                            kill.Location |> Option.map (fun l -> l.Region) |> Option.map regionStatsLink;                            
+                            kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;                  
                         ] 
                         |> Seq.mapSomes   
                         |> Strings.join " / "
