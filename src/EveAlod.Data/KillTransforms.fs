@@ -59,7 +59,7 @@
             | Some char -> Some {
                                 Attacker.Char = Some char;
                                 Damage = json |> propInt "damage_done";
-                                Ship = json |> propStr "ship_type_id" |> toEntity 
+                                Ship = json |> propStr "ship_type_id" |> toItemTypeEntity 
                             }
             | _ -> None
 
@@ -100,7 +100,7 @@
         let applyVictim (package: JsonValue option) (km: Kill)=
             let victimJson = package |> asKill |> prop "victim"
             let victim = victimJson |> toCharacter 
-            let victimShip = victimJson |> propStr "ship_type_id" |> toEntity;
+            let victimShip = victimJson |> propStr "ship_type_id" |> toItemTypeEntity;
             let items = victimJson |> prop "items" |> Option.map asArray |> toCargoItems
             let fittings,cargo = items |> Seq.splitBy (fun i -> isFitted i.Location)
 
