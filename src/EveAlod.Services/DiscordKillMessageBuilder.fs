@@ -36,12 +36,13 @@
             char |> Option.bind (fun c ->  [c] |> getCharacters |> Seq.tryHead ) 
 
         let getEntities (entities: seq<Entity>) =
+            let entity id = 
+                IronSde.ItemTypes.itemtype id
+                |> Option.map (fun it -> { Entity.Id = it.id.ToString(); Name = it.name; })
+
             entities
-                |> Seq.map (fun c -> c.Id |> staticEntities.Entity)
-                |> Async.Parallel
-                |> Async.RunSynchronously                  
-                |> Array.filter Option.isSome
-                |> Seq.map Option.get
+                |> Seq.map (fun e -> e.Id |> Strings.toInt |> Option.bind entity)
+                |> Seq.mapSomes
                 |> List.ofSeq
 
         let getVictimShipType (kill: Kill) =

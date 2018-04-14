@@ -20,6 +20,12 @@
                                     
             concat txts ""
 
+        let toInt (value: string) =
+            value
+            |> Int32.TryParse
+            |> (fun (ok,value) -> if ok then Some value else None)
+            
+
         let toIntValue (value: string option) =
             value
             |> Option.map (fun s -> Int32.TryParse(s))
