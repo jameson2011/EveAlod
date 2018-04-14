@@ -36,20 +36,15 @@
             char |> Option.bind (fun c ->  [c] |> getCharacters |> Seq.tryHead ) 
 
         let getEntities (entities: seq<Entity>) =
+            let entity id = 
+                IronSde.ItemTypes.itemtype id
+                |> Option.map (fun it -> { Entity.Id = it.id.ToString(); Name = it.name; })
+
             entities
-                |> Seq.map (fun c -> c.Id |> staticEntities.Entity)
-                |> Async.Parallel
-                |> Async.RunSynchronously                  
-                |> Array.filter Option.isSome
-                |> Seq.map Option.get
+                |> Seq.map (fun e -> e.Id |> Strings.toInt |> Option.bind entity)
+                |> Seq.mapSomes
                 |> List.ofSeq
-
-        let getVictimShipType (kill: Kill) =
-            kill.VictimShip 
-            |> Option.map (fun f -> [ f ]) |> Option.defaultValue []
-            |> getEntities
-            |> List.tryHead
-
+        
         let titleLink (kill: Kill) = getTagText kill.Tags 
         let title kill = ("title", JsonValue.String(titleLink kill))
 
@@ -253,11 +248,8 @@
             |> List.ofSeq
             
         
-        let getCorpLossMsg (kill: Kill) =             
-            let victimShipType = getVictimShipType kill            
-            let victim = getCharacter kill.Victim 
-
-            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+        let getCorpLossMsg (kill: Kill) =                         
+            let kill = { kill with Victim = getCharacter kill.Victim; } 
             
             let attackers = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
@@ -273,16 +265,13 @@
                                 url kill; 
                                 color red; 
                                 footer(); 
-                                shipTypeThumbnail victimShipType; 
+                                shipTypeThumbnail kill.VictimShip;
                                 descriptionField kill;
                                 fields|]
             elements |> toEmbedsJson |> toJsonString
             
-        let getCorpWinMsg (kill: Kill) =             
-            let victimShipType = getVictimShipType kill
-            let victim = getCharacter kill.Victim 
-
-            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+        let getCorpWinMsg (kill: Kill) =                         
+            let kill = { kill with Victim = getCharacter kill.Victim ; } 
             
             let corpMates = getKillCorpCharacters corpId kill |> corpMatesField 
             let killwhores = getKillNonCorpCharacters corpId kill |> killWhoresField 
@@ -299,18 +288,14 @@
                                 url kill; 
                                 color green; 
                                 footer(); 
-                                shipTypeThumbnail victimShipType;
+                                shipTypeThumbnail kill.VictimShip;
                                 descriptionField kill;
                                 fields|]
 
             elements |> toEmbedsJson |> toJsonString
 
-        let getGenericMsg kill = 
-            
-            let victimShipType = getVictimShipType kill            
-            let victim = getCharacter kill.Victim 
-
-            let kill = { kill with Victim = victim; VictimShip = victimShipType }
+        let getGenericMsg kill =                         
+            let kill = { kill with Victim = getCharacter kill.Victim;  }
 
             let opponents = getKillNonCorpCharacters corpId kill |> opponentsField 
             let tagsField = kill.Tags |> viewableTags |> tagsField
@@ -326,7 +311,7 @@
                                 url kill; 
                                 color blue; 
                                 footer(); 
-                                shipTypeThumbnail victimShipType; 
+                                shipTypeThumbnail kill.VictimShip;
                                 descriptionField kill;
                                 fields|]
 

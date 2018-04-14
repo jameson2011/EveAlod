@@ -3,7 +3,7 @@
     module EntityTransforms=
 
         open FSharp.Data
-        open System
+        open EveAlod.Common
 
         type JsonCorpSearchProvider = JsonProvider<"""{ "corporation": [ 234 ] }""">
         type JsonGroupIdProvider = JsonProvider<"./SampleIds.json">
@@ -18,6 +18,11 @@
             | "" -> None
             | id -> Some {Entity.Id = id; Name = "" };
        
+        let toItemTypeEntity id =
+            id  |> Strings.toInt
+                |> Option.bind IronSde.ItemTypes.itemtype
+                |> Option.map (fun e -> { Entity.Id = e.id.ToString(); Name = e.name })            
+
         let toItemLocation id =
             match System.Int32.TryParse(id) with
             | true, x -> 
