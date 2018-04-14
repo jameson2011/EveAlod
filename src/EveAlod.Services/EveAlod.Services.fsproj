@@ -191,6 +191,11 @@
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
+        <Reference Include="IronSde.ItemTypes">
+          <HintPath>..\..\packages\IronSde\lib\net461\IronSde.ItemTypes.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
         <Reference Include="IronSde.Names">
           <HintPath>..\..\packages\IronSde\lib\net461\IronSde.Names.dll</HintPath>
           <Private>True</Private>
