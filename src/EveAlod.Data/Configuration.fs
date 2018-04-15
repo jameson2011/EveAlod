@@ -21,6 +21,8 @@
                     
                     ValuationLimit: float;
                     ValuationSpread: float;
+                    
+                    IgnoredItemTypes: int [];
 
                     }
 
