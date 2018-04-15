@@ -11,13 +11,14 @@ namespace EveAlod.Services
             | PlexInHold | SkillInjectorInHold -> 20.
             | Expensive -> 100.
             | Spendy -> 40.
+            | NormalPrice -> 10.
             | ZeroValue -> 1.
             | Cheap -> 1.
             | PlayerKill -> 2.
             | NpcKill -> 1.
-            | Pod  -> 20.
-            | EcmFitted -> 20.
-            | AwoxKill -> 20.
+            | Pod  -> 15.
+            | EcmFitted -> 15.
+            | AwoxKill -> 15.
             | SoloKill -> 10.
             | FailFit -> 20.            
             | WideMarginShipType -> 10.

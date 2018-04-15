@@ -23,6 +23,7 @@
         | Pod
         | Spendy
         | Expensive
+        | NormalPrice
         | Cheap
         | ZeroValue
         | WideMarginShipType

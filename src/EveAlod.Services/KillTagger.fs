@@ -5,7 +5,7 @@
     open EveAlod.Data
 
     
-    type KillTagger(config: Configuration, entityProvider: StaticDataActor)=
+    type KillTagger(config: Configuration, entityProvider: StaticDataActor)=        
         
         let isType (key: EntityGroupKey) (entity:Entity) =
             let group = entityProvider.EntityIds(key) |> Async.RunSynchronously
@@ -14,14 +14,18 @@
             | None -> false
         
         let isEcm = isType EntityGroupKey.Ecm
-        let isPlex (item: CargoItem) = 
-            item.Item |> isType EntityGroupKey.Plex
-        let isSkillInjector (item: CargoItem) = 
-            item.Item |> isType EntityGroupKey.SkillInjector
-        let hasQuantity quantity (item: CargoItem) = 
-            item.Quantity >= quantity
+        let isPlex (item: CargoItem) =  item.Item |> isType EntityGroupKey.Plex
+        let isSkillInjector (item: CargoItem) =  item.Item |> isType EntityGroupKey.SkillInjector
+        let hasQuantity quantity (item: CargoItem) =  item.Quantity >= quantity
         let isPod = isType EntityGroupKey.Capsule
+
         
+        let appendSupplementary (tags: KillTag list) =
+            [ Tagging.normalPrice tags; ]
+                |> Seq.mapSomes
+                |> List.ofSeq
+                |> List.append tags
+
         member __.Tag(kill: Kill)=            
             let tags = [                            
                             Tagging.isCorpKill config.MinCorpDamage config.CorpId;
@@ -42,6 +46,7 @@
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes
                         |> List.ofSeq
+                        |> appendSupplementary
                         |> List.append kill.Tags
             
             {kill with Tags = tags}

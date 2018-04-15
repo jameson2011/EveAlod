@@ -41,12 +41,12 @@
         let killValuationActor = KillValuationActor(config, logger.Post,
                                                     [ killTagger.Post ] |> Actors.forwardMany (Killmail))
 
-        let killDeduper = KillDeduperActor(logger.Post, 
+        let killBlacklist = KillBlacklistActor(config, logger.Post, 
                                                 [ killValuationActor.Post ] |> Actors.forwardMany (Killmail) )
 
 
         let killTransform = KillTransformActor(logger.Post, 
-                                                [ killDeduper.Post ] |> Actors.forwardMany (Killmail))
+                                                [ killBlacklist.Post ] |> Actors.forwardMany (Killmail))
                
         let killSource = KillSourceActor(logger.Post,
                                                 [ killTransform.Post ] |> Actors.forwardMany (ActorMessage.KillmailJson) ,

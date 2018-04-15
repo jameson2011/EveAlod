@@ -142,7 +142,7 @@
             let viewable (tag: KillTag) =
                 match tag with
                 | PlayerKill | CorpKill | CorpLoss
-                | Spendy | Expensive | Cheap | ZeroValue
+                | Spendy | Expensive | Cheap | ZeroValue | NormalPrice
                 | WideMarginShipType | NarrowMarginShipType -> false
                 | _ -> true
             tags |> List.filter viewable

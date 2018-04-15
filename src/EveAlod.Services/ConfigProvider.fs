@@ -30,6 +30,7 @@
                 KillValuationUri = c.KillValuationUri;
                 ValuationLimit = (float c.ValuationLimit);
                 ValuationSpread = (float c.ValuationSpread);
+                IgnoredItemTypes = [| 41030; 43681;|]; // Excavator mining drones
             }
 
         let getCorpId ticker = 
