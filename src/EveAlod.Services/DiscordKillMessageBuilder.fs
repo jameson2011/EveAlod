@@ -32,19 +32,28 @@
                 |> Seq.map Option.get
                 |> List.ofSeq
 
+        let resolveAttackers (maxCount) (attackers: seq<Attacker>) =
+            let attackerChars = attackers   |> Seq.filter (fun a -> Option.isSome a.Char )
+                                            |> Seq.map (fun a -> Option.get a.Char)
+                                            |> Seq.truncate maxCount
+                                            |> getCharacters
+                                            |> Seq.map (fun c -> c.Char.Id, c)
+                                            |> Map.ofSeq
+            let resolve (attacker: Attacker) =
+                match attacker.Char with
+                | Some c ->     match attackerChars |> Map.tryFind c.Char.Id with
+                                | Some c2 -> { attacker with Char = Some c2 }
+                                | _ -> attacker
+                | _ -> attacker
+
+            attackers 
+                |> Seq.map resolve
+                |> List.ofSeq
+
+
         let getCharacter (char: Character option) = 
             char |> Option.bind (fun c ->  [c] |> getCharacters |> Seq.tryHead ) 
-
-        let getEntities (entities: seq<Entity>) =
-            let entity id = 
-                IronSde.ItemTypes.itemtype id
-                |> Option.map (fun it -> { Entity.Id = it.id.ToString(); Name = it.name; })
-
-            entities
-                |> Seq.map (fun e -> e.Id |> Strings.toInt |> Option.bind entity)
-                |> Seq.mapSomes
-                |> List.ofSeq
-        
+            
         let titleLink (kill: Kill) = getTagText kill.Tags 
         let title kill = ("title", JsonValue.String(titleLink kill))
 
@@ -57,9 +66,6 @@
 
         let regionLink (value: Region) =
             value.Id |> Zkb.regionKillsUri |> sprintf "[%s](%s)" value.Name
-
-        let regionStatsLink (value: Region) =
-            value.Id |> Zkb.regionStatsUri |> sprintf "[%s](%s)" value.Name
 
         let constellationLink (value: Constellation) =
             sprintf "%s" value.Name
@@ -75,22 +81,26 @@
 
         let celestialLink (value: Celestial) =
             value.Id |> Zkb.locationKillsUri |> sprintf "[%s](%s)" value.Name 
-
-        let celestialStatsLink (value: Celestial) =
-            value.Id |> Zkb.locationStatsUri |> sprintf "[%s](%s)" value.Name 
-
-        let characterLink (value: Character) =
-            value.Char.Id |> Zkb.characterKillboardUri |> sprintf "[%s](%s)" value.Char.Name
-
-        let characterStatsLink (value: Character) =
-            value.Char.Id |> Zkb.characterKillboardStatsUri |> sprintf "[%s](%s)" value.Char.Name
-
+        
         let shipTypeStatsLink (value: Entity) =
             value.Id |> Zkb.shipTypeStatsUri |> sprintf "[%s](%s)" value.Name
 
         let shipTypeLink (value: Entity) =
             value.Id |> Zkb.shipTypeKillsUri |> sprintf "[%s](%s)" value.Name 
 
+        let characterLink (value: Character) =
+            value.Char.Id |> Zkb.characterKillboardUri |> sprintf "[%s](%s)" value.Char.Name
+
+        let attackerLink (value: Attacker)=
+            match value.Char, value.Ship with
+            | Some c, None -> characterLink c
+            | Some c, Some s -> sprintf "%s _(%s)_" (characterLink c) (shipTypeLink s)
+            | _,_ -> ""
+
+        let characterStatsLink (value: Character) =
+            value.Char.Id |> Zkb.characterKillboardStatsUri |> sprintf "[%s](%s)" value.Char.Name
+
+        
         let distanceText (value: float<m>) = 
             let km,au = value |> (Units.metresToKm <++> Units.metresToAU)
             if System.Math.Round(decimal au, 2) >= 0.01m then 
@@ -147,33 +157,32 @@
                         ("value", toJsonValueString tags);
                     |]
 
-
-        let composeCharNames (characters: Character list) = 
-            characters 
-                |> Seq.filter (fun c ->  not (String.IsNullOrWhiteSpace(c.Char.Name)))
-                |> Seq.map characterLink
+        let composeAttackerNames (attackers: seq<Attacker>) = 
+            attackers 
+                |> Seq.map attackerLink
+                |> Seq.filter (String.IsNullOrWhiteSpace >> not)
                 |> List.ofSeq
                 |> prettyConcat            
 
-        let getCharNames maxCount chars =
-            let group = chars |> Seq.truncate (maxCount + 1) |> Array.ofSeq
+        let getAttackerLinks maxCount (attackers: seq<Attacker>) =
+            let group = attackers |> Seq.truncate (maxCount + 1) |> Array.ofSeq
             let suffix = if group.Length > maxCount then " + others" else ""
             group |> Seq.truncate maxCount
-                |> getCharacters 
-                |> composeCharNames 
+                |> composeAttackerNames 
                 |> (fun s -> s + suffix)
 
-        let attackersField (title: Character list -> string) chars = 
-            match chars with
+        let attackersField (title: Attacker list -> string) attackers = 
+            match attackers with
             | [] -> Array.empty
-            | chars -> 
+            | attackers ->                         
+                        let maxCount = 3
+                        let xs = resolveAttackers (maxCount + 1)  attackers
                         [| 
-                            ("name", toJsonValueString (title chars));
-                            ("value", chars |> getCharNames 3 |> toJsonValueString )  
+                            ("name", toJsonValueString (title attackers));
+                            ("value", xs |> getAttackerLinks maxCount |> toJsonValueString )  
                         |]
 
         let statsField (kill: Kill)=
-            
             let text = [    kill.Victim  |> Option.map characterStatsLink;
                             kill.VictimShip |> Option.map shipTypeStatsLink;
                             kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;                  
@@ -230,13 +239,12 @@
             match attackerCorpId with
             | Some id -> id = corpId
             | _ -> false
-                                
+        
         let getKillCorpCharacters corpId km =
             km.Attackers 
             |> Seq.sortByDescending (fun a -> a.Damage)
             |> Seq.filter (isCorpie corpId)
             |> Seq.filter (fun a -> a.Char.IsSome)
-            |> Seq.map (fun a -> a.Char.Value)
             |> List.ofSeq
 
         let getKillNonCorpCharacters corpId km =
@@ -244,7 +252,6 @@
             |> Seq.sortByDescending (fun a -> a.Damage)
             |> Seq.filter ((isCorpie corpId) >> not)
             |> Seq.filter (fun a -> a.Char.IsSome)
-            |> Seq.map (fun a -> a.Char.Value)
             |> List.ofSeq
             
         
