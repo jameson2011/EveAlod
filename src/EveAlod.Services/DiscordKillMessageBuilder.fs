@@ -208,6 +208,9 @@
         let victimLink (character: Character option) =            
             character |> Option.map characterLink |> Option.defaultValue ""
 
+        let killTime (kill: Kill)=
+            kill.Occurred.ToString("yyyy-MM-dd HH:mmZ")
+            
             
         let shipTypeThumbnailLink (shipType: Entity option) =
             (match shipType with
@@ -223,12 +226,13 @@
             let value = kill.TotalValue
             let victimShipTypeLink = kill.VictimShip |> Option.map shipTypeLink                                        
             let victim = victimLink kill.Victim
-            
+            let time = killTime kill
+
             let text = match victim, victimShipTypeLink with
-                        | "", None ->       sprintf "**%s ISK** gone\n%s" (formatIsk value) location
-                        | "", Some vst ->   sprintf "**%s ISK** %s gone\n%s" (formatIsk value) vst location
-                        | v, Some vst ->    sprintf "%s lost a **%s ISK** %s\n%s" v (formatIsk value) vst location
-                        | v, None ->        sprintf "%s lost **%s ISK**\n%s" v (formatIsk value) location
+                        | "", None ->       sprintf "**%s ISK** gone\n\n%s\n\n%s" (formatIsk value) location time
+                        | "", Some vst ->   sprintf "**%s ISK** %s gone\n\n%s\n\n%s" (formatIsk value) vst location time 
+                        | v, Some vst ->    sprintf "%s lost a **%s ISK** %s\n\n%s\n\n%s" v (formatIsk value) vst location time 
+                        | v, None ->        sprintf "%s lost **%s ISK**\n\n%s\n%s" v (formatIsk value) location time
 
             ("description", text |> toJsonValueString)
 
