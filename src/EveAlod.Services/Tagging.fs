@@ -159,10 +159,9 @@
 
 
         let normalPrice (tags: seq<KillTag>) =             
-            tags    |> Seq.filter (fun t -> priceTags |> Set.contains t)
-                    |> Seq.isEmpty            
-                    |> (function 
-                            | true -> Some KillTag.NormalPrice
-                            | _ -> None)
+            let matches = tags |> Seq.filter (fun t -> priceTags |> Set.contains t)
+            match Seq.isEmpty matches with            
+            | true -> Some KillTag.NormalPrice
+            | _ -> None
 
 
