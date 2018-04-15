@@ -11,6 +11,7 @@ namespace EveAlod.Services
             | PlexInHold | SkillInjectorInHold -> 20.
             | Expensive -> 100.
             | Spendy -> 40.
+            | NormalPrice -> 10.
             | ZeroValue -> 1.
             | Cheap -> 1.
             | PlayerKill -> 2.

@@ -11,10 +11,13 @@
         let private spendy2Limit =      500000000.
         let private cheapLimit =        10000000.
 
+        let private priceTags = [ KillTag.Spendy; KillTag.Expensive; KillTag.Cheap; KillTag.ZeroValue] |> Set.ofSeq        
+
         let private locationSecurity (kill: Kill)=
             match kill.Location with
             | Some l -> Some l.SolarSystem.Security
             | _ -> None
+
 
         let tagPresent (tag: KillTag) kill=        
             kill.Tags |> Seq.exists (fun t -> t = tag) 
@@ -153,3 +156,13 @@
             | Some Highsec -> Some KillTag.Highsec
             | Some Wormhole -> Some KillTag.Wormhole
             | _ -> None
+
+
+        let normalPrice (tags: seq<KillTag>) =             
+            tags    |> Seq.filter (fun t -> priceTags |> Set.contains t)
+                    |> Seq.isEmpty            
+                    |> (function 
+                            | true -> Some KillTag.NormalPrice
+                            | _ -> None)
+
+
