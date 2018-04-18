@@ -133,7 +133,7 @@
             match kill.TotalValueValuation with
             | Some v -> [| ("name", toJsonValueString "value");
                             ("value", (v * 100.) 
-                                        |> sprintf "**%s ISK**, **%.2f%%** of highest value for this ship type" value 
+                                        |> sprintf "**%s ISK**, **%.2f%%** of highest value for this type" value 
                                         |> toJsonValueString) |] 
             | _ -> Array.empty
             
