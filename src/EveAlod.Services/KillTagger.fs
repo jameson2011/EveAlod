@@ -42,6 +42,7 @@
                             Tagging.isCheap; 
                             Tagging.isZeroValue;
                             Tagging.locationTag;
+                            Tagging.isGateCamp;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

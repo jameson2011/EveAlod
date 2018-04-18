@@ -8,7 +8,7 @@
                 
         let getLocationText (location: Location option) =
             match location with
-            | Some l ->     let cel = l.Celestial |> Option.map (fun c -> c.Name) |> Option.defaultValue ""
+            | Some l ->     let cel = l.Celestial |> Option.map IronSde.Celestials.name |> Option.defaultValue ""
                             let r = l.Region.Name
                             let c = l.Constellation.Name
                             let s = l.SolarSystem.Name

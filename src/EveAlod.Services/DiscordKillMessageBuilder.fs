@@ -80,7 +80,7 @@
             sprintf "%A: %s" value.Security (value.SecurityLevel.ToString("N1"))
 
         let celestialLink (value: Celestial) =
-            value.Id |> Zkb.locationKillsUri |> sprintf "[%s](%s)" value.Name 
+            value|> Celestials.id |> Zkb.locationKillsUri |> sprintf "[%s](%s)" (Celestials.name value)
         
         let shipTypeStatsLink (value: Entity) =
             value.Id |> Zkb.shipTypeStatsUri |> sprintf "[%s](%s)" value.Name
