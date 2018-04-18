@@ -11,9 +11,7 @@ module Locations=
     
     let private findCelestial solarSystemId position =
         IronSde.MapSearch.findClosestCelestial solarSystemId position 
-            |> Option.map (fun (c,d) -> { Celestial.Id = IronSde.Celestials.id c; 
-                                                            Name = IronSde.Celestials.name c;}, d)
-                
+            
     let region solarSystemId =
         solarSystemId   |> IronSde.SolarSystems.region 
                         |> (fun r -> { Region.Id = r.id; Name = r.name })

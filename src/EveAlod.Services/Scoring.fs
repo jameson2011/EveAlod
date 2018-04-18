@@ -24,6 +24,7 @@ namespace EveAlod.Services
             | WideMarginShipType -> 10.
             | NarrowMarginShipType -> 1.
             | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1
+            | Gatecamp -> 0.1
 
         let private tagsScore = Seq.map tagScore >> Seq.sum
             

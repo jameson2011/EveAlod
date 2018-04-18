@@ -164,4 +164,17 @@
             | true -> Some KillTag.NormalPrice
             | _ -> None
 
+        
+        let isGateCamp  (kill: Kill) =
+            let isGate = function | IronSde.Stargate _ -> true | _ -> false
+                
+            let distance = kill.Location |> Option.bind (fun l -> match l.Distance, l.Celestial with
+                                                                    | Some d, Some c when (isGate c) -> Some (IronSde.Units.metresToKm d)
+                                                                    | _ -> None)
+            let isCamp = distance |> Option.map (fun d -> d < 250.0<IronSde.km> &&
+                                                            (List.length kill.Attackers) >= 3)
 
+            match isCamp with
+            | Some true -> Some KillTag.Gatecamp
+            | _ -> None            
+            

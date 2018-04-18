@@ -32,21 +32,15 @@
         | Highsec
         | Nullsec
         | Wormhole
-    
+        | Gatecamp
+
     type SpaceSecurity = 
         | Lowsec
         | Nullsec
         | Wormhole
         | Highsec
 
-    type SolarSystem=
-        {
-            Id: int;
-            Name: string;
-            SecurityLevel: float;
-            Security: SpaceSecurity;
-        }
-
+    
     type ItemLocation =
         | Unknown
         | NoLocation // None
@@ -71,12 +65,18 @@
         | SubsystemBay
     
     
+    type SolarSystem=
+        {
+            Id: int;
+            Name: string;
+            SecurityLevel: float;
+            Security: SpaceSecurity;
+        }
     type Region = { Id: int; Name: string; }
     type Constellation = { Id: int; Name: string; }
-    type Celestial = { Id: int; Name: string; }
-
+    
     type Location = {
-            Celestial: Celestial option;
+            Celestial: IronSde.Celestial option;
             Distance: float<IronSde.m> option;
             SolarSystem: SolarSystem;
             Constellation: Constellation;
