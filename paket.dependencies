@@ -6,7 +6,7 @@ nuget FSharp.Control.AsyncSeq
 nuget FSharp.Core 4.3.3
 nuget FAKE 4.63.2 restriction: >= net461
 nuget FSharp.Data 2.4.3
-nuget IronSde 0.0.0.13-alpha
+nuget IronSde 0.0.0.14-alpha
 nuget log4net
 nuget Microsoft.Extensions.CommandLineUtils 1.1.1 restriction: >= net461
 nuget mongocsharpdriver 2.5.0
