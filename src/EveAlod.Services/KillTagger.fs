@@ -5,7 +5,7 @@
     open EveAlod.Data
 
     
-    type KillTagger(config: Configuration, entityProvider: StaticDataActor)=        
+    type KillTagger(config: Configuration)= 
         
         let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
             let types = group   |> IronSde.ItemTypes.group
