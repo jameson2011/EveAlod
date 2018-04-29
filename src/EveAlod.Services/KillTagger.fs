@@ -5,20 +5,20 @@
     open EveAlod.Data
 
     
-    type KillTagger(config: Configuration, entityProvider: StaticDataActor)=        
+    type KillTagger(config: Configuration)= 
         
-        let isType (key: EntityGroupKey) (entity:Entity) =
-            let group = entityProvider.EntityIds(key) |> Async.RunSynchronously
-            match group with 
-            | Some grp -> grp.Contains(entity.Id)
-            | None -> false
+        let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
+            let types = group   |> IronSde.ItemTypes.group
+                                |> Option.map IronSde.ItemTypes.itemTypes
+                                |> Option.defaultValue Seq.empty
+            types   |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
         
-        let isEcm = isType EntityGroupKey.Ecm
-        let isPlex (item: CargoItem) =  item.Item |> isType EntityGroupKey.Plex
-        let isSkillInjector (item: CargoItem) =  item.Item |> isType EntityGroupKey.SkillInjector
-        let hasQuantity quantity (item: CargoItem) =  item.Quantity >= quantity
-        let isPod = isType EntityGroupKey.Capsule
+        let isEcm = isInItemTypeGroup IronSde.ItemTypeGroups.ECM
+        let isPlex (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.PLEX
+        let isSkillInjector (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.SkillInjectors
+        let isPod = isInItemTypeGroup IronSde.ItemTypeGroups.Capsule
 
+        let hasQuantity quantity (item: CargoItem) =  item.Quantity >= quantity
         
         let appendSupplementary (tags: KillTag list) =
             [ Tagging.normalPrice tags; ]
@@ -43,6 +43,9 @@
                             Tagging.isZeroValue;
                             Tagging.locationTag;
                             Tagging.isGateCamp;
+                            Tagging.missingLows;
+                            Tagging.missingMids;
+                            Tagging.noRigs;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

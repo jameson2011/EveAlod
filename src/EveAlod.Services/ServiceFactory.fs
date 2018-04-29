@@ -35,7 +35,7 @@
                                                 [ logger.Post; killFilter.Post ] |> Actors.forwardMany (Killmail)) 
         
         let killTagger = KillTaggerActor(logger.Post, 
-                                                KillTagger(config, staticDataActor), 
+                                                KillTagger(config), 
                                                 [ killScorer.Post ] |> Actors.forwardMany (Killmail))
         
         let killValuationActor = KillValuationActor(config, logger.Post,

@@ -7,10 +7,7 @@
 
     module ScoringTests =
         open EveAlod.Services
-        open FsCheck.Random
         
-        
-
         [<Property(Verbose=true)>]
         let ``score dependent on tags``(tags: KillTag list)=
             let kill = { Kill.empty with Tags = tags |> List.distinct}
@@ -27,11 +24,13 @@
         let ``all tags have a positive score``(tag: KillTag)=
             let kill = { Kill.empty with Tags = [ tag ] }
 
-            (Scoring.score kill) > 0.
+            match Scoring.score kill, Scoring.isNullifier tag with
+            | x,true -> x = 0.
+            | x,_ -> x > 0.
 
-        [<Property(Verbose=true, Replay="(193286329,296399112)")>]
+        [<Property(Verbose=true, MaxTest = 1000)>]
         let ``tag scores are accumulative``(tags: KillTag list)=
-            let tags = tags |> List.distinct
+            let tags = tags |> List.filter (Scoring.isNullifier >> not) |> List.distinct
             let kill tag = { Kill.empty with Tags = [ tag ] }
             let tagScores = tags    |> List.map kill
                                     |> List.map Scoring.score

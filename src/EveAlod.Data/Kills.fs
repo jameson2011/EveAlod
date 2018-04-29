@@ -33,7 +33,10 @@
         | Nullsec
         | Wormhole
         | Gatecamp
-
+        | MissingLows
+        | MissingMids
+        | NoRigs
+        
     type SpaceSecurity = 
         | Lowsec
         | Nullsec

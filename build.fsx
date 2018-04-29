@@ -1,9 +1,6 @@
 #r @"packages/FAKE/tools/FakeLib.dll"
-#r @"packages/FSharpLint.Fake/tools/FSharpLint.Core.dll"
-#r @"packages/FSharpLint.Fake/tools/FSharpLint.Fake.dll"
 
 open Fake
-open FSharpLint.Fake
 open Fake.Testing.XUnit2
 
 
@@ -26,12 +23,6 @@ Target "BuildApp" (fun _ ->
                             appProjects
                             |> MSBuildRelease buildDir "Build"
                             |> Log "AppBuild-Output: ")
-
-Target "LintApp" (fun _ ->
-                            appProjects
-                            |> Seq.iter (FSharpLint 
-                                            (fun o -> { o with FailBuildIfAnyWarnings = true }))
-                )
 
 Target "BuildUnitTests" (fun _ -> 
                             unitTestProjects
@@ -69,8 +60,7 @@ Target "All" (fun _ -> trace "Built and all tests run" )
 
 // Dependencies
 
-"LintApp"
-==> "ScrubArtifacts" 
+"ScrubArtifacts" 
 ==> "BuildApp"
 
 
