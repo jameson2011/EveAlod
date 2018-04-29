@@ -30,6 +30,9 @@ namespace EveAlod.Services
                 [| KillTag.EcmFitted |], [| "ECM is illegal"; "Doing God's work" |];
                 [| KillTag.Expensive |], [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
                 [| KillTag.Spendy |], [| "Oops"; "DEPLOY CREDIT CARD" |];
+                [| KillTag.MissingLows |], [| "Low slots exist" |];
+                [| KillTag.MissingMids |], [| "Mid slots exist" |];
+                [| KillTag.MissingRigs |], [| "Rig slots exist" |];
             |]
 
         

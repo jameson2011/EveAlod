@@ -43,6 +43,9 @@
                             Tagging.isZeroValue;
                             Tagging.locationTag;
                             Tagging.isGateCamp;
+                            Tagging.missingLows;
+                            Tagging.missingMids;
+                            Tagging.missingRigs;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

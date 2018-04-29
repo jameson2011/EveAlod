@@ -36,14 +36,54 @@
             |> Set.ofSeq
 
         let getAttackerCorpsDamage(km: Kill)=
-            let r = km.Attackers
-                        |> Seq.map (fun a -> (a.Damage, getAttackerCorpId a))
-                        |> Seq.filter (fun (_,s) -> s.IsSome)                                    
-                        |> Seq.map (fun (dmg,corpId) -> (dmg, corpId.Value) )                        
-                        |> Seq.groupBy (fun (_,corpId) -> corpId)
-                        |> Seq.map (fun (corpId, xs) -> (corpId, xs |> Seq.sumBy (fun (dmg,_) -> dmg) ))
-                        |> Map.ofSeq
-            r
+            km.Attackers
+                |> Seq.map (fun a -> (a.Damage, getAttackerCorpId a))
+                |> Seq.filter (fun (_,s) -> s.IsSome)                                    
+                |> Seq.map (fun (dmg,corpId) -> (dmg, corpId.Value) )                        
+                |> Seq.groupBy (fun (_,corpId) -> corpId)
+                |> Seq.map (fun (corpId, xs) -> (corpId, xs |> Seq.sumBy (fun (dmg,_) -> dmg) ))
+                |> Map.ofSeq
+            
+        let itemType (e: Entity) =
+            e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
+
+        let fittingItemType (e: CargoItem)=
+            e.Item |> itemType
+
+        let fittedItemTypes (location: ItemLocation) (fittings: seq<CargoItem>) =
+            fittings |> Seq.filter (fun e -> e.Location = location)
+                     |> Seq.map fittingItemType
+                     |> Seq.mapSomes
+
+        let shipTypeSlot (slot: IronSde.AttributeTypes) (itemType: IronSde.ItemType) =
+            match IronSde.ItemTypes.attribute slot itemType with
+                        | Some a -> int a.value 
+                        | _ -> 0
+
+        let attrType = function
+            | ItemLocation.LowSlot -> Some IronSde.AttributeTypes.lowSlots
+            | ItemLocation.HighSlot -> Some IronSde.AttributeTypes.hiSlots
+            | ItemLocation.MidSlot -> Some IronSde.AttributeTypes.medSlots
+            | ItemLocation.RigSlot -> Some IronSde.AttributeTypes.rigSlots
+            | _ -> None
+
+        let victimHasMissingSlots (location: ItemLocation) (km: Kill)=
+            match km.VictimShip |> Option.bind itemType, attrType location with
+            | Some s, Some at -> 
+                        let avail = shipTypeSlot at s
+                        let fitted =  km.Fittings |> fittedItemTypes location |> Seq.length
+                        fitted < avail
+            | _ -> false
+
+        let victimHasNothingInSlots (location: ItemLocation) (km: Kill)=
+            match km.VictimShip |> Option.bind itemType, attrType location with
+            | Some s, Some at -> 
+                        let avail = shipTypeSlot at s
+                        let noneFitted =  km.Fittings |> fittedItemTypes location |> Seq.isEmpty
+                        avail > 0 && (noneFitted)
+            | _ -> false
+
+
 
         let isVictimInPod (isPod: Entity -> bool) (km: Kill) = 
             match km.VictimShip with
@@ -116,6 +156,15 @@
         let isPod isPod = 
             (tagOnTrue KillTag.Pod) (isVictimInPod isPod)
 
+        let missingLows = 
+            (tagOnTrue KillTag.MissingLows) (victimHasMissingSlots ItemLocation.LowSlot)
+
+        let missingMids = 
+            (tagOnTrue KillTag.MissingMids) (victimHasMissingSlots ItemLocation.MidSlot)
+            
+        let missingRigs = 
+            (tagOnTrue KillTag.MissingRigs) (victimHasNothingInSlots ItemLocation.RigSlot)
+            
         let isPlayer =
             (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)
 
