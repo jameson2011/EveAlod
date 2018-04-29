@@ -45,7 +45,7 @@
                             Tagging.isGateCamp;
                             Tagging.missingLows;
                             Tagging.missingMids;
-                            Tagging.missingRigs;
+                            Tagging.noRigs;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

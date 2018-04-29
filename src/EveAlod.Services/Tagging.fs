@@ -162,8 +162,8 @@
         let missingMids = 
             (tagOnTrue KillTag.MissingMids) (victimHasMissingSlots ItemLocation.MidSlot)
             
-        let missingRigs = 
-            (tagOnTrue KillTag.MissingRigs) (victimHasNothingInSlots ItemLocation.RigSlot)
+        let noRigs = 
+            (tagOnTrue KillTag.NoRigs) (victimHasNothingInSlots ItemLocation.RigSlot)
             
         let isPlayer =
             (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)

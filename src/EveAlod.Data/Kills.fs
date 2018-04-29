@@ -35,7 +35,7 @@
         | Gatecamp
         | MissingLows
         | MissingMids
-        | MissingRigs
+        | NoRigs
         
     type SpaceSecurity = 
         | Lowsec

@@ -32,7 +32,7 @@ namespace EveAlod.Services
                 [| KillTag.Spendy |], [| "Oops"; "DEPLOY CREDIT CARD" |];
                 [| KillTag.MissingLows |], [| "Low slots exist" |];
                 [| KillTag.MissingMids |], [| "Mid slots exist" |];
-                [| KillTag.MissingRigs |], [| "Rig slots exist" |];
+                [| KillTag.NoRigs |], [| "Rig slots exist" |];
             |]
 
         
