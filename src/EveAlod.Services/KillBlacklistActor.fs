@@ -22,6 +22,8 @@
         let isBlacklisted (kill: Kill) = 
             kill.VictimShip |> isBlacklisted
             
+        let isTooOld (kill: Kill) =
+            System.DateTime.UtcNow - config.IgnoredKillAge >= kill.Occurred 
 
         let pipe = MessageInbox.Start(fun inbox -> 
             let rec getNext() = async {
@@ -33,6 +35,8 @@
                     | Killmail km ->    
                                 if isBlacklisted km then
                                     km.Id |> sprintf "Kill %s ignored as blacklisted" |> logTrace
+                                elif isTooOld km then
+                                    km.Occurred.ToString() |> sprintf "Kill %s ignored as too old (%s)" km.Id |> logTrace
                                 else                                     
                                     forward km
                     | _ ->      ignore 0

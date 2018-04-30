@@ -1,5 +1,7 @@
 ﻿namespace EveAlod.Data
 
+    open System
+
     type DiscordChannel = { 
         Id: string; 
         Token: string
@@ -23,6 +25,6 @@
                     ValuationSpread: float;
                     
                     IgnoredItemTypes: int [];
-
+                    IgnoredKillAge: TimeSpan;
                     }
 

@@ -9,5 +9,6 @@
   "killSourceUri": "http://127.0.0.1",
   "killValuationUri": "http://127.0.0.1:81",
   "valuationLimit": 0.0001,
-  "valuationSpread": 0.0001
+  "valuationSpread": 0.0001,
+  "killAgeHours": 24
 }
