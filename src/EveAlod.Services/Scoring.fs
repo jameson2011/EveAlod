@@ -23,7 +23,7 @@ namespace EveAlod.Services
             | AwoxKill -> 10.
             | SoloKill -> 10.
             | FailFit -> 20.            
-            | MissingLows | MissingMids | NoRigs -> 5.
+            | MissingLows | MissingMids | NoRigs | MixedTank -> 5.
             | WideMarginShipType -> 10.
             | NarrowMarginShipType -> 1.
             | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1

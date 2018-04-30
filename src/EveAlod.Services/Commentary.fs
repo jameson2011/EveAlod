@@ -31,6 +31,7 @@ namespace EveAlod.Services
                 [| KillTag.AwoxKill |], [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];
                 [| KillTag.EcmFitted |], [| "ECM is illegal"; "Doing God's work" |];
                 [| KillTag.Stabbed |], [| "Stabs are illegal" |];
+                [| KillTag.MixedTank |], [| "My eyes" |];
                 [| KillTag.Expensive |], [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
                 [| KillTag.Spendy |], [| "Oops"; "DEPLOY CREDIT CARD" |];
                 [| KillTag.MissingLows |], [| "Low slots exist" |];

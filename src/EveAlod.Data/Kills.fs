@@ -36,6 +36,7 @@ type KillTag =
     | MissingLows
     | MissingMids
     | NoRigs
+    | MixedTank
     | Stabbed
         
 type SpaceSecurity = 
