@@ -22,64 +22,28 @@
         let tagPresent (tag: KillTag) kill=        
             kill.Tags |> Seq.exists (fun t -> t = tag) 
             
-        let getCorpId (character: Character option)=
-            character |> Option.bind (fun c -> c.Corp 
-                                                |> Option.map (fun c -> c.Id))
-
-        let getAttackerCorpId(attacker: Attacker)=
-            attacker.Char |> getCorpId
-        
-        let getAttackerCorpIds(km: Kill)=
-            km.Attackers
-            |> Seq.map getAttackerCorpId
-            |> Seq.mapSomes
-            |> Set.ofSeq
-
         let getAttackerCorpsDamage(km: Kill)=
             km.Attackers
-                |> Seq.map (fun a -> (a.Damage, getAttackerCorpId a))
+                |> Seq.map (fun a -> (a.Damage, KillTransforms.getAttackerCorpId a))
                 |> Seq.filter (fun (_,s) -> s.IsSome)                                    
                 |> Seq.map (fun (dmg,corpId) -> (dmg, corpId.Value) )                        
                 |> Seq.groupBy (fun (_,corpId) -> corpId)
                 |> Seq.map (fun (corpId, xs) -> (corpId, xs |> Seq.sumBy (fun (dmg,_) -> dmg) ))
                 |> Map.ofSeq
-            
-        let itemType (e: Entity) =
-            e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
-
-        let fittingItemType (e: CargoItem)=
-            e.Item |> itemType
-
-        let fittedItemTypes (location: ItemLocation) (fittings: seq<CargoItem>) =
-            fittings |> Seq.filter (fun e -> e.Location = location)
-                     |> Seq.map fittingItemType
-                     |> Seq.mapSomes
-
-        let shipTypeSlot (slot: IronSde.AttributeTypes) (itemType: IronSde.ItemType) =
-            match IronSde.ItemTypes.attribute slot itemType with
-                        | Some a -> int a.value 
-                        | _ -> 0
-
-        let attrType = function
-            | ItemLocation.LowSlot -> Some IronSde.AttributeTypes.lowSlots
-            | ItemLocation.HighSlot -> Some IronSde.AttributeTypes.hiSlots
-            | ItemLocation.MidSlot -> Some IronSde.AttributeTypes.medSlots
-            | ItemLocation.RigSlot -> Some IronSde.AttributeTypes.rigSlots
-            | _ -> None
-
+         
         let victimHasMissingSlots (location: ItemLocation) (km: Kill)=
-            match km.VictimShip |> Option.bind itemType, attrType location with
+            match km.VictimShip |> Option.bind ShipTransforms.itemType, ShipTransforms.attrType location with
             | Some s, Some at -> 
-                        let avail = shipTypeSlot at s
-                        let fitted =  km.Fittings |> fittedItemTypes location |> Seq.length
+                        let avail = ShipTransforms.shipTypeSlot at s
+                        let fitted =  km.Fittings |> ShipTransforms.fittedItemTypes location |> Seq.length
                         fitted < avail
             | _ -> false
 
         let victimHasNothingInSlots (location: ItemLocation) (km: Kill)=
-            match km.VictimShip |> Option.bind itemType, attrType location with
+            match km.VictimShip |> Option.bind ShipTransforms.itemType, ShipTransforms.attrType location with
             | Some s, Some at -> 
-                        let avail = shipTypeSlot at s
-                        let noneFitted =  km.Fittings |> fittedItemTypes location |> Seq.isEmpty
+                        let avail = ShipTransforms.shipTypeSlot at s
+                        let noneFitted =  km.Fittings |> ShipTransforms.fittedItemTypes location |> Seq.isEmpty
                         avail > 0 && (noneFitted)
             | _ -> false
 
@@ -98,7 +62,7 @@
             | _ -> false
         
         let areAttackersInSameCorp (corpId: string) (km: Kill)=
-            let attackerCorpIds = getAttackerCorpIds km
+            let attackerCorpIds = KillTransforms.getAttackerCorpIds km
             attackerCorpIds.Count = 1 &&
                 (attackerCorpIds |> Seq.item 0) = corpId
                 
@@ -136,9 +100,8 @@
             km.Cargo
             |> Seq.exists pred
         
-        let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
+        let hasItemsFitted (pred: CargoItem -> bool) (km: Kill) =
             km.Fittings
-            |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
             
 
@@ -150,7 +113,7 @@
         let hasItemInHold tag (pred: CargoItem -> bool) =
             (tagOnTrue tag) (hasItemsInCargo pred)
             
-        let hasItemFitted tag (pred: Entity -> bool) =
+        let hasItemFitted tag (pred: CargoItem -> bool) =
             (tagOnTrue tag) (hasItemsFitted pred)
             
         let isPod isPod = 
@@ -165,6 +128,13 @@
         let noRigs = 
             (tagOnTrue KillTag.NoRigs) (victimHasNothingInSlots ItemLocation.RigSlot)
             
+        let hasMixedTank = 
+            let items k = k.Fittings |> Seq.map (fun c -> c.Item) |> Seq.cache
+            let isArmour =  Seq.exists ShipTransforms.isArmourMod
+            let isShield = Seq.exists ShipTransforms.isShieldMod
+            
+            (tagOnTrue KillTag.MixedTank) (items >> (isArmour <&&> isShield))
+
         let isPlayer =
             (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)
 

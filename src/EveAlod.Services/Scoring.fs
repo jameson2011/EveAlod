@@ -19,10 +19,12 @@ namespace EveAlod.Services
             | PlayerKill -> 2.
             | Pod  -> 15.
             | EcmFitted -> 10.
+            | Stabbed -> 10.
             | AwoxKill -> 10.
             | SoloKill -> 10.
             | FailFit -> 20.            
-            | MissingLows | MissingMids | NoRigs -> 5.
+            | MissingLows | MissingMids | NoRigs  -> 5.
+            | MixedTank -> 10.
             | WideMarginShipType -> 10.
             | NarrowMarginShipType -> 1.
             | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1
