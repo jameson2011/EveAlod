@@ -18,7 +18,7 @@ namespace EveAlod.Services
             | NpcKill-> 0.1
             | PlayerKill -> 2.
             | Pod  -> 15.
-            | EcmFitted -> 15.
+            | EcmFitted -> 10.
             | AwoxKill -> 10.
             | SoloKill -> 10.
             | FailFit -> 20.            
