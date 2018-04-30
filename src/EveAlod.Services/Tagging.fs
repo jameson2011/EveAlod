@@ -136,9 +136,8 @@
             km.Cargo
             |> Seq.exists pred
         
-        let hasItemsFitted (pred: Entity -> bool) (km: Kill) =
+        let hasItemsFitted (pred: CargoItem -> bool) (km: Kill) =
             km.Fittings
-            |> Seq.map (fun e -> e.Item)
             |> Seq.exists pred
             
 
@@ -150,7 +149,7 @@
         let hasItemInHold tag (pred: CargoItem -> bool) =
             (tagOnTrue tag) (hasItemsInCargo pred)
             
-        let hasItemFitted tag (pred: Entity -> bool) =
+        let hasItemFitted tag (pred: CargoItem -> bool) =
             (tagOnTrue tag) (hasItemsFitted pred)
             
         let isPod isPod = 

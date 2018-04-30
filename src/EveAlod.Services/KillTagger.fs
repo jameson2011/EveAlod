@@ -13,10 +13,11 @@
                                 |> Option.defaultValue Seq.empty
             types   |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
         
-        let isEcm = isInItemTypeGroup IronSde.ItemTypeGroups.ECM
+        let isEcm (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.ECM
         let isPlex (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.PLEX
         let isSkillInjector (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.SkillInjectors
         let isPod = isInItemTypeGroup IronSde.ItemTypeGroups.Capsule
+        let isWarpCoreStab (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.WarpCoreStabilizer
 
         let hasQuantity quantity (item: CargoItem) =  item.Quantity >= quantity
         
@@ -46,6 +47,7 @@
                             Tagging.missingLows;
                             Tagging.missingMids;
                             Tagging.noRigs;
+                            Tagging.hasItemFitted KillTag.Stabbed isWarpCoreStab;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

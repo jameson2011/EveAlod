@@ -36,6 +36,7 @@
         | MissingLows
         | MissingMids
         | NoRigs
+        | Stabbed
         
     type SpaceSecurity = 
         | Lowsec

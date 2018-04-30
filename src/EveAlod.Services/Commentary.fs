@@ -17,7 +17,9 @@ namespace EveAlod.Services
                 [| KillTag.SoloKill; KillTag.Expensive|], [| "NICE"; "A thing of beauty is a joy forever" |];
                 [| KillTag.SoloKill; KillTag.Spendy|], [| "Who said solo is dead?";  |];
                 [| KillTag.EcmFitted; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Call the boss: PADDLING INCOMING"; |];
+                [| KillTag.Stabbed; KillTag.CorpLoss |], [| "Someone needs to be fired"; "Call the boss: PADDLING INCOMING"; |];
                 [| KillTag.EcmFitted; KillTag.CorpKill |], [| "Deserves Plex for this"; |];
+                [| KillTag.Stabbed; KillTag.CorpKill |], [| "Deserves Plex for this"; |];
                 [| KillTag.CorpLoss; KillTag.CorpKill |], [| "Oh dear"; |];
                 [| KillTag.CorpLoss |], [| "CORPIE DOWN"; "RIP" |];
                 [| KillTag.CorpKill |], [| "GREAT VICTORY"; "GLORIOUS VICTORY" |];
@@ -28,6 +30,7 @@ namespace EveAlod.Services
                 [| KillTag.SkillInjectorInHold |], [| "Skill injector in hold!"; "FFS"; "No comment needed" |];
                 [| KillTag.AwoxKill |], [| "Ooooh... Awox"; "Should have checked his API"; "Didn't like that corp anyway" |];
                 [| KillTag.EcmFitted |], [| "ECM is illegal"; "Doing God's work" |];
+                [| KillTag.Stabbed |], [| "Stabs are illegal" |];
                 [| KillTag.Expensive |], [| "DERP"; "Oh dear, how sad, never mind"; "Someone's gonna be crying" |];
                 [| KillTag.Spendy |], [| "Oops"; "DEPLOY CREDIT CARD" |];
                 [| KillTag.MissingLows |], [| "Low slots exist" |];
