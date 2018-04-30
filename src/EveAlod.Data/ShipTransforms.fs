@@ -13,7 +13,7 @@ module ShipTransforms=
                         IronSde.ItemTypeGroups.ShieldRecharger;
                         IronSde.ItemTypeGroups.ShieldResistanceAmplifier;
                         IronSde.ItemTypeGroups.RigShield;
-                        |]
+                        |] |> Set.ofSeq
 
     let armourMods = [| IronSde.ItemTypeGroups.AncillaryArmorRepairer;
                         IronSde.ItemTypeGroups.ArmorHardener;
@@ -23,7 +23,7 @@ module ShipTransforms=
                         IronSde.ItemTypeGroups.ArmorPlatingEnergized;
                         IronSde.ItemTypeGroups.ArmorRepairUnit;
                         IronSde.ItemTypeGroups.RigArmor;
-                        |]
+                        |] |> Set.ofSeq
 
     
     let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
@@ -34,7 +34,7 @@ module ShipTransforms=
        
     let itemType (e: Entity) =
         e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
-
+        
     let fittingItemType (e: CargoItem)=
         e.Item |> itemType
 
@@ -42,6 +42,22 @@ module ShipTransforms=
         fittings |> Seq.filter (fun e -> e.Location = location)
                     |> Seq.map fittingItemType
                     |> Seq.mapSomes
+
+    let itemTypeGroups (items: seq<CargoItem>) =
+        items   |> Seq.map fittingItemType
+                |> Seq.mapSomes
+                |> Seq.map (fun t -> t.group.key)
+                |> Seq.distinct
+    
+    let isInGroup (groups: Set<IronSde.ItemTypeGroups>) (item: Entity)=
+        item |> itemType
+             |> Option.map (fun t -> t.group.key )
+             |> Option.map (fun t -> groups |> Set.contains t) 
+             |> Option.defaultValue false
+
+    let isArmourMod = isInGroup armourMods
+
+    let isShieldMod = isInGroup shieldMods
 
     let shipTypeSlot (slot: IronSde.AttributeTypes) (itemType: IronSde.ItemType) =
         match IronSde.ItemTypes.attribute slot itemType with

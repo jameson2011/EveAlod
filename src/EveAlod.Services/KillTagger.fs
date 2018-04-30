@@ -34,6 +34,7 @@
                             Tagging.missingLows;
                             Tagging.missingMids;
                             Tagging.noRigs;
+                            Tagging.hasMixedTank;
                         ]
                         |> Seq.map (fun f -> f kill)
                         |> Seq.mapSomes

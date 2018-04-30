@@ -128,6 +128,13 @@
         let noRigs = 
             (tagOnTrue KillTag.NoRigs) (victimHasNothingInSlots ItemLocation.RigSlot)
             
+        let hasMixedTank = 
+            let items k = k.Fittings |> Seq.map (fun c -> c.Item) |> Seq.cache
+            let isArmour =  Seq.exists ShipTransforms.isArmourMod
+            let isShield = Seq.exists ShipTransforms.isShieldMod
+            
+            (tagOnTrue KillTag.MixedTank) (items >> (isArmour <&&> isShield))
+
         let isPlayer =
             (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)
 
