@@ -77,6 +77,7 @@
     <Compile Include="EntityTransforms.fs" />
     <Compile Include="Locations.fs" />
     <Compile Include="KillTransforms.fs" />
+    <Compile Include="ShipTransforms.fs" />
     <None Include="SampleRedisqKillmail.json" />
     <None Include="SampleCharacter.json" />
     <None Include="SampleEntity.json" />
