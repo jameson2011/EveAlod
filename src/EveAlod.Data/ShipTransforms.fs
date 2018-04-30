@@ -27,10 +27,33 @@ module ShipTransforms=
 
     
     let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
-        let types = group   |> IronSde.ItemTypes.group
-                            |> Option.map IronSde.ItemTypes.itemTypes
-                            |> Option.defaultValue Seq.empty
-        types   |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
+        group   |> IronSde.ItemTypes.group
+                |> Option.map IronSde.ItemTypes.itemTypes
+                |> Option.defaultValue Seq.empty
+                |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
+       
+    let itemType (e: Entity) =
+        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
+
+    let fittingItemType (e: CargoItem)=
+        e.Item |> itemType
+
+    let fittedItemTypes (location: ItemLocation) (fittings: seq<CargoItem>) =
+        fittings |> Seq.filter (fun e -> e.Location = location)
+                    |> Seq.map fittingItemType
+                    |> Seq.mapSomes
+
+    let shipTypeSlot (slot: IronSde.AttributeTypes) (itemType: IronSde.ItemType) =
+        match IronSde.ItemTypes.attribute slot itemType with
+                    | Some a -> int a.value 
+                    | _ -> 0
+
+    let attrType = function
+        | ItemLocation.LowSlot -> Some IronSde.AttributeTypes.lowSlots
+        | ItemLocation.HighSlot -> Some IronSde.AttributeTypes.hiSlots
+        | ItemLocation.MidSlot -> Some IronSde.AttributeTypes.medSlots
+        | ItemLocation.RigSlot -> Some IronSde.AttributeTypes.rigSlots
+        | _ -> None
 
         
     let hasQuantity quantity (item: CargoItem) =  item.Quantity >= quantity
