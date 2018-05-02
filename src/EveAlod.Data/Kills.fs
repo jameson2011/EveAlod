@@ -23,6 +23,7 @@ type KillTag =
     | Pod
     | Spendy
     | Expensive
+    | AboveNormalPrice
     | NormalPrice
     | Cheap
     | ZeroValue

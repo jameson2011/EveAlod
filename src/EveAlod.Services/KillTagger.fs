@@ -25,6 +25,7 @@
                             Tagging.isPlayer;
                             Tagging.isExpensive;
                             Tagging.isSpendyWithinLimits config.ValuationLimit;
+                            Tagging.isAboveNormalWithinLowerLimits config.ValuationLowerLimit;
                             Tagging.isShipTypeWideMargin config.ValuationSpread;
                             Tagging.isShipTypeNarrowMargin config.ValuationSpread;
                             Tagging.isCheap; 

@@ -11,7 +11,7 @@
         let private spendy2Limit =      500000000.
         let private cheapLimit =        10000000.
 
-        let private priceTags = [ KillTag.Spendy; KillTag.Expensive; KillTag.Cheap; KillTag.ZeroValue] |> Set.ofSeq        
+        let private priceTags = [ KillTag.Spendy; KillTag.Expensive; KillTag.NormalPrice; KillTag.AboveNormalPrice; KillTag.Cheap; KillTag.ZeroValue] |> Set.ofSeq        
 
         let private locationSecurity (kill: Kill)=
             match kill.Location with
@@ -140,12 +140,12 @@
 
         let isExpensive =
             (tagOnTrue KillTag.Expensive) (isTotalValueOver expensiveLimit)
-            
-        let isSpendy =
-            (tagOnTrue KillTag.Spendy) ((isTotalValueOver spendyLimit) <&&> (isTotalValueUnder expensiveLimit))
-        
+          
         let isSpendyWithinLimits valuationLimit=
             (tagOnTrue KillTag.Spendy) ((isTotalValueOver spendy2Limit) <&&> (isTotalValueValuationOver valuationLimit) <&&> (isTotalValueUnder expensiveLimit))
+        
+        let isAboveNormalWithinLowerLimits valuationLimit=
+            (tagOnTrue KillTag.AboveNormalPrice) ((isTotalValueOver spendy2Limit) <&&> (isTotalValueValuationOver valuationLimit) <&&> (isTotalValueUnder expensiveLimit))
         
         let isShipTypeWideMargin spreadLimit=
             (tagOnTrue KillTag.WideMarginShipType) (isShipTypeSpreadOver spreadLimit)
