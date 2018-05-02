@@ -188,7 +188,7 @@
                             kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;                  
                         ] 
                         |> Seq.mapSomes   
-                        |> Strings.join " / "
+                        |> Strings.join " - "
             match text with
             | "" -> [||]
             | t -> [|   ("name", toJsonValueString "stats");
