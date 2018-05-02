@@ -62,8 +62,10 @@
                 sprintf "Min Corp Dmg:      %f" config.MinCorpDamage;
                 sprintf "Discord:           %s" config.ChannelId;
                 sprintf "Discord token:     %s" config.ChannelToken;
-                sprintf "Valuation Limit:   %f" config.ValuationLimit;
-                sprintf "Valuation Spread:  %f" config.ValuationSpread
+                sprintf "Valuation Upper:   %f" config.ValuationLimit;
+                sprintf "Valuation Lower:   %f" config.ValuationLowerLimit;
+                sprintf "Valuation Spread:  %f" config.ValuationSpread;
+                sprintf "Ignored kill age:  %s" (config.IgnoredKillAge.ToString());
             ]            
             |> Seq.map ActorMessage.Info
             |> Seq.iter log

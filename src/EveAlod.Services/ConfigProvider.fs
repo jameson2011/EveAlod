@@ -31,6 +31,7 @@
                 KillSourceUri = c.KillSourceUri;
                 KillValuationUri = c.KillValuationUri;
                 ValuationLimit = (float c.ValuationLimit);
+                ValuationLowerLimit = 0.1;
                 ValuationSpread = (float c.ValuationSpread);
                 IgnoredItemTypes = [| 41030; 43681;|]; // Excavator mining drones
                 IgnoredKillAge = match c.KillAgeHours with

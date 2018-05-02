@@ -22,6 +22,7 @@
                     KillValuationUri: string;
                     
                     ValuationLimit: float;
+                    ValuationLowerLimit: float;
                     ValuationSpread: float;
                     
                     IgnoredItemTypes: int [];

@@ -14,6 +14,7 @@ namespace EveAlod.Services
             | PlexInHold | SkillInjectorInHold -> 20.
             | Expensive -> 100.
             | Spendy -> 40.
+            | AboveNormalPrice -> 15.
             | NormalPrice -> 10.
             | NpcKill-> 0.1
             | PlayerKill -> 2.
@@ -30,16 +31,23 @@ namespace EveAlod.Services
             | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1
             | Gatecamp -> 0.1
             
-        let isNullifier = function
-            | ZeroValue -> true
-            | _ -> false
-                
+        let private nullifiers = [ ZeroValue ; Cheap ] |> Set.ofSeq
+        let private antiNullifiers = [ CorpKill; CorpLoss ] |> Set.ofSeq
+        
+        let isNullified tags = 
+            let nulls = tags |> Set.intersect nullifiers 
+            let antinulls = tags |> Set.intersect antiNullifiers
+
+            match nulls |> Set.isEmpty, antinulls |> Set.isEmpty with
+            | false, true -> true
+            | _, _-> false
+            
         let private tagsScore tags =
-            match tags |> Seq.exists isNullifier with
+            match isNullified tags with 
             | true -> 0.
             | _ -> tags |> Seq.map tagScore |> Seq.sum
 
         let score (km: Kill) = 
-            km.Tags |> Seq.distinct |> tagsScore
+            km.Tags |> Set.ofSeq |> tagsScore
             
 
