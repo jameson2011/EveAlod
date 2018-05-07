@@ -33,7 +33,7 @@ module ShipTransforms=
                 |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
        
     let itemType (e: Entity) =
-        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
+        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemType
         
     let fittingItemType (e: CargoItem)=
         e.Item |> itemType

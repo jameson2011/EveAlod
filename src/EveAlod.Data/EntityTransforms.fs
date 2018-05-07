@@ -20,7 +20,7 @@
        
         let toItemTypeEntity id =
             id  |> Strings.toInt
-                |> Option.bind IronSde.ItemTypes.itemtype
+                |> Option.bind IronSde.ItemTypes.itemType
                 |> Option.map (fun e -> { Entity.Id = e.id.ToString(); Name = e.name })            
 
         let toItemLocation id =
