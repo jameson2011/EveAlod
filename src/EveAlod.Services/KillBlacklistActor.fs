@@ -9,18 +9,11 @@
         let logTrace = Actors.postTrace typeof<KillValuationActor>.Name log
         let logException = Actors.postException typeof<KillFilterActor>.Name log
 
-        let blacklistedItemTypes = 
-            config.IgnoredItemTypes 
-                |> Seq.map Strings.toString
-                |> Set.ofSeq
-
-        let isBlacklisted (itemType: Entity option)= 
-            itemType |> Option.map (fun t -> t.Id)
-                     |> Option.map blacklistedItemTypes.Contains
-                     |> Option.defaultValue false
-
         let isBlacklisted (kill: Kill) = 
-            kill.VictimShip |> isBlacklisted
+            kill.VictimShip |> Option.bind ShipTransforms.itemType
+                            |> Option.map (ShipTransforms.isDrone <||> 
+                                            (ShipTransforms.shipIsFittable >> not) )
+                            |> Option.defaultValue false
             
         let isTooOld (kill: Kill) =
             System.DateTime.UtcNow - config.IgnoredKillAge >= kill.Occurred 

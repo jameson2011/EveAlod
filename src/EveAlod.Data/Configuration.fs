@@ -25,7 +25,6 @@
                     ValuationLowerLimit: float;
                     ValuationSpread: float;
                     
-                    IgnoredItemTypes: int [];
                     IgnoredKillAge: TimeSpan;
                     }
 
