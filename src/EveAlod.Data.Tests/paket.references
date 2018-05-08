@@ -3,3 +3,4 @@ xunit
 FsCheck
 FsCheck.Xunit
 Newtonsoft.Json
+IronSde

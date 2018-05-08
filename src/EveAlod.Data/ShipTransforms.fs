@@ -3,6 +3,9 @@
 module ShipTransforms=
 
     open EveAlod.Common
+    open IronSde
+    open FSharp.Data
+    open FSharp.Data
     
     let shieldMods = [| IronSde.ItemTypeGroups.ShieldBoostAmplifier;
                         IronSde.ItemTypeGroups.AncillaryShieldBooster;
@@ -33,7 +36,7 @@ module ShipTransforms=
                 |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
        
     let itemType (e: Entity) =
-        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemtype
+        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemType
         
     let fittingItemType (e: CargoItem)=
         e.Item |> itemType
@@ -80,3 +83,22 @@ module ShipTransforms=
     let isPod = isInItemTypeGroup IronSde.ItemTypeGroups.Capsule
     let isWarpCoreStab (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.WarpCoreStabilizer
     
+    let isShip itemType = itemType.group.category = IronSde.ItemTypeCategories.Ship
+    
+    let isDrone itemType = itemType.group.category = IronSde.ItemTypeCategories.Drone
+
+    let shipIsFittable (ship: IronSde.ItemType) =
+        
+        let isPod = ship.group.key = IronSde.ItemTypeGroups.Capsule
+        
+        let lows = ship |> shipTypeSlot IronSde.AttributeTypes.lowSlots
+        let mids = ship |> shipTypeSlot IronSde.AttributeTypes.medSlots
+        let highs = ship |> shipTypeSlot IronSde.AttributeTypes.hiSlots
+        let rigs = ship |> shipTypeSlot IronSde.AttributeTypes.rigSlots       
+        let hold = ship.capacity |> Option.defaultValue 0.
+        
+        match isPod, lows, mids, highs, rigs, hold with
+        | true, _, _, _, _, _ ->    true
+        | false, 0, 0, 0, 0, 0. ->  false
+        | _ ->                      true
+          

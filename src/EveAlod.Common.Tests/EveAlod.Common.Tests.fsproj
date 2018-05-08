@@ -91,7 +91,7 @@
     <Content Include="packages.config" />
     <Compile Include="Arb.fs" />
     <Compile Include="DateTimeTests.fs" />
-    <Compile Include="CombinatorsTests.fs" />
+    <Compile Include="OperatorsTests.fs" />
     <Compile Include="JsonTests.fs" />
     <Compile Include="SeqTests.fs" />
     <Compile Include="StringsTests.fs" />

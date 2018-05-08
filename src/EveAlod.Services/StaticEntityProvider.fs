@@ -9,6 +9,8 @@
 
     type StaticEntityProvider()=
     
+        let esiRooturl = "https://esi.evetech.net"
+
         let ecmGroupId = "201"
         let plexGroupId = "1875"
         let skillInjectorGroupId = "1739"
@@ -18,13 +20,13 @@
         let httpClient = Web.httpClient()
         let getData = Web.getData httpClient
 
-        let universeUri group = (sprintf "https://esi.tech.ccp.is/latest/universe/%s/%s/?datasource=tranquility&language=en-us" group)
+        let universeUri group = (sprintf "%s/latest/universe/%s/%s/?datasource=tranquility&language=en-us" esiRooturl group)
         let entityGroupUri = "groups" |> universeUri
         let entityTypesUri = "types" |> universeUri
         let systemsUri = "systems" |> universeUri
         let groupCategoriesUri = "categories" |> universeUri
-        let charactersUri = sprintf "https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us" 
-        let corpSearchUri = sprintf "https://esi.tech.ccp.is/latest/search/?categories=corporation&datasource=tranquility&language=en-us&search=%s&strict=true"
+        let charactersUri = sprintf "%s/latest/characters/%s/?datasource=tranquility&language=en-us" esiRooturl
+        let corpSearchUri = sprintf "%s/latest/search/?categories=corporation&datasource=tranquility&language=en-us&search=%s&strict=true" esiRooturl
 
         let getEntityGroup(id: string)=
             async {
