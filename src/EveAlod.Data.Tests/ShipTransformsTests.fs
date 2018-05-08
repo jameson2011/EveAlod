@@ -62,3 +62,11 @@ module ShipTransformsTests=
                         
         Assert.True(result)
 
+    [<Theory>]
+    [<InlineData(12236)>]
+    let ``shipIsFittable Towers are fittable``(id)=
+        let result = id |> IronSde.ItemTypes.itemType
+                        |> Option.get
+                        |> ShipTransforms.shipIsFittable
+                        
+        Assert.True(result)

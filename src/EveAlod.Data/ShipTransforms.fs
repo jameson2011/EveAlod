@@ -83,12 +83,8 @@ module ShipTransforms=
     let isPod = isInItemTypeGroup IronSde.ItemTypeGroups.Capsule
     let isWarpCoreStab (item: CargoItem) =  item.Item |> isInItemTypeGroup IronSde.ItemTypeGroups.WarpCoreStabilizer
     
-    
-    // TODO:
-
     let isShip itemType = itemType.group.category = IronSde.ItemTypeCategories.Ship
     
-    // TODO:
     let isDrone itemType = itemType.group.category = IronSde.ItemTypeCategories.Drone
 
     let shipIsFittable (ship: IronSde.ItemType) =
