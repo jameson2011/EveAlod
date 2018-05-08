@@ -30,3 +30,35 @@ module ShipTransformsTests=
                         |> ShipTransforms.shipIsFittable
                         
         Assert.True(result)
+
+    [<Theory>]
+    [<InlineData(672)>]
+    let ``shipIsFittable shuttles are fittable``(id)=
+        let result = id |> IronSde.ItemTypes.itemType
+                        |> Option.get
+                        |> ShipTransforms.shipIsFittable
+                        
+        Assert.True(result)
+
+    [<Theory>]
+    [<InlineData(20187)>]
+    let ``shipIsFittable freighters are fittable``(id)=
+        let result = id |> IronSde.ItemTypes.itemType
+                        |> Option.get
+                        |> ShipTransforms.shipIsFittable
+                        
+        Assert.True(result)
+
+
+    [<Theory>]
+    [<InlineData(29990)>]
+    [<InlineData(29984)>]
+    [<InlineData(29988)>]
+    [<InlineData(29986)>]
+    let ``shipIsFittable T3 cruisers are fittable``(id)=
+        let result = id |> IronSde.ItemTypes.itemType
+                        |> Option.get
+                        |> ShipTransforms.shipIsFittable
+                        
+        Assert.True(result)
+
