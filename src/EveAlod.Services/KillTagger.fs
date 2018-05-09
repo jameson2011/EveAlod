@@ -6,6 +6,26 @@ open EveAlod.Data
     
 type KillTagger(config: Configuration)= 
         
+    let normalisePairs = 
+        [
+            [| KillTag.MixedTank; KillTag.Industrial |], [ KillTag.Industrial ];
+        ] |> List.map (fun (xs,ys) -> xs |> Set.ofSeq, ys)
+
+    let normalise (tags: KillTag list) =
+        
+        let rec norm pairs tags =
+            match pairs with
+            | [] ->         tags
+            | (s,r)::t ->   let m = s |> Set.intersect tags
+                            let normtags =      if m = s then
+                                                    s   |> Set.difference tags
+                                                        |> Set.append r
+                                                else
+                                                    tags
+                            norm t normtags
+            
+        norm normalisePairs (Set.ofList tags) |> List.ofSeq
+
     let appendSupplementary (tags: KillTag list) =
         [ Tagging.normalPrice tags; ]
             |> Seq.mapSomes
@@ -35,11 +55,13 @@ type KillTagger(config: Configuration)=
                         Tagging.missingMids;
                         Tagging.noRigs;
                         Tagging.hasMixedTank;
+                        Tagging.isIndustrial;
                     ]
                     |> Seq.map (fun f -> f kill)
                     |> Seq.mapSomes
                     |> List.ofSeq
                     |> appendSupplementary
                     |> List.append kill.Tags
-            
+                    |> normalise
+
         {kill with Tags = tags}

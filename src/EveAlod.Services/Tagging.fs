@@ -46,7 +46,10 @@ module Tagging=
                     avail > 0 && (noneFitted)
         | _ -> false
 
-
+    let isVictimInIndustrial (kill: Kill) =
+        match kill.VictimShip with
+        | Some e -> ShipTransforms.isIndustrialShip e
+        | _ -> false
 
     let isVictimInPod (isPod: Entity -> bool) (km: Kill) = 
         match km.VictimShip with
@@ -133,6 +136,9 @@ module Tagging=
         let isShield = Seq.exists ShipTransforms.isShieldMod
             
         (tagOnTrue KillTag.MixedTank) (items >> (isArmour <&&> isShield))
+
+    let isIndustrial =
+        (tagOnTrue KillTag.Industrial) (isVictimInIndustrial)
 
     let isPlayer =
         (tagOnTrue KillTag.PlayerKill) (not << tagPresent KillTag.NpcKill)

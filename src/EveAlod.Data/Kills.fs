@@ -39,6 +39,7 @@ type KillTag =
     | NoRigs
     | MixedTank
     | Stabbed
+    | Industrial
         
 type SpaceSecurity = 
     | Lowsec
