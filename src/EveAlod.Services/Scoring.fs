@@ -30,7 +30,8 @@ namespace EveAlod.Services
             | NarrowMarginShipType -> 1.
             | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1
             | Gatecamp -> 0.1
-            
+            | Industrial -> 0.1
+
         let private nullifiers = [ ZeroValue ; Cheap ] |> Set.ofSeq
         let private antiNullifiers = [ CorpKill; CorpLoss ] |> Set.ofSeq
         

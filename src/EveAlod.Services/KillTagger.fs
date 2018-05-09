@@ -35,6 +35,7 @@ type KillTagger(config: Configuration)=
                         Tagging.missingMids;
                         Tagging.noRigs;
                         Tagging.hasMixedTank;
+                        Tagging.isIndustrial;
                     ]
                     |> Seq.map (fun f -> f kill)
                     |> Seq.mapSomes

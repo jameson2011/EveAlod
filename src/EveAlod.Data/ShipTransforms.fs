@@ -29,6 +29,19 @@ module ShipTransforms=
                         |] |> Set.ofSeq
 
     
+    let industrialShips = [|
+                            IronSde.ItemTypeGroups.MiningBarge;
+                            IronSde.ItemTypeGroups.DeepSpaceTransport;
+                            IronSde.ItemTypeGroups.Freighter;
+                            IronSde.ItemTypeGroups.IndustrialCommandShip;
+                            IronSde.ItemTypeGroups.BlockadeRunner;
+                            IronSde.ItemTypeGroups.Industrial;
+                            IronSde.ItemTypeGroups.Exhumer;
+                            IronSde.ItemTypeGroups.JumpFreighter;
+                            IronSde.ItemTypeGroups.CapitalIndustrialShip;
+                            |] |> Set.ofSeq
+
+
     let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
         group   |> IronSde.ItemTypes.group
                 |> Option.map IronSde.ItemTypes.itemTypes
@@ -57,6 +70,8 @@ module ShipTransforms=
              |> Option.map (fun t -> t.group.key )
              |> Option.map (fun t -> groups |> Set.contains t) 
              |> Option.defaultValue false
+
+    let isIndustrialShip = isInGroup industrialShips
 
     let isArmourMod = isInGroup armourMods
 
