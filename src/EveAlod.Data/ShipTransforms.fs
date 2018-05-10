@@ -44,8 +44,7 @@ module ShipTransforms=
 
     let isInItemTypeGroup (group: IronSde.ItemTypeGroups) (entity: Entity) =
         group   |> IronSde.ItemTypes.group
-                |> Option.map IronSde.ItemTypes.itemTypes
-                |> Option.defaultValue Seq.empty
+                |> IronSde.ItemTypes.itemTypes
                 |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
        
     let itemType (e: Entity) =
