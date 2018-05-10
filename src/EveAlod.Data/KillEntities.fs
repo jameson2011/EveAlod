@@ -71,7 +71,25 @@ type ItemLocation =
     | FighterTube
     | SubsystemBay
     
-    
+type ImplantSet =
+    | Halo
+    | Talisman
+    | Talon
+    | Christmas
+    | Spur
+    | Crystal
+    | Grail
+    | Centurion
+    | Harvest
+    | Jackal
+    | Slave
+    | Snake
+    | Asklepian
+    | Virtue
+    | Edge
+    | Nomad
+    | Ascendancy
+
 type SolarSystem=
     {
         Id: int;
