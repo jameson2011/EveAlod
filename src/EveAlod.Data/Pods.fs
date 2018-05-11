@@ -52,20 +52,35 @@ module Pods=
                       |> Seq.map (fun kvp -> kvp.Key)
                       |> Seq.tryHead
                       
-    let implants =
-        let groups = 
-            ItemTypeCategories.Implant
-            |> groups
-            |> Seq.filter (fun g -> g.key <> ItemTypeGroups.Booster)
-
-        groups |> Seq.collect itemTypes
-
-    let implantSet (implant) = 
+    let private getImplantSetGrade implant = 
         let set = getImplantSetKey implant |> Option.bind getSet
 
         match set, getGrade implant with
         | Some s, Some g -> Some (s,g)
         | _ -> None
-        
 
+    
+    let implants =
+        ItemTypeCategories.Implant
+        |> groups
+        |> Seq.filter (fun g -> g.key <> ItemTypeGroups.Booster)
+        |> Seq.collect itemTypes
+
+    let private implantsBySetAndGrade =
+        implants
+            |> Seq.groupBy (fun i -> match getImplantSetGrade i with    
+                                     | Some (s,g) -> Some (s,g)
+                                     | _ -> None) 
+            |> Seq.filter (fun (k,is) -> Option.isSome k)
+            |> Seq.map (fun (k,is) -> (Option.get k), Array.ofSeq is)
+            |> Map.ofSeq
+
+    let implantSet (implant) = getImplantSetGrade implant
+        
+    let setImplants (set: ImplantSet) (grade: ImplantGrade)=        
+        implantsBySetAndGrade 
+            |> Map.tryFind (set, grade)
+            |> Option.defaultValue [||]
+            
+        
         

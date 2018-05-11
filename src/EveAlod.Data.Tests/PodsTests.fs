@@ -14,6 +14,14 @@ open EveAlod.Data
 module PodsTests=
     
     [<Theory>]
+    [<InlineData(ImplantSet.Crystal, ImplantGrade.HighGrade, 6)>]
+    [<InlineData(ImplantSet.Spur, ImplantGrade.HighGrade, 6)>]
+    [<InlineData(ImplantSet.Spur, ImplantGrade.MidGrade, 0)>]
+    let setImplantsReturnsSet(set, grade, expectedCount)=
+        let implants = Pods.setImplants set grade |> Array.ofSeq
+        Assert.Equal(expectedCount, implants.Length)
+
+    [<Theory>]
     [<InlineData(20160, ImplantSet.Crystal, ImplantGrade.HighGrade)>]
     [<InlineData(22110, ImplantSet.Crystal, ImplantGrade.MidGrade)>]
     [<InlineData(33924, ImplantSet.Crystal, ImplantGrade.LowGrade)>]
@@ -45,6 +53,7 @@ module PodsTests=
         | Some (s,g) -> failwith "Some returned"
         
     [<Fact>]
+    // Terrible test, but as this relies on string parsing, a brittle triggering test is least evil
     let GradedImplantsReturnsPartiallyFullList()=
         let implants = Pods.implants
         
