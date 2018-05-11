@@ -159,36 +159,35 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
                     inlineField;
                 |]
 
-    
+    let implantSets (kill: Kill) =
+        kill
+        |> KillTransforms.fittingItems ItemLocation.Implant 
+        |> Seq.map (fun i -> match Pods.implantSet i with
+                                    | Some (s,g) -> Some ((s,g),i)
+                                    | _ -> None)
+        |> Seq.mapSomes
+        |> Seq.groupBy (fun (k,_) -> k)
+                |> Seq.map (fun ((s,g),xs) -> (s,g), 
+                                                    xs |> Seq.map snd 
+                                                        |> Seq.sort
+                                                        |> Array.ofSeq,
+                                                    Pods.setImplants s g)
+
     let podSummaryField (kill: Kill)=
         match kill.VictimShip |> Option.map ShipTransforms.isPod |> Option.defaultValue false with
         | false -> Array.empty
-        | _ ->  let implants = kill
-                                |> KillTransforms.fittingItems ItemLocation.Implant 
-                
-                let sets = implants
-                            |> Seq.map (fun i -> match Pods.implantSet i with
-                                                        | Some (s,g) -> Some ((s,g),i)
-                                                        | _ -> None)
-                            |> Seq.mapSomes
-                            |> Array.ofSeq
-                
-                if sets.Length = 0 then
+        | _ ->  let values = kill 
+                                |> implantSets
+                                |> Seq.map (fun ((s,g),implants,fullSet) -> 
+                                                    match implants = fullSet with  
+                                                    | true -> sprintf "Full set %A %A" g s
+                                                    | _ -> sprintf "%A %A" g s
+                                                    )
+                                |> Array.ofSeq
+
+                if values.Length = 0 then
                     Array.empty
                 else
-                    let distinctSets = sets 
-                                        |> Seq.groupBy (fun (k,_) -> k)
-                                        |> Seq.map (fun ((s,g),xs) -> (s,g), 
-                                                                            xs |> Seq.map snd 
-                                                                                |> Seq.sort
-                                                                                |> Array.ofSeq,
-                                                                            Pods.setImplants s g)
-                    let values = distinctSets 
-                                    |> Seq.map (fun ((s,g),implants,fullSet) -> 
-                                                        match implants = fullSet with  
-                                                        | true -> sprintf "Full set %A %A" g s
-                                                        | _ -> sprintf "%A %A" g s
-                                                        )
                     [|
                         ("name", toJsonValueString "implants");
                         ("value", values
