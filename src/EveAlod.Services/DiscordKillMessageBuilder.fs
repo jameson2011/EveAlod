@@ -6,6 +6,7 @@ open IronSde
 open EveAlod.Data
 open EveAlod.Common
 open EveAlod.Common.Strings
+open EveAlod.Data
 
 type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
 
@@ -18,6 +19,7 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
     let toJsonRecord js = JsonValue.Record js
     let toEmbedsJson xs = (JsonValue.Record [| ("embeds", JsonValue.Array [| JsonValue.Record xs |] ) |])
     let toFieldsJson xs = ("fields", JsonValue.Array xs)
+    let inlineField = ("inline", toJsonValueString "true")
 
     let getTagText =  Commentary.getText |> Commentary.getTagsText 
     let formatIsk (value: float) = value.ToString("N0")
@@ -154,8 +156,46 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
                 [| 
                     ("name", toJsonValueString "tags");
                     ("value", toJsonValueString tags);
+                    inlineField;
                 |]
 
+    
+    let podSummaryField (kill: Kill)=
+        match kill.VictimShip |> Option.map ShipTransforms.isPod |> Option.defaultValue false with
+        | false -> Array.empty
+        | _ ->  let implants = kill
+                                |> KillTransforms.fittingItems ItemLocation.Implant 
+                
+                let sets = implants
+                            |> Seq.map (fun i -> match Pods.implantSet i with
+                                                        | Some (s,g) -> Some ((s,g),i)
+                                                        | _ -> None)
+                            |> Seq.mapSomes
+                            |> Array.ofSeq
+                
+                if sets.Length = 0 then
+                    Array.empty
+                else
+                    let distinctSets = sets 
+                                        |> Seq.groupBy (fun (k,_) -> k)
+                                        |> Seq.map (fun ((s,g),xs) -> (s,g), 
+                                                                            xs |> Seq.map snd 
+                                                                                |> Seq.sort
+                                                                                |> Array.ofSeq,
+                                                                            Pods.setImplants s g)
+                    let values = distinctSets 
+                                    |> Seq.map (fun ((s,g),implants,fullSet) -> 
+                                                        match implants = fullSet with  
+                                                        | true -> sprintf "Full set %A %A" g s
+                                                        | _ -> sprintf "%A %A" g s
+                                                        )
+                    [|
+                        ("name", toJsonValueString "implants");
+                        ("value", values
+                                    |> Strings.join ", " |> toJsonValueString);
+                        inlineField;
+                    |]
+        
     let composeAttackerNames (attackers: seq<Attacker>) = 
         attackers 
             |> Seq.map attackerLink
@@ -265,8 +305,9 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let tagsField = kill.Tags |> viewableTags |> tagsField
         let valueField = valueField kill
         let statsField = statsField kill
+        let podField = podSummaryField kill
 
-        let fields =  [| attackers; valueField; statsField; tagsField |] 
+        let fields =  [| attackers; valueField; statsField; tagsField; podField |] 
                         |> Array.filter (Array.isEmpty >> not)
                         |> Array.map toJsonRecord
                         |> toFieldsJson
@@ -288,8 +329,9 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let valueField = valueField kill
         let statsField = statsField kill
         let tagsField = kill.Tags |> viewableTags |> tagsField
+        let podField = podSummaryField kill
 
-        let fields =  [| corpMates; killwhores; valueField; statsField; tagsField |] 
+        let fields =  [| corpMates; killwhores; valueField; statsField; tagsField; podField |] 
                         |> Array.filter (Array.isEmpty >> not)
                         |> Array.map toJsonRecord
                         |> toFieldsJson
@@ -311,8 +353,9 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let tagsField = kill.Tags |> viewableTags |> tagsField
         let valueField = valueField kill
         let statsField = statsField kill
+        let podField = podSummaryField kill
 
-        let fields =  [| opponents; valueField; statsField; tagsField |] 
+        let fields =  [| opponents; valueField; statsField; tagsField; podField |] 
                         |> Array.filter (Array.isEmpty >> not)
                         |> Array.map toJsonRecord
                         |> toFieldsJson

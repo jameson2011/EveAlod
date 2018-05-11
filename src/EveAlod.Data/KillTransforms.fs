@@ -149,6 +149,11 @@ module KillTransforms=
         |> Seq.mapSomes
         |> Set.ofSeq
             
-            
+    let fittingItems location kill = 
+        kill.Fittings
+            |> Seq.filter (fun ci -> ci.Location = location)
+            |> Seq.map (fun ci -> itemType ci.Item)
+            |> Seq.mapSomes
+                
             
 

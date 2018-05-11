@@ -31,7 +31,7 @@ module Tagging=
             |> Map.ofSeq
          
     let victimHasMissingSlots (location: ItemLocation) (km: Kill)=
-        match km.VictimShip |> Option.bind ShipTransforms.itemType, ShipTransforms.attrType location with
+        match km.VictimShip |> Option.bind EntityTransforms.itemType, ShipTransforms.attrType location with
         | Some s, Some at -> 
                     let avail = ShipTransforms.shipTypeSlot at s
                     let fitted =  km.Fittings |> ShipTransforms.fittedItemTypes location |> Seq.length
@@ -39,7 +39,7 @@ module Tagging=
         | _ -> false
 
     let victimHasNothingInSlots (location: ItemLocation) (km: Kill)=
-        match km.VictimShip |> Option.bind ShipTransforms.itemType, ShipTransforms.attrType location with
+        match km.VictimShip |> Option.bind EntityTransforms.itemType, ShipTransforms.attrType location with
         | Some s, Some at -> 
                     let avail = ShipTransforms.shipTypeSlot at s
                     let noneFitted =  km.Fittings |> ShipTransforms.fittedItemTypes location |> Seq.isEmpty

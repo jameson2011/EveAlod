@@ -72,7 +72,7 @@ module Pods=
                                      | Some (s,g) -> Some (s,g)
                                      | _ -> None) 
             |> Seq.filter (fun (k,is) -> Option.isSome k)
-            |> Seq.map (fun (k,is) -> (Option.get k), Array.ofSeq is)
+            |> Seq.map (fun (k,is) -> (Option.get k), is |> Seq.sort |> Array.ofSeq)
             |> Map.ofSeq
 
     let implantSet (implant) = getImplantSetGrade implant

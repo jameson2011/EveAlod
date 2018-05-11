@@ -47,6 +47,8 @@
         let join (delimiter: string) (values: seq<string>) = 
             System.String.Join(delimiter, values)
 
+        let trim (value: string) = value.Trim()
+
         let split (delim: string) (value: string) = 
             value.Split(delim.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
 

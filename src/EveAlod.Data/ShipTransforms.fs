@@ -47,11 +47,9 @@ module ShipTransforms=
                 |> IronSde.ItemTypes.itemTypes
                 |> Seq.exists (fun t -> Strings.str t.id = entity.Id)
        
-    let itemType (e: Entity) =
-        e.Id |> Strings.toInt |> Option.defaultValue 0 |> IronSde.ItemTypes.itemType
-        
+    
     let fittingItemType (e: CargoItem)=
-        e.Item |> itemType
+        e.Item |> EntityTransforms.itemType
 
     let fittedItemTypes (location: ItemLocation) (fittings: seq<CargoItem>) =
         fittings |> Seq.filter (fun e -> e.Location = location)
@@ -65,7 +63,7 @@ module ShipTransforms=
                 |> Seq.distinct
     
     let isInGroup (groups: Set<IronSde.ItemTypeGroups>) (item: Entity)=
-        item |> itemType
+        item |> EntityTransforms.itemType
              |> Option.map (fun t -> t.group.key )
              |> Option.map (fun t -> groups |> Set.contains t) 
              |> Option.defaultValue false

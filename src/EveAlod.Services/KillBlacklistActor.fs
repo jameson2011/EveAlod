@@ -10,7 +10,7 @@
         let logException = Actors.postException typeof<KillFilterActor>.Name log
 
         let isBlacklisted (kill: Kill) = 
-            kill.VictimShip |> Option.bind ShipTransforms.itemType
+            kill.VictimShip |> Option.bind EntityTransforms.itemType
                             |> Option.map (ShipTransforms.isDrone <||> 
                                             (ShipTransforms.shipIsFittable >> not) )
                             |> Option.defaultValue false
