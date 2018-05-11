@@ -62,9 +62,6 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
     let url kill = ("url", JsonValue.String(urlLink kill))
     let color color = ("color", JsonValue.Float(float color))
         
-    let footer() = 
-        ("footer", JsonValue.Record([| "text", JsonValue.String("provided by evealod, jameson2011, zkillboard.com & ccp") |] ))
-
     let regionLink (value: Region) =
         value.Id |> Zkb.regionKillsUri |> sprintf "[%s](%s)" value.Name
 
@@ -314,7 +311,6 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let elements = [|   title kill; 
                             url kill; 
                             color red; 
-                            footer(); 
                             shipTypeThumbnail kill.VictimShip;
                             descriptionField kill;
                             fields|]
@@ -338,7 +334,6 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let elements = [|   title kill; 
                             url kill; 
                             color green; 
-                            footer(); 
                             shipTypeThumbnail kill.VictimShip;
                             descriptionField kill;
                             fields|]
@@ -362,7 +357,6 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         let elements = [|   title kill; 
                             url kill; 
                             color blue; 
-                            footer(); 
                             shipTypeThumbnail kill.VictimShip;
                             descriptionField kill;
                             fields|]
