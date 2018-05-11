@@ -64,6 +64,7 @@
     <Compile Include="EntityTransformsTests.fs" />
     <Compile Include="KillTransformsTests.fs" />
     <Compile Include="ShipTransformsTests.fs" />
+    <Compile Include="PodsTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
