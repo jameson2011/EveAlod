@@ -72,12 +72,13 @@
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />
     <Compile Include="Configuration.fs" />
-    <Compile Include="Kills.fs" />
+    <Compile Include="KillEntities.fs" />
     <Compile Include="ActorMessages.fs" />
     <Compile Include="EntityTransforms.fs" />
     <Compile Include="Locations.fs" />
     <Compile Include="KillTransforms.fs" />
     <Compile Include="ShipTransforms.fs" />
+    <Compile Include="Pods.fs" />
     <None Include="SampleRedisqKillmail.json" />
     <None Include="SampleCharacter.json" />
     <None Include="SampleEntity.json" />

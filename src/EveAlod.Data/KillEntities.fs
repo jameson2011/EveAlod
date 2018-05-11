@@ -71,7 +71,30 @@ type ItemLocation =
     | FighterTube
     | SubsystemBay
     
-    
+type ImplantGrade =
+    | HighGrade = 1
+    | MidGrade = 2
+    | LowGrade = 3
+
+type ImplantSet =
+    | Halo = 1
+    | Talisman = 2
+    | Talon = 3
+    | Christmas = 4
+    | Spur = 5
+    | Crystal = 6
+    | Grail= 7 
+    | Centurion = 8
+    | Harvest = 9
+    | Jackal = 10
+    | Slave = 11
+    | Snake = 12
+    | Asklepian = 13
+    | Virtue = 14
+    | Edge = 15
+    | Nomad = 16
+    | Ascendancy = 17
+
 type SolarSystem=
     {
         Id: int;
