@@ -68,6 +68,10 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
     let constellationLink (value: Constellation) =
         sprintf "%s" value.Name
 
+
+    let abyssalSystemLink() =
+        Zkb.abyssalKillsUrl() |> sprintf "[Abyssal](%s)" 
+
     let solarSystemLink (value: SolarSystem) =
         value.Id |> Zkb.solarSystemKillsUrl |> sprintf "[%s](%s)" value.Name 
 
@@ -111,6 +115,7 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
             
     let getLocationText (location: Location option) =
         match location with
+        | Some l when l.SolarSystem.Security = SpaceSecurity.Abyssal -> abyssalSystemLink()
         | Some l ->     let cel = l.Celestial |> Option.map celestialLink |> Option.defaultValue ""
                         let distance = l.Distance |> Option.map distanceText |> Option.defaultValue ""
                         let region = l.Region |> regionLink

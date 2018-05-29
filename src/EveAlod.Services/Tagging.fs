@@ -179,6 +179,7 @@ module Tagging=
         | Some Nullsec -> Some KillTag.Nullsec
         | Some Highsec -> Some KillTag.Highsec
         | Some Wormhole -> Some KillTag.Wormhole
+        | Some Abyssal -> Some KillTag.Abyssal
         | _ -> None
 
 

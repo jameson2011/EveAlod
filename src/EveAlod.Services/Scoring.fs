@@ -28,7 +28,7 @@ namespace EveAlod.Services
             | MixedTank -> 10.
             | WideMarginShipType -> 10.
             | NarrowMarginShipType -> 1.
-            | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole -> 0.1
+            | KillTag.Lowsec | KillTag.Highsec | KillTag.Nullsec | KillTag.Wormhole | KillTag.Abyssal -> 0.1
             | Gatecamp -> 0.1
             | Industrial -> 0.1
 

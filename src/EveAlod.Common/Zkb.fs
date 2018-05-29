@@ -17,6 +17,9 @@ module Zkb=
     let regionStatsUri id = 
         sprintf "%s/region/%i/stats/" ZkbDomain id
 
+    let abyssalKillsUrl() = 
+        sprintf "%s/kills/abyssal/" ZkbDomain
+
     let solarSystemKillsUrl id =
         sprintf "%s/system/%i/" ZkbDomain id
 

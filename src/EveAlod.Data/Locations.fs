@@ -7,7 +7,9 @@ module Locations=
         | IronSde.SecurityLevel.Lowsec -> Lowsec
         | IronSde.SecurityLevel.Nullsec -> Nullsec
         | IronSde.SecurityLevel.Wormhole -> Wormhole
-        | _ -> Highsec
+        | IronSde.SecurityLevel.Highsec -> Highsec
+        | IronSde.SecurityLevel.Abyssal -> Abyssal
+
     
     let private findCelestial solarSystemId position =
         IronSde.MapSearch.findClosestCelestial solarSystemId position 
