@@ -33,6 +33,7 @@ type KillTag =
     | Highsec
     | Nullsec
     | Wormhole
+    | Abyssal
     | Gatecamp
     | MissingLows
     | MissingMids
@@ -46,7 +47,7 @@ type SpaceSecurity =
     | Nullsec
     | Wormhole
     | Highsec
-
+    | Abyssal
     
 type ItemLocation =
     | Unknown
