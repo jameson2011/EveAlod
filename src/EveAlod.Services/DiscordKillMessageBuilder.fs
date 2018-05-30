@@ -223,9 +223,12 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
                     |]
 
     let statsField (kill: Kill)=
-        let text = [    kill.Victim  |> Option.map characterStatsLink;
+        let text = [    kill.Victim     |> Option.map characterStatsLink;
                         kill.VictimShip |> Option.map shipTypeStatsLink;
-                        kill.Location |> Option.map (fun l -> l.SolarSystem) |> Option.map solarSystemStatsLink;                  
+                        kill.Location   |> Option.bind (fun l -> match l.SolarSystem with
+                                                                    | l when l.Security = SpaceSecurity.Abyssal -> None
+                                                                    | l -> Some l) 
+                                        |> Option.map solarSystemStatsLink;                  
                     ] 
                     |> Seq.mapSomes   
                     |> Strings.join " - "
