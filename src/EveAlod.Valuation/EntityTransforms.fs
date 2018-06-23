@@ -54,12 +54,14 @@ module EntityTransforms=
         |  _ -> None
 
     let toKillmailIds json =
-        let root = KillmailHistoryIdProvider.Parse(json)
+        match json with
+        | "null" -> Some []
+        | _ ->  let root = KillmailHistoryIdProvider.Parse(json)
         
-        let ids = root.JsonValue.Properties()
-                        |> Seq.map (fun (id,_) -> id)
-                        |> List.ofSeq
-        Some ids
+                let ids = root.JsonValue.Properties()
+                                |> Seq.map (fun (id,_) -> id)
+                                |> List.ofSeq
+                Some ids
 
     let toKill json =
         let package = DefaultJsonProvider.Parse(json).JsonValue.AsArray()
