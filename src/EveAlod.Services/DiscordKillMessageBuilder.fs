@@ -64,14 +64,14 @@ type DiscordKillMessageBuilder(staticEntities: StaticDataActor, corpId: string)=
         
     let regionLink (value: Region) =
         value.Id |> Zkb.regionKillsUri |> sprintf "[%s](%s)" value.Name
-
-    let constellationLink (value: Constellation) =
-        sprintf "%s" value.Name
-
+        
 
     let abyssalSystemLink() =
         Zkb.abyssalKillsUrl() |> sprintf "[Abyssal](%s)" 
 
+    let constellationLink (value: Constellation) =
+        value.Id |> Zkb.constellationKillsUrl |> sprintf "[%s](%s)" value.Name 
+    
     let solarSystemLink (value: SolarSystem) =
         value.Id |> Zkb.solarSystemKillsUrl |> sprintf "[%s](%s)" value.Name 
 

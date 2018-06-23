@@ -29,6 +29,12 @@ module Zkb=
     let locationKillsUri id =
         sprintf "%s/location/%i/" ZkbDomain id
 
+    let constellationKillsUrl id =
+        sprintf "%s/constellation/%i/" ZkbDomain id
+
+    let constellationStatsUrl id =
+        sprintf "%s/constellation/%i/stats/" ZkbDomain id
+        
     let locationStatsUri id =
         sprintf "%s/location/%i/stats/" ZkbDomain id
 
