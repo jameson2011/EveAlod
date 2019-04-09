@@ -43,20 +43,20 @@ module MongoDb=
                     |> ignore
 
     let pingDb (db: IMongoDatabase) = 
-        runCmd db "{ping:1}"        
+        runCmd db "{ping:1}"
         db
 
     let initDb dbName (connection: string) =            
         let client= MongoClient(connection)                                            
         let db = client.GetDatabase(dbName)                        
-        db |> pingDb
+        db 
         
 
     let setIndex (path: string) (collection: IMongoCollection<'a>) =                        
         let json = sprintf "{'%s': 1 }" path
         let def = IndexKeysDefinition<'a>.op_Implicit(json)
-            
-        collection.Indexes.CreateOne(def) |> ignore
+        let model = CreateIndexModel<'a>(def)
+        collection.Indexes.CreateOne(model) |> ignore
 
         collection
         
