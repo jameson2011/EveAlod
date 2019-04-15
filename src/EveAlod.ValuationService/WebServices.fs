@@ -11,6 +11,16 @@ module WebServices=
     [<Literal>]    
     let private InternalErrorJson = """{ "error": "Internal error" }"""
 
+    let private clientIp (ctx: HttpContext) = ctx.clientIp false []
+
+    let private clientPort (ctx: HttpContext) = ctx.clientPort false []
+
+    let private msgSource source msg = (source, msg)
+
+    let private logInfo (log: PostMessage) = EveAlod.Data.ActorMessage.Info >> log
+
+    let private logTrace (log: PostMessage) = (msgSource "WebServices") >> EveAlod.Data.ActorMessage.Trace >> log
+
     let jsonMimeType = Writers.setMimeType "application/json; charset=utf-8"
     
     let setExpiry (age: int ) = age |> toString |> Writers.setHeader "Expires" 
@@ -28,6 +38,17 @@ module WebServices=
         ub.Path <- path
         ub.Uri
     
+    let logRouteInvoke (log: PostMessage) (ctx: HttpContext) =
+        async {
+            
+            let clientIp = clientIp ctx 
+
+            sprintf "Received [%s] [%s] from [%s:%s]" (ctx.request.method.ToString()) ctx.request.path (clientIp.ToString()) (clientPort(ctx).ToString())
+                |> logTrace log 
+
+            return Some ctx
+        }
+
     let getShipSummaryStatsJson (shipStats: ShipStatsActor) (ctx: HttpContext)=
         async {
             let uri = composeUri ctx.request.host ctx.request.url 

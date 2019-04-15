@@ -18,6 +18,12 @@ build_script:
 - cmd: >-
     ./build.bat all
 
+on_success:
+  - ps: ./sendwebhook.ps1 success $env:WEBHOOK_URL
+on_failure:
+  - ps: ./sendwebhook.ps1 failure $env:WEBHOOK_URL
+
+
 test: off
 
 artifacts:
