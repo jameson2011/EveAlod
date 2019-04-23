@@ -10,5 +10,10 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
-- script: .\build.bat
-  displayName: 'Build'
+#- script: .\build.bat
+#  displayName: 'Build'
+
+- task: BatchScript@1
+  inputs:
+    filename: build.bat
+    
